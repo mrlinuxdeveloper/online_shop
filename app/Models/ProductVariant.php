@@ -1,0 +1,53 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+class ProductVariant extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'product_id',
+        'size_id',
+        'color_id',
+        'sku',
+        'price',
+        'stock',
+        'weight',
+        'status',
+    ];
+
+    protected $casts = [
+        'price' => 'decimal:2',
+        'weight' => 'decimal:2',
+        'status' => 'boolean',
+    ];
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    public function size()
+    {
+        return $this->belongsTo(Size::class);
+    }
+
+    public function color()
+    {
+        return $this->belongsTo(Color::class);
+    }
+
+    public function cartItems()
+    {
+        return $this->hasMany(CartItem::class);
+    }
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+}
