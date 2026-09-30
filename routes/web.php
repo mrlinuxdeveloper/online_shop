@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\PaymentController;
+
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\BrandController;
@@ -10,11 +14,10 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SizeController;
 use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\ProductVariantController;
-use App\Http\Controllers\Admin\CartController;
-use App\Http\Controllers\Shop\ProductController as ShopProductController;
-use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\Admin\OrderController;
+
+use App\Http\Controllers\Shop\ProductController as ShopProductController;
 
 
 /*
@@ -24,6 +27,48 @@ use App\Http\Controllers\Admin\OrderController;
 */
 
 Auth::routes();
+
+
+/*
+|--------------------------------------------------------------------------
+| Home
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/', [
+    HomeController::class,
+    'index'
+])->name('home');
+
+
+/*
+|--------------------------------------------------------------------------
+| Shop
+|--------------------------------------------------------------------------
+*/
+
+/*
+|--------------------------------------------------------------------------
+| Product Listing
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/products', [
+    ShopProductController::class,
+    'index'
+])->name('shop.products.index');
+
+
+/*
+|--------------------------------------------------------------------------
+| Product Details
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/products/{product}', [
+    ShopProductController::class,
+    'show'
+])->name('shop.products.show');
 
 
 /*
@@ -96,7 +141,7 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Start Payment
+    | Payment
     |--------------------------------------------------------------------------
     */
 
@@ -113,8 +158,7 @@ Route::middleware('auth')->group(function () {
 | Payment Callback
 |--------------------------------------------------------------------------
 |
-| این route نباید داخل auth باشد.
-| زرین‌پال بعد از پرداخت کاربر را به این URL برمی‌گرداند.
+| این Route نباید داخل auth باشد.
 |
 */
 
@@ -153,8 +197,10 @@ Route::middleware(['auth', 'admin'])
         |--------------------------------------------------------------------------
         */
 
-        Route::resource('categories', CategoryController::class)
-            ->except(['show']);
+        Route::resource(
+            'categories',
+            CategoryController::class
+        )->except(['show']);
 
 
         /*
@@ -163,8 +209,10 @@ Route::middleware(['auth', 'admin'])
         |--------------------------------------------------------------------------
         */
 
-        Route::resource('brands', BrandController::class)
-            ->except(['show']);
+        Route::resource(
+            'brands',
+            BrandController::class
+        )->except(['show']);
 
 
         /*
@@ -173,28 +221,10 @@ Route::middleware(['auth', 'admin'])
         |--------------------------------------------------------------------------
         */
 
-        Route::resource('products', ProductController::class)
-            ->except(['show']);
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Sizes
-        |--------------------------------------------------------------------------
-        */
-
-        Route::resource('sizes', SizeController::class)
-            ->except(['show']);
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Colors
-        |--------------------------------------------------------------------------
-        */
-
-        Route::resource('colors', ColorController::class)
-            ->except(['show']);
+        Route::resource(
+            'products',
+            ProductController::class
+        )->except(['show']);
 
 
         /*
@@ -260,58 +290,65 @@ Route::middleware(['auth', 'admin'])
             [ProductVariantController::class, 'destroy']
         )->name('products.variants.destroy');
 
+
         /*
-|--------------------------------------------------------------------------
-| Orders
-|--------------------------------------------------------------------------
-*/
+        |--------------------------------------------------------------------------
+        | Sizes
+        |--------------------------------------------------------------------------
+        */
 
-        Route::get('/orders', [
-            OrderController::class,
-            'index'
-        ])->name('orders.index');
+        Route::resource(
+            'sizes',
+            SizeController::class
+        )->except(['show']);
 
-        Route::get('/orders/{order}', [
-            OrderController::class,
-            'show'
-        ])->name('orders.show');
 
-        Route::patch('/orders/{order}/status', [
-            OrderController::class,
-            'updateStatus'
-        ])->name('orders.status');
+        /*
+        |--------------------------------------------------------------------------
+        | Colors
+        |--------------------------------------------------------------------------
+        */
+
+        Route::resource(
+            'colors',
+            ColorController::class
+        )->except(['show']);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Orders
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get(
+            '/orders',
+            [OrderController::class, 'index']
+        )->name('orders.index');
+
+        Route::get(
+            '/orders/{order}',
+            [OrderController::class, 'show']
+        )->name('orders.show');
+
+        Route::patch(
+            '/orders/{order}/status',
+            [OrderController::class, 'updateStatus']
+        )->name('orders.status');
+
+        Route::patch(
+            '/orders/{order}/payment-status',
+            [OrderController::class, 'updatePaymentStatus']
+        )->name('orders.payment-status');
+
+        Route::get(
+            '/orders/{order}/invoice',
+            [OrderController::class, 'invoice']
+        )->name('orders.invoice');
+
+        Route::patch(
+            '/orders/{order}/shipment',
+            [OrderController::class, 'updateShipment']
+        )->name('orders.shipment');
 
     });
-
-
-/*
-|--------------------------------------------------------------------------
-| Shop
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/products/{product}', [
-    ShopProductController::class,
-    'show'
-])->name('shop.products.show');
-
-/*
-|--------------------------------------------------------------------------
-| Orders
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/orders', [
-    OrderController::class,
-    'index'
-])->name('orders.index');
-
-Route::get('/orders/{order}', [
-    OrderController::class,
-    'show'
-])->name('orders.show');
-
-Route::patch('/orders/{order}/status', [
-    OrderController::class,
-    'updateStatus'
-])->name('orders.status');

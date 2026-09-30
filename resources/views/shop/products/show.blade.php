@@ -33,6 +33,7 @@
                         id="mainProductImage"
                         src="{{ asset('storage/' . $primaryImage->image) }}"
                         class="img-fluid rounded"
+                        style="width:100%; max-height:550px; object-fit:contain;"
                         alt="{{ $product->name }}"
                     >
 
@@ -47,11 +48,11 @@
 
                 @endif
 
-                {{-- Thumbnails --}}
 
+                {{-- Thumbnails --}}
                 @if($product->images->count() > 1)
 
-                    <div class="d-flex gap-2 mt-3">
+                    <div class="d-flex flex-wrap gap-2 mt-3">
 
                         @foreach($product->images as $image)
 
@@ -59,15 +60,15 @@
                                 src="{{ asset('storage/' . $image->image) }}"
                                 class="rounded border product-thumbnail"
                                 style="
-                                width:80px;
-                                height:80px;
-                                object-fit:cover;
-                                cursor:pointer;
-                            "
+                                    width:80px;
+                                    height:80px;
+                                    object-fit:cover;
+                                    cursor:pointer;
+                                "
                                 onclick="
-                                document.getElementById('mainProductImage').src =
-                                this.src;
-                            "
+                                    document.getElementById('mainProductImage').src = this.src;
+                                "
+                                alt="{{ $product->name }}"
                             >
 
                         @endforeach
@@ -79,12 +80,13 @@
             </div>
 
 
-            {{-- Product Info --}}
+            {{-- Product Information --}}
             <div class="col-md-6">
 
                 <h1 class="mb-3">
                     {{ $product->name }}
                 </h1>
+
 
                 @if($product->brand)
 
@@ -95,6 +97,7 @@
 
                 @endif
 
+
                 @if($product->category)
 
                     <div class="text-muted mb-3">
@@ -104,11 +107,29 @@
 
                 @endif
 
+
+                {{-- Price --}}
                 <div class="mb-4">
 
                     <h3 id="productPrice">
                         {{ number_format($product->price) }}
                     </h3>
+
+                    @if($product->discount > 0)
+
+                        <div class="text-muted">
+
+                            <del>
+                                {{ number_format($product->price) }}
+                            </del>
+
+                            <span class="text-danger ms-2">
+                                {{ $product->discount }}% OFF
+                            </span>
+
+                        </div>
+
+                    @endif
 
                 </div>
 
@@ -122,8 +143,8 @@
 
                     @csrf
 
-                    {{-- Variant ID --}}
 
+                    {{-- Selected Variant --}}
                     <input
                         type="hidden"
                         name="product_variant_id"
@@ -132,8 +153,14 @@
 
 
                     {{-- Size --}}
+                    @php
+                        $sizeVariants = $variants
+                            ->whereNotNull('size_id')
+                            ->unique('size_id')
+                            ->sortBy('size.name');
+                    @endphp
 
-                    @if($variants->whereNotNull('size_id')->count())
+                    @if($sizeVariants->count())
 
                         <div class="mb-4">
 
@@ -146,13 +173,7 @@
                                 id="sizeOptions"
                             >
 
-                                @foreach(
-                                    $variants
-                                        ->whereNotNull('size_id')
-                                        ->unique('size_id')
-                                        ->sortBy('size.name')
-                                    as $variant
-                                )
+                                @foreach($sizeVariants as $variant)
 
                                     @if($variant->size)
 
@@ -176,8 +197,14 @@
 
 
                     {{-- Color --}}
+                    @php
+                        $colorVariants = $variants
+                            ->whereNotNull('color_id')
+                            ->unique('color_id')
+                            ->sortBy('color.name');
+                    @endphp
 
-                    @if($variants->whereNotNull('color_id')->count())
+                    @if($colorVariants->count())
 
                         <div class="mb-4">
 
@@ -190,13 +217,7 @@
                                 id="colorOptions"
                             >
 
-                                @foreach(
-                                    $variants
-                                        ->whereNotNull('color_id')
-                                        ->unique('color_id')
-                                        ->sortBy('color.name')
-                                    as $variant
-                                )
+                                @foreach($colorVariants as $variant)
 
                                     @if($variant->color)
 
@@ -206,17 +227,17 @@
                                             data-color-id="{{ $variant->color_id }}"
                                         >
 
-                                        <span
-                                            style="
-                                                display:inline-block;
-                                                width:18px;
-                                                height:18px;
-                                                border-radius:50%;
-                                                background:{{ $variant->color->hex }};
-                                                border:1px solid #ccc;
-                                                vertical-align:middle;
-                                            "
-                                        ></span>
+                                            <span
+                                                style="
+                                                    display:inline-block;
+                                                    width:18px;
+                                                    height:18px;
+                                                    border-radius:50%;
+                                                    background:{{ $variant->color->hex }};
+                                                    border:1px solid #ccc;
+                                                    vertical-align:middle;
+                                                "
+                                            ></span>
 
                                             {{ $variant->color->name }}
 
@@ -234,7 +255,6 @@
 
 
                     {{-- Quantity --}}
-
                     <div class="mb-4">
 
                         <label class="form-label fw-bold">
@@ -253,28 +273,26 @@
 
                         <small
                             id="stockInfo"
-                            class="text-muted"
+                            class="text-muted d-block mt-2"
                         ></small>
 
                     </div>
 
 
-                    {{-- Add Button --}}
-
+                    {{-- Add To Cart Button --}}
                     <button
                         type="submit"
                         id="addToCartButton"
                         class="btn btn-dark btn-lg"
                         disabled
                     >
-                        Select Size and Color
+                        Select Options
                     </button>
 
                 </form>
 
 
                 {{-- Description --}}
-
                 @if($product->description)
 
                     <div class="mt-5">
@@ -301,110 +319,179 @@
 
 
 @push('scripts')
+@php
+    $variantData = $variants->map(function ($variant) {
+        return [
+            'id' => $variant->id,
+            'size_id' => $variant->size_id,
+            'color_id' => $variant->color_id,
+            'price' => $variant->price,
+            'stock' => $variant->stock,
+        ];
+    })->values()->toArray();
+@endphp
 
     <script>
+        const variants = @json($variantData); console.log(variants);
 
-        const variants = @json(
-        $variants->map(function ($variant) {
-            return [
-                'id' => $variant->id,
-                'size_id' => $variant->size_id,
-                'color_id' => $variant->color_id,
-                'price' => $variant->price,
-                'stock' => $variant->stock,
-            ];
-        })->values()
-    );
+
+    {{--    const variants = @json (--}}
+    {{--    $variants->map(function ($variant) {--}}
+
+    {{--        return [--}}
+    {{--            'id' => $variant->id,--}}
+    {{--            'size_id' => $variant->size_id,--}}
+    {{--            'color_id' => $variant->color_id,--}}
+    {{--            'price' => $variant->price,--}}
+    {{--            'stock' => $variant->stock,--}}
+    {{--        ];--}}
+
+    {{--    })->values()--}}
+    {{--);--}}
+
 
         let selectedSize = null;
         let selectedColor = null;
 
-        const variantId = document.getElementById('variantId');
-        const quantity = document.getElementById('quantity');
-        const productPrice = document.getElementById('productPrice');
-        const stockInfo = document.getElementById('stockInfo');
+
+        const variantId =
+            document.getElementById('variantId');
+
+        const quantity =
+            document.getElementById('quantity');
+
+        const productPrice =
+            document.getElementById('productPrice');
+
+        const stockInfo =
+            document.getElementById('stockInfo');
+
         const addToCartButton =
             document.getElementById('addToCartButton');
 
 
+        const hasSizes =
+            variants.some(
+                variant => variant.size_id !== null
+            );
+
+
+        const hasColors =
+            variants.some(
+                variant => variant.color_id !== null
+            );
+
+
+        /*
+         * Find exact variant
+         */
         function findVariant()
         {
+
             return variants.find(function (variant) {
 
                 const sizeMatches =
-                    selectedSize === null ||
+                    !hasSizes ||
                     variant.size_id == selectedSize;
 
                 const colorMatches =
-                    selectedColor === null ||
+                    !hasColors ||
                     variant.color_id == selectedColor;
 
                 return sizeMatches && colorMatches;
 
             });
+
         }
 
 
+        /*
+         * Reset variant information
+         */
+        function resetVariant()
+        {
+
+            variantId.value = '';
+
+            stockInfo.innerText = '';
+
+            quantity.max = '';
+
+            quantity.value = 1;
+
+            addToCartButton.disabled = true;
+
+            addToCartButton.innerText =
+                'Select Options';
+
+            productPrice.innerText =
+                Number({{ $product->price }}).toLocaleString();
+
+        }
+
+
+        /*
+         * Update selected variant
+         */
         function updateVariant()
         {
+
+            /*
+             * هنوز همه گزینه‌های لازم انتخاب نشده
+             */
+            if (
+                (hasSizes && selectedSize === null) ||
+                (hasColors && selectedColor === null)
+            ) {
+
+                resetVariant();
+
+                return;
+            }
+
+
             const variant = findVariant();
 
+
+            /*
+             * ترکیب انتخاب‌شده وجود ندارد
+             */
             if (!variant) {
 
                 variantId.value = '';
 
+                stockInfo.innerText =
+                    'This combination is unavailable';
+
+                quantity.max = '';
+
                 addToCartButton.disabled = true;
 
                 addToCartButton.innerText =
-                    'This combination is unavailable';
-
-                stockInfo.innerText = '';
-
-                productPrice.innerText =
-                    '{{ number_format($product->price) }}';
+                    'Combination unavailable';
 
                 return;
             }
 
 
             /*
-             * اگر محصول Size و Color دارد،
-             * باید هر دو انتخاب شده باشند.
+             * Set Variant ID
              */
-
-            const hasSizes =
-                variants.some(v => v.size_id !== null);
-
-            const hasColors =
-                variants.some(v => v.color_id !== null);
-
-
-            if (
-                (hasSizes && selectedSize === null) ||
-                (hasColors && selectedColor === null)
-            ) {
-
-                variantId.value = '';
-
-                addToCartButton.disabled = true;
-
-                addToCartButton.innerText =
-                    'Select Size and Color';
-
-                stockInfo.innerText = '';
-
-                return;
-            }
-
-
             variantId.value = variant.id;
 
+
+            /*
+             * Set Variant Price
+             */
             productPrice.innerText =
                 Number(
                     variant.price ?? {{ $product->price }}
                 ).toLocaleString();
 
 
+            /*
+             * Set Stock
+             */
             stockInfo.innerText =
                 'Available stock: ' + variant.stock;
 
@@ -412,23 +499,43 @@
             quantity.max = variant.stock;
 
 
+            /*
+             * Out of stock
+             */
             if (variant.stock <= 0) {
+
+                quantity.value = 1;
 
                 addToCartButton.disabled = true;
 
                 addToCartButton.innerText =
                     'Out of stock';
 
-            } else {
-
-                addToCartButton.disabled = false;
-
-                addToCartButton.innerText =
-                    'Add to Cart';
+                return;
             }
+
+
+            /*
+             * Available
+             */
+            if (Number(quantity.value) > variant.stock) {
+
+                quantity.value = variant.stock;
+
+            }
+
+
+            addToCartButton.disabled = false;
+
+            addToCartButton.innerText =
+                'Add to Cart';
+
         }
 
 
+        /*
+         * Size selection
+         */
         document
             .querySelectorAll('.size-option')
             .forEach(function (button) {
@@ -437,14 +544,19 @@
 
                     document
                         .querySelectorAll('.size-option')
-                        .forEach(btn =>
-                            btn.classList.remove('active')
-                        );
+                        .forEach(function (btn) {
+
+                            btn.classList.remove('active');
+
+                        });
+
 
                     this.classList.add('active');
 
+
                     selectedSize =
                         this.dataset.sizeId;
+
 
                     updateVariant();
 
@@ -453,6 +565,9 @@
             });
 
 
+        /*
+         * Color selection
+         */
         document
             .querySelectorAll('.color-option')
             .forEach(function (button) {
@@ -461,14 +576,19 @@
 
                     document
                         .querySelectorAll('.color-option')
-                        .forEach(btn =>
-                            btn.classList.remove('active')
-                        );
+                        .forEach(function (btn) {
+
+                            btn.classList.remove('active');
+
+                        });
+
 
                     this.classList.add('active');
 
+
                     selectedColor =
                         this.dataset.colorId;
+
 
                     updateVariant();
 
@@ -477,27 +597,41 @@
             });
 
 
-        quantity.addEventListener('change', function () {
+        /*
+         * Quantity validation
+         */
+        quantity.addEventListener('input', function () {
 
             const variant = findVariant();
+
 
             if (!variant) {
                 return;
             }
 
-            if (Number(this.value) > variant.stock) {
 
-                this.value = variant.stock;
+            let value =
+                Number(this.value);
+
+
+            if (value < 1 || Number.isNaN(value)) {
+
+                value = 1;
 
             }
 
-            if (Number(this.value) < 1) {
 
-                this.value = 1;
+            if (value > variant.stock) {
+
+                value = variant.stock;
 
             }
+
+
+            this.value = value;
 
         });
+
 
     </script>
 
