@@ -82,6 +82,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(CouponUsage::class);
     }
+    public function adminUser()
+{
+    return $this->hasOne(AdminUser::class);
+}
 }
 
 // <?php

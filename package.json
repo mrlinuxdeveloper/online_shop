@@ -1,9 +1,29 @@
 {
+    "name": "online_shop",
+    "version": "1.0.0",
     "private": true,
+    "description": "<p align=\"center\"><a href=\"https://laravel.com\" target=\"_blank\"><img src=\"https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg\" width=\"400\" alt=\"Laravel Logo\"></a></p>",
+    "homepage": "https://github.com/mrlinuxdeveloper/online_shop#readme",
+    "bugs": {
+        "url": "https://github.com/mrlinuxdeveloper/online_shop/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/mrlinuxdeveloper/online_shop.git"
+    },
+    "license": "ISC",
+    "author": "",
     "type": "module",
+    "main": "vite.config.js",
+    "directories": {
+        "test": "tests"
+    },
     "scripts": {
         "build": "vite build",
         "dev": "vite"
+    },
+    "dependencies": {
+        "admin-lte-persian": "^2.4.10"
     },
     "devDependencies": {
         "@popperjs/core": "^2.11.6",
@@ -15,8 +35,5 @@
         "sass": "^1.56.1",
         "tailwindcss": "^4.0.0",
         "vite": "^6.0.11"
-    },
-    "dependencies": {
-        "admin-lte-persian": "^2.4.10"
     }
 }
