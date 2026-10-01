@@ -18,7 +18,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\Admin\OrderController;
 
 use App\Http\Controllers\Shop\ProductController as ShopProductController;
-
+use App\Http\Controllers\AddressController;
 
 /*
 |--------------------------------------------------------------------------
@@ -88,6 +88,31 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+
+
+    Route::middleware('auth')->group(function () {
+
+
+        Route::get('/addresses', [AddressController::class, 'index'])
+            ->name('addresses.index');
+
+        Route::get('/addresses/create', [AddressController::class, 'create'])
+            ->name('addresses.create');
+
+        Route::post('/addresses', [AddressController::class, 'store'])
+            ->name('addresses.store');
+
+        Route::get('/addresses/{address}/edit', [AddressController::class, 'edit'])
+            ->name('addresses.edit');
+
+        Route::put('/addresses/{address}', [AddressController::class, 'update'])
+            ->name('addresses.update');
+
+        Route::delete('/addresses/{address}', [AddressController::class, 'destroy'])
+            ->name('addresses.destroy');
+
+
+    });
 
 
     /*

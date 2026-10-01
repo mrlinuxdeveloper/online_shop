@@ -322,33 +322,45 @@ class CheckoutController extends Controller
              */
             Invoice::create([
                 'order_id' => $order->id,
-
-                'invoice_number' =>
-                    'INV-' . strtoupper(
-                        Str::random(10)
-                    ),
-
-                'subtotal' =>
-                    $subtotal,
-
-                'discount' =>
-                    $discount,
-
-                'shipping_cost' =>
-                    $shippingCost,
-
-                'tax' =>
-                    $tax,
-
-                'total_price' =>
-                    $total,
-
-                'status' =>
-                    'pending',
-
-                'issued_at' =>
-                    now(),
+                'invoice_number' => 'INV-' . strtoupper(Str::random(10)),
+                'subtotal' => $subtotal,
+                'discount' => $discount,
+                'shipping_cost' => $shippingCost,
+                'tax' => $tax,
+                'total_price' => $total,
+                'status' => 'issued',
+                'issued_at' => now(),
             ]);
+
+//            Invoice::create([
+//                'order_id' => $order->id,
+//
+//                'invoice_number' =>
+//                    'INV-' . strtoupper(
+//                        Str::random(10)
+//                    ),
+//
+//                'subtotal' =>
+//                    $subtotal,
+//
+//                'discount' =>
+//                    $discount,
+//
+//                'shipping_cost' =>
+//                    $shippingCost,
+//
+//                'tax' =>
+//                    $tax,
+//
+//                'total_price' =>
+//                    $total,
+//
+//                'status' =>
+//                    'pending',
+//
+//                'issued_at' =>
+//                    now(),
+//            ]);
 
 
             DB::commit();

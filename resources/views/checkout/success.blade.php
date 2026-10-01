@@ -2,16 +2,7 @@
 
 @section('content')
 
-    @if($order->payment_status !== 'paid')
 
-        <a
-            href="{{ route('payment.start', $order) }}"
-            class="btn btn-success"
-        >
-            Pay Now
-        </a>
-
-    @endif
 
 
     <div class="container py-5">
@@ -182,7 +173,17 @@
                             >
                                 Back to Cart
                             </a>
+                            @if($order->payment_status !== 'paid')
 
+                                <a
+                                    href="{{ route('payment.start', $order) }}"
+                                    class="btn btn-success"
+                                    style="padding: 6px 40px"
+                                >
+                                    Pay Now
+                                </a>
+
+                            @endif
                         </div>
 
                     </div>
