@@ -9,7 +9,9 @@ use App\Models\Payment as PaymentModel;
 use App\Models\Invoice as OrderInvoice;
 use Illuminate\Support\Facades\DB;
 use Shetabit\Multipay\Invoice as GatewayInvoice;
-use Shetabit\Payment\Facade\Payment;
+//use Shetabit\Payment\Facade\Payment;
+use Shetabit\Multipay\Payment;
+
 use Shetabit\Multipay\Exceptions\InvalidPaymentException;
 
 class PaymentController extends Controller
@@ -104,17 +106,33 @@ class PaymentController extends Controller
             if ($paymentRecord) {
                 $paymentRecord->update([
                     'status' => 'failed',
-                    'description' => 'Payment initialization failed.',
+                    'description' => $e->getMessage(),
                 ]);
             }
 
-            return redirect()
-                ->route('checkout.success', $order)
-                ->with(
-                    'error',
-                    'Unable to start payment.'
-                );
+            return back()->with(
+                'error',
+                'Payment error: ' . $e->getMessage()
+            );
         }
+//        } catch (\Throwable $e) {
+//
+//            report($e);
+//
+//            if ($paymentRecord) {
+//                $paymentRecord->update([
+//                    'status' => 'failed',
+//                    'description' => 'Payment initialization failed.',
+//                ]);
+//            }
+//
+//            return redirect()
+//                ->route('checkout.success', $order)
+//                ->with(
+//                    'error',
+//                    'Unable to start payment.'
+//                );
+//        }
     }
 
 
@@ -265,11 +283,20 @@ class PaymentController extends Controller
                  * اگر همزمان callback دیگری رسید،
                  * موجودی دوباره کم نشود.
                  */
-                if (
-                    $lockedOrder->payment_status === 'paid'
-                ) {
-                    return;
+
+
+                if ($lockedOrder->invoice) {
+                    $lockedOrder->invoice->update([
+                        'status' => 'issued',
+                    ]);
                 }
+//                if (
+//                    $lockedOrder->payment_status === 'paid'
+//                ) {
+//                    return;
+//                }
+
+
 
                 /*
                  * قفل Payment
