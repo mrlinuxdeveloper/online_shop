@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Payment as PaymentModel;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Shetabit\Multipay\Invoice;
 use Shetabit\Multipay\Payment;
@@ -12,66 +13,51 @@ use Shetabit\Multipay\Exceptions\InvalidPaymentException;
 
 class PaymentController extends Controller
 {
-    /**
-     * شروع پرداخت سفارش
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | Start Payment
+    |--------------------------------------------------------------------------
+    */
+
     public function payment(Order $order)
     {
         /*
-         * فقط صاحب سفارش می‌تواند پرداخت را انجام دهد.
+         * فقط صاحب سفارش اجازه پرداخت دارد
          */
         if ($order->user_id !== auth()->id()) {
             abort(403);
         }
 
         /*
-         * اگر سفارش قبلاً پرداخت شده است.
+         * اگر سفارش قبلاً پرداخت شده
          */
         if ($order->payment_status === 'paid') {
             return redirect()
                 ->route('checkout.success', $order)
-                ->with(
-                    'success',
-                    'This order has already been paid.'
-                );
+                ->with('success', 'این سفارش قبلاً پرداخت شده است.');
         }
 
         /*
-         * مبلغ سفارش
+         * مبلغ سفارش از دیتابیس گرفته می‌شود
          */
         $amount = (int) $order->total_price;
 
         if ($amount <= 0) {
             return redirect()
-                ->route('checkout.success', $order)
-                ->with(
-                    'error',
-                    'Invalid payment amount.'
-                );
+                ->route('cart.index')
+                ->with('error', 'مبلغ سفارش معتبر نیست.');
         }
 
-        $paymentRecord = null;
+        /*
+         * اگر قبلاً برای این سفارش Payment ساخته شده،
+         * همان رکورد را استفاده می‌کنیم.
+         */
+        $paymentRecord = PaymentModel::where('order_id', $order->id)
+            ->whereIn('status', ['pending', 'failed'])
+            ->latest()
+            ->first();
 
-        try {
-
-            /*
-             * Invoice مربوط به Shetabit
-             */
-            $invoice = (new Invoice())
-                ->amount($amount);
-
-            /*
-             * اطلاعات اضافی Invoice
-             */
-            $invoice->detail([
-                'description' => 'Payment for order ' . $order->order_number,
-                'order_id' => $order->id,
-                'order_number' => $order->order_number,
-            ]);
-
-            /*
-             * ثبت Payment در دیتابیس خودمان
-             */
+        if (!$paymentRecord) {
             $paymentRecord = PaymentModel::create([
                 'order_id' => $order->id,
                 'user_id' => $order->user_id,
@@ -80,278 +66,229 @@ class PaymentController extends Controller
                 'status' => 'pending',
                 'description' => 'Payment for order ' . $order->order_number,
             ]);
-
+        } else {
             /*
-             * طبق API نسخه 3.4:
-             *
-             * Payment باید با config پروژه ساخته شود.
+             * اگر پرداخت قبلی ناموفق بوده،
+             * برای تلاش جدید وضعیت را pending می‌کنیم.
              */
-            $payment = new Payment(
-                config('payment')
-            );
-
-            /*
-             * ارسال درخواست خرید به زرین پال
-             *
-             * transactionId در callback رسمی
-             * به ما تحویل داده می‌شود.
-             */
-            return $payment
-                ->callbackUrl(
-                    route('payment.verify')
-                )
-                ->purchase(
-                    $invoice,
-                    function ($driver, $transactionId) use (
-                        $paymentRecord
-                    ) {
-
-                        /*
-                         * ذخیره Authority / Transaction ID
-                         */
-                        $paymentRecord->update([
-                            'authority' => $transactionId,
-                        ]);
-                    }
-                )
-                ->pay()
-                ->render();
-
-        } catch (\Throwable $e) {
-
-            /*
-             * ثبت خطا در Laravel log
-             */
-            report($e);
-
-            if ($paymentRecord) {
-                $paymentRecord->update([
-                    'status' => 'failed',
-                    'description' => $e->getMessage(),
-                ]);
-            }
-
-            /*
-             * فعلاً خطای واقعی را نمایش می‌دهیم
-             * تا در مرحله تست مشخص شود مشکل کجاست.
-             */
-            return redirect()
-                ->route('checkout.success', $order)
-                ->with(
-                    'error',
-                    'Payment error: ' . $e->getMessage()
-                );
+            $paymentRecord->update([
+                'amount' => $amount,
+                'status' => 'pending',
+                'description' => 'Payment for order ' . $order->order_number,
+            ]);
         }
+
+        /*
+         * Invoice مربوط به خود پکیج پرداخت
+         */
+        $invoice = (new Invoice())
+            ->amount($amount);
+
+        $invoice->detail([
+            'description' => 'Payment for order ' . $order->order_number,
+            'order_id' => $order->id,
+            'order_number' => $order->order_number,
+        ]);
+
+        /*
+         * اطلاعات لازم برای callback
+         *
+         * چون verify ممکن است خارج از middleware auth اجرا شود،
+         * اطلاعات سفارش را در session نگه می‌داریم.
+         */
+        session()->put('payment_order_id', $order->id);
+        session()->put('payment_id', $paymentRecord->id);
+
+        /*
+         * ساخت Payment بر اساس نسخه فعلی Multipay
+         */
+        $payment = new Payment(
+            config('payment')
+        );
+
+        /*
+         * ارسال به درگاه
+         */
+        return $payment
+            ->callbackUrl(route('payment.verify'))
+            ->purchase(
+                $invoice,
+
+                function ($driver, $transactionId) use ($paymentRecord) {
+
+                    /*
+                     * transactionId دریافت شده از درگاه
+                     */
+                    $paymentRecord->update([
+                        'authority' => $transactionId,
+                    ]);
+
+                    /*
+                     * برای verify
+                     */
+                    session()->put(
+                        'payment_transaction_id',
+                        $transactionId
+                    );
+                }
+            )
+            ->pay()
+            ->render();
     }
 
 
-    /**
-     * Callback زرین پال
-     */
-    public function verify()
+    /*
+    |--------------------------------------------------------------------------
+    | Verify Payment
+    |--------------------------------------------------------------------------
+    */
+
+    public function verify(Request $request)
     {
         /*
-         * Authority ارسال‌شده توسط زرین پال
+         * اطلاعات پرداخت از session
          */
-        $authority = request()->query('Authority');
+        $orderId = session('payment_order_id');
+        $paymentId = session('payment_id');
+        $transactionId = session('payment_transaction_id');
 
         /*
-         * وضعیت پرداخت
+         * اگر transactionId در session نبود،
+         * از رکورد Payment می‌خوانیم.
          */
-        $status = request()->query('Status');
+        if (!$transactionId && $paymentId) {
 
-        /*
-         * اگر کاربر پرداخت را لغو کرده باشد.
-         */
-        if (
-            !$authority ||
-            strtoupper((string) $status) !== 'OK'
-        ) {
-            return redirect()
-                ->route('dashboard')
-                ->with(
-                    'error',
-                    'Payment was cancelled.'
-                );
+            $paymentRecord = PaymentModel::find($paymentId);
+
+            if ($paymentRecord) {
+                $transactionId = $paymentRecord->authority;
+            }
         }
 
         /*
-         * پیدا کردن Payment خودمان
+         * سفارش
          */
-        $paymentRecord = PaymentModel::where(
-            'authority',
-            $authority
-        )->first();
-
-        if (!$paymentRecord) {
-            return redirect()
-                ->route('dashboard')
-                ->with(
-                    'error',
-                    'Payment record not found.'
-                );
-        }
-
-        /*
-         * پیدا کردن سفارش
-         */
-        $order = Order::find(
-            $paymentRecord->order_id
-        );
+        $order = Order::find($orderId);
 
         if (!$order) {
             return redirect()
-                ->route('dashboard')
-                ->with(
-                    'error',
-                    'Order not found.'
-                );
+                ->route('cart.index')
+                ->with('error', 'سفارش پیدا نشد.');
         }
 
         /*
-         * اگر قبلاً پرداخت شده است.
+         * رکورد پرداخت
          */
-        if (
-            $paymentRecord->status === 'paid' ||
-            $order->payment_status === 'paid'
-        ) {
+        $paymentRecord = PaymentModel::find($paymentId);
+
+        if (!$paymentRecord) {
+
+            $paymentRecord = PaymentModel::where('order_id', $order->id)
+                ->latest()
+                ->first();
+        }
+
+        if (!$paymentRecord) {
+            return redirect()
+                ->route('cart.index')
+                ->with('error', 'رکورد پرداخت پیدا نشد.');
+        }
+
+        /*
+         * اگر قبلاً پرداخت شده
+         */
+        if ($order->payment_status === 'paid') {
+
             return redirect()
                 ->route('checkout.success', $order)
                 ->with(
                     'success',
-                    'Payment has already been verified.'
+                    'این سفارش قبلاً پرداخت شده است.'
                 );
         }
+
+        /*
+         * transactionId باید وجود داشته باشد
+         */
+        if (!$transactionId) {
+
+            $paymentRecord->update([
+                'status' => 'failed',
+            ]);
+
+            return redirect()
+                ->route('cart.index')
+                ->with(
+                    'error',
+                    'شناسه تراکنش پرداخت پیدا نشد.'
+                );
+        }
+
+        /*
+         * مبلغ سفارش
+         */
+        $amount = (int) $order->total_price;
 
         try {
 
             /*
-             * Payment جدید برای Verify
+             * ساخت Payment
              */
             $payment = new Payment(
                 config('payment')
             );
 
             /*
-             * طبق مستندات رسمی:
-             *
-             * amount()
-             * transactionId()
-             * verify()
+             * Verify
              */
             $receipt = $payment
-                ->amount(
-                    (int) $paymentRecord->amount
-                )
-                ->transactionId(
-                    $authority
-                )
+                ->amount($amount)
+                ->transactionId($transactionId)
                 ->verify();
 
             /*
-             * Reference ID زرین پال
+             * شماره مرجع پرداخت
              */
             $referenceId = $receipt->getReferenceId();
 
             /*
-             * ثبت نهایی پرداخت
+             * ثبت اطلاعات پرداخت
              */
             DB::transaction(function () use (
                 $order,
                 $paymentRecord,
-                $authority,
+                $transactionId,
                 $referenceId
             ) {
 
                 /*
-                 * قفل سفارش
+                 * قفل کردن سفارش
                  */
-                $lockedOrder = Order::where(
-                    'id',
-                    $order->id
-                )
+                $lockedOrder = Order::where('id', $order->id)
                     ->lockForUpdate()
-                    ->firstOrFail();
+                    ->first();
 
                 /*
-                 * اگر قبلاً پرداخت شده است.
+                 * اگر همزمان قبلاً پرداخت شده،
+                 * دوباره عملیات انجام نشود.
                  */
-                if (
-                    $lockedOrder->payment_status === 'paid'
-                ) {
+                if ($lockedOrder->payment_status === 'paid') {
                     return;
                 }
 
                 /*
-                 * قفل Payment
+                 * Payment
                  */
-                $lockedPayment = PaymentModel::where(
-                    'id',
-                    $paymentRecord->id
-                )
-                    ->lockForUpdate()
-                    ->firstOrFail();
-
-                /*
-                 * بارگذاری Variant های سفارش
-                 */
-                $lockedOrder->load([
-                    'items.variant',
-                ]);
-
-                /*
-                 * بررسی و کاهش موجودی
-                 */
-                foreach ($lockedOrder->items as $orderItem) {
-
-                    if (!$orderItem->variant) {
-                        throw new \RuntimeException(
-                            'Product variant not found.'
-                        );
-                    }
-
-                    $variant = $orderItem->variant
-                        ->newQuery()
-                        ->where(
-                            'id',
-                            $orderItem->variant->id
-                        )
-                        ->lockForUpdate()
-                        ->first();
-
-                    if (!$variant) {
-                        throw new \RuntimeException(
-                            'Product variant not found.'
-                        );
-                    }
-
-                    if (
-                        $variant->stock <
-                        $orderItem->quantity
-                    ) {
-                        throw new \RuntimeException(
-                            'Insufficient stock.'
-                        );
-                    }
-
-                    $variant->decrement(
-                        'stock',
-                        $orderItem->quantity
-                    );
-                }
-
-                /*
-                 * ثبت Payment موفق
-                 */
-                $lockedPayment->update([
+                $paymentRecord->update([
                     'status' => 'paid',
-                    'transaction_id' => $authority,
+                    'transaction_id' => $referenceId,
+                    'authority' => $transactionId,
                     'reference_id' => $referenceId,
                     'paid_at' => now(),
                 ]);
 
                 /*
-                 * تغییر وضعیت سفارش
+                 * وضعیت سفارش
                  */
                 $lockedOrder->update([
                     'payment_status' => 'paid',
@@ -359,15 +296,47 @@ class PaymentController extends Controller
                 ]);
 
                 /*
-                 * Invoice ما:
+                 * Invoice
                  *
-                 * طبق ساختار فعلی دیتابیس شما
-                 * status فقط issued/cancelled است.
+                 * status جدول invoices در پروژه تو
+                 * issued / cancelled است.
                  */
                 if ($lockedOrder->invoice) {
                     $lockedOrder->invoice->update([
                         'status' => 'issued',
                     ]);
+                }
+
+                /*
+                 * کاهش موجودی Variantها
+                 */
+                $lockedOrder->load([
+                    'items.variant',
+                ]);
+
+                foreach ($lockedOrder->items as $item) {
+
+                    if ($item->variant) {
+
+                        $variant = $item->variant;
+
+                        /*
+                         * کنترل موجودی
+                         */
+                        if ($variant->stock < $item->quantity) {
+
+                            throw new \Exception(
+                                'موجودی محصول ' .
+                                $item->product_name .
+                                ' کافی نیست.'
+                            );
+                        }
+
+                        $variant->decrement(
+                            'stock',
+                            $item->quantity
+                        );
+                    }
                 }
 
                 /*
@@ -384,48 +353,58 @@ class PaymentController extends Controller
             });
 
             /*
-             * پرداخت موفق
+             * پاک کردن اطلاعات موقت پرداخت
+             */
+            session()->forget([
+                'payment_order_id',
+                'payment_id',
+                'payment_transaction_id',
+            ]);
+
+            /*
+             * انتقال به صفحه موفقیت
              */
             return redirect()
                 ->route('checkout.success', $order)
                 ->with(
                     'success',
-                    'Payment completed successfully.'
+                    'پرداخت با موفقیت انجام شد. شماره پیگیری: ' .
+                    $referenceId
                 );
 
-        } catch (InvalidPaymentException $e) {
+        } catch (InvalidPaymentException $exception) {
 
             /*
-             * پرداخت توسط درگاه تأیید نشده است.
+             * پرداخت ناموفق
              */
-            report($e);
-
             $paymentRecord->update([
                 'status' => 'failed',
-                'description' => $e->getMessage(),
+            ]);
+
+            $order->update([
+                'payment_status' => 'failed',
             ]);
 
             return redirect()
-                ->route('checkout.success', $order)
+                ->route('cart.index')
                 ->with(
                     'error',
-                    'Payment verification failed: ' .
-                    $e->getMessage()
+                    $exception->getMessage()
                 );
 
-        } catch (\Throwable $e) {
+        } catch (\Throwable $exception) {
 
-            /*
-             * خطای عمومی
-             */
-            report($e);
+            report($exception);
+
+            $paymentRecord->update([
+                'status' => 'failed',
+            ]);
 
             return redirect()
-                ->route('checkout.success', $order)
+                ->route('cart.index')
                 ->with(
                     'error',
-                    'An error occurred while verifying payment: ' .
-                    $e->getMessage()
+                    'خطایی هنگام تأیید پرداخت رخ داد.'
                 );
         }
     }
