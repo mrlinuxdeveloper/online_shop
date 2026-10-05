@@ -17,7 +17,7 @@ use App\Http\Controllers\Admin\SizeController;
 use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\OrderController;
-
+use App\Http\Controllers\User\OrderController as UserOrderController;
 use App\Http\Controllers\Shop\ProductController as ShopProductController;
 
 
@@ -190,6 +190,21 @@ Route::middleware('auth')->group(function () {
         PaymentController::class,
         'payment'
     ])->name('payment.start');
+
+
+// My Orders
+Route::get('/orders', [
+    UserOrderController::class,
+    'index'
+])->name('orders.index');
+
+Route::get('/orders/{order}', [
+    UserOrderController::class,
+    'show'
+])->name('orders.show');
+
+
+
 
 });
 
