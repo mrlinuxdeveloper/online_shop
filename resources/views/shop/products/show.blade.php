@@ -2,7 +2,22 @@
 
 @section('content')
 
-    ```
+    <style>
+        .wishlist-button {
+            border: 1px solid #222;
+            background: #fff;
+            color: #222;
+            padding: 10px 18px;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .wishlist-button:hover {
+            background: #222;
+            color: #fff;
+        }
+    </style>
     <div class="container py-5">
 
         {{-- Messages --}}
@@ -292,7 +307,22 @@
                     </button>
 
                 </form>
+                @auth
+                    <form
+                        action="{{ route('wishlist.store', $product->id) }}"
+                        method="POST"
+                        style="display: inline;"
+                    >
+                        @csrf
 
+                        <button
+                            type="submit"
+                            class="wishlist-button"
+                        >
+                            ❤️ افزودن به علاقه‌مندی‌ها
+                        </button>
+                    </form>
+                @endauth
 
                 {{-- Description --}}
                 @if($product->description)
@@ -310,13 +340,182 @@
                     </div>
 
                 @endif
+                {{-- Reviews --}}
+                <div class="mt-5">
+
+                    <h4 class="mb-4">
+                        نظرات کاربران
+                    </h4>
+
+                    @php
+                        $approvedReviews = $product->reviews
+                            ->where('status', true)
+                            ->sortByDesc('created_at');
+                    @endphp
+
+                    @if($approvedReviews->count())
+
+                        @foreach($approvedReviews as $review)
+
+                            <div class="border rounded p-3 mb-3">
+
+                                <div class="d-flex justify-content-between">
+
+                                    <strong>
+                                        {{ $review->user->name }}
+                                    </strong>
+
+                                    <span>
+                        @for($i = 1; $i <= 5; $i++)
+
+                                            @if($i <= $review->rating)
+                                                ⭐
+                                            @else
+                                                ☆
+                                            @endif
+
+                                        @endfor
+                    </span>
+
+                                </div>
+
+                                @if($review->comment)
+
+                                    <p class="mt-2 mb-0">
+                                        {{ $review->comment }}
+                                    </p>
+
+                                @endif
+
+                                <small class="text-muted">
+                                    {{ $review->created_at->format('Y/m/d') }}
+                                </small>
+
+                            </div>
+
+                        @endforeach
+
+                    @else
+
+                        <p class="text-muted">
+                            هنوز نظری برای این محصول ثبت نشده است.
+                        </p>
+
+                    @endif
+
+                </div>
+
+
+                @auth
+
+                    <div class="mt-5">
+
+                        <h4 class="mb-4">
+                            ثبت نظر
+                        </h4>
+
+                        <form
+                            action="{{ route('reviews.store', $product) }}"
+                            method="POST"
+                        >
+                            @csrf
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                    امتیاز
+                                </label>
+
+                                <div>
+                                    @for($i = 1; $i <= 5; $i++)
+
+                                        <label
+                                            style="
+                                cursor: pointer;
+                                font-size: 28px;
+                                margin-left: 5px;
+                            "
+                                        >
+
+                                            <input
+                                                type="radio"
+                                                name="rating"
+                                                value="{{ $i }}"
+                                                style="display: none;"
+                                                {{ old('rating') == $i ? 'checked' : '' }}
+                                            >
+
+                                            ⭐
+
+                                        </label>
+
+                                    @endfor
+                                </div>
+
+                                @error('rating')
+                                <div class="text-danger mt-1">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+
+                            </div>
+
+                            <div class="mb-3">
+
+                                <label
+                                    for="comment"
+                                    class="form-label"
+                                >
+                                    نظر شما
+                                </label>
+
+                                <textarea
+                                    name="comment"
+                                    id="comment"
+                                    rows="5"
+                                    class="form-control"
+                                    placeholder="نظر خود را درباره این محصول بنویسید..."
+                                >{{ old('comment') }}</textarea>
+
+                                @error('comment')
+                                <div class="text-danger mt-1">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+
+                            </div>
+
+                            <button
+                                type="submit"
+                                class="btn btn-dark"
+                            >
+                                ثبت نظر
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                @else
+
+                    <div class="alert alert-info mt-5">
+
+                        برای ثبت نظر ابتدا وارد حساب کاربری خود شوید.
+
+                        <a href="{{ route('login') }}">
+                            ورود
+                        </a>
+
+                    </div>
+
+                @endauth
 
             </div>
 
         </div>
 
     </div>
-    ```
+
 
 @endsection
 

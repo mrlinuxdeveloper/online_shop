@@ -111,8 +111,29 @@
             </li>
 
             <li>
-                <a href="{{ route('admin.brands.index') }}" class="nav-link" >
+                <a href="{{ route('admin.brands.index') }}" class="nav-link">
                     Brands
+                </a>
+            </li>
+
+            <li class="nav-item">
+
+                <a
+                    href="{{ route('admin.reviews.index') }}"
+                    class="nav-link"
+                >
+                     <span>
+                         💬
+                     </span>
+
+                    نظرات
+                </a>
+
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ route('admin.coupons.index') }}">
+                    کدهای تخفیف
                 </a>
             </li>
 
@@ -140,10 +161,32 @@
                 </a>
             </li>
 
-            <li>
-                <a href="#">
-                    Users
+            <li class="nav-item">
+
+                <a
+                    href="{{ route('admin.users.index') }}"
+                    class="nav-link"
+                >
+
+        <span>
+            👥
+        </span>
+
+                    کاربران
+
                 </a>
+
+            </li>
+            <li class="nav-item">
+
+                <a
+                    href="{{ route('admin.inventory.index') }}"
+                    class="nav-link"
+                >
+                    📦
+                    موجودی انبار
+                </a>
+
             </li>
 
         </ul>

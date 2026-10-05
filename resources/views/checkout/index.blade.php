@@ -11,18 +11,21 @@
             </p>
         </div>
 
+        {{-- Success --}}
         @if(session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
             </div>
         @endif
 
+        {{-- Error --}}
         @if(session('error'))
             <div class="alert alert-danger">
                 {{ session('error') }}
             </div>
         @endif
 
+        {{-- Validation Errors --}}
         @if($errors->any())
             <div class="alert alert-danger">
                 <ul class="mb-0">
@@ -33,16 +36,21 @@
             </div>
         @endif
 
-        <form
-            action="{{ route('checkout.store') }}"
-            method="POST"
-        >
-            @csrf
+        <div class="row g-4">
 
-            <div class="row g-4">
+            {{-- ========================= --}}
+            {{-- Left Side --}}
+            {{-- ========================= --}}
 
-                {{-- Left side --}}
-                <div class="col-lg-8">
+            <div class="col-lg-8">
+
+                {{-- Main Checkout Form --}}
+                <form
+                    id="checkout-form"
+                    action="{{ route('checkout.store') }}"
+                    method="POST"
+                >
+                    @csrf
 
                     {{-- Addresses --}}
                     <div class="card border-0 shadow-sm mb-4">
@@ -93,13 +101,18 @@
                                                     value="{{ $address->id }}"
                                                     id="address-{{ $address->id }}"
                                                     class="address-radio"
+
                                                     @checked(
                                                         old(
                                                             'address_id',
-                                                            $addresses->firstWhere('is_default', true)?->id
+                                                            $addresses->firstWhere(
+                                                                'is_default',
+                                                                true
+                                                            )?->id
                                                             ?? $addresses->first()?->id
                                                         ) == $address->id
                                                     )
+                                                    required
                                                 >
 
                                                 <div class="address-content">
@@ -210,7 +223,7 @@
                                         </div>
 
 
-                                        {{-- Product information --}}
+                                        {{-- Product Information --}}
                                         <div class="col">
 
                                             <h6 class="fw-bold mb-2">
@@ -301,8 +314,8 @@
                     </div>
 
 
-                    {{-- Note --}}
-                    <div class="card border-0 shadow-sm">
+                    {{-- Order Note --}}
+                    <div class="card border-0 shadow-sm mb-4">
 
                         <div class="card-header bg-white py-3">
                             <h5 class="mb-0 fw-bold">
@@ -323,116 +336,101 @@
 
                     </div>
 
-                </div>
+                </form>
+                {{-- End Main Checkout Form --}}
 
 
-                {{-- Right side --}}
-                <div class="col-lg-4">
+                {{-- ========================= --}}
+                {{-- Coupon Form --}}
+                {{-- ========================= --}}
 
-                    <div class="card border-0 shadow-sm checkout-summary">
+                <div class="card border-0 shadow-sm mb-4">
 
-                        <div class="card-header bg-white py-3">
-                            <h5 class="mb-0 fw-bold">
-                                Order Summary
-                            </h5>
-                        </div>
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0 fw-bold">
+                            Discount Code
+                        </h5>
+                    </div>
 
-                        <div class="card-body">
+                    <div class="card-body">
 
-                            {{-- Subtotal --}}
-                            <div class="summary-row">
-                            <span>
-                                Subtotal
-                            </span>
+                        @if(session('checkout_coupon'))
 
-                                <strong>
-                                    {{ number_format($subtotal) }}
-                                </strong>
-                            </div>
+                            <div class="alert alert-success mb-0">
 
+                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
 
-                            {{-- Discount --}}
-                            <div class="summary-row">
+                                    <div>
+                                        <strong>
+                                            Coupon Applied
+                                        </strong>
 
-                            <span>
-                                Discount
-                            </span>
+                                        <div class="small mt-1">
+                                            Code:
+                                            {{ session('checkout_coupon.code') }}
+                                        </div>
+                                    </div>
 
-                                <strong class="text-success">
-                                    {{ number_format($discount) }}
-                                </strong>
+                                    <strong>
+                                        -{{ number_format(session('checkout_coupon.discount')) }}
+                                        Toman
+                                    </strong>
 
-                            </div>
-
-
-                            {{-- Shipping --}}
-                            <div class="summary-row">
-
-                            <span>
-                                Shipping
-                            </span>
-
-                                <strong>
-                                    {{ number_format($shippingCost) }}
-                                </strong>
+                                </div>
 
                             </div>
 
+                        @else
 
-                            {{-- Tax --}}
-                            <div class="summary-row">
-
-                            <span>
-                                Tax
-                            </span>
-
-                                <strong>
-                                    {{ number_format($tax) }}
-                                </strong>
-
-                            </div>
-
-
-                            <hr>
-
-
-                            {{-- Total --}}
-                            <div class="summary-total">
-
-                            <span>
-                                Total
-                            </span>
-
-                                <strong>
-                                    {{ number_format($total) }}
-                                </strong>
-
-                            </div>
-
-
-                            <div class="text-muted small mt-2">
-                                Currency: Toman
-                            </div>
-
-
-                            {{-- Submit --}}
-                            <button
-                                type="submit"
-                                class="btn btn-dark btn-lg w-100 mt-4"
-                                @disabled($addresses->isEmpty())
+                            <form
+                                action="{{ route('checkout.coupon') }}"
+                                method="POST"
                             >
-                                Place Order
-                            </button>
 
+                                @csrf
 
-                            <a
-                                href="{{ route('cart.index') }}"
-                                class="btn btn-outline-secondary w-100 mt-2"
-                            >
-                                Back to Cart
-                            </a>
+                                <label
+                                    for="coupon_code"
+                                    class="form-label"
+                                >
+                                    Coupon Code
+                                </label>
 
-                        </div>
+                                <div class="input-group">
+
+                                    <input
+                                        type="text"
+                                        name="coupon_code"
+                                        id="coupon_code"
+                                        class="form-control coupon-input @error('coupon_code') is-invalid @enderror"
+                                        value="{{ old('coupon_code') }}"
+                                        placeholder="Enter your discount code"
+                                        autocomplete="off"
+                                        required
+                                    >
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-outline-dark"
+                                    >
+                                        Apply
+                                    </button>
+
+                                </div>
+
+                                @error('coupon_code')
+                                <div class="text-danger small mt-2">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+
+                                <div class="text-muted small mt-2">
+                                    Enter your discount code and click Apply.
+                                </div>
+
+                            </form>
+
+                        @endif
 
                     </div>
 
@@ -440,7 +438,106 @@
 
             </div>
 
-        </form>
+
+            {{-- ========================= --}}
+            {{-- Right Side --}}
+            {{-- ========================= --}}
+
+            <div class="col-lg-4">
+
+                <div class="card border-0 shadow-sm checkout-summary">
+
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0 fw-bold">
+                            Order Summary
+                        </h5>
+                    </div>
+
+                    <div class="card-body">
+
+                        {{-- Subtotal --}}
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+
+                            <strong>
+                                {{ number_format($subtotal) }}
+                            </strong>
+                        </div>
+
+
+                        {{-- Discount --}}
+                        <div class="summary-row">
+                            <span>Discount</span>
+
+                            <strong class="text-success">
+                                {{ number_format($discount) }}
+                            </strong>
+                        </div>
+
+
+                        {{-- Shipping --}}
+                        <div class="summary-row">
+                            <span>Shipping</span>
+
+                            <strong>
+                                {{ number_format($shippingCost) }}
+                            </strong>
+                        </div>
+
+
+                        {{-- Tax --}}
+                        <div class="summary-row">
+                            <span>Tax</span>
+
+                            <strong>
+                                {{ number_format($tax) }}
+                            </strong>
+                        </div>
+
+
+                        <hr>
+
+
+                        {{-- Total --}}
+                        <div class="summary-total">
+                            <span>Total</span>
+
+                            <strong>
+                                {{ number_format($total) }}
+                            </strong>
+                        </div>
+
+
+                        <div class="text-muted small mt-2">
+                            Currency: Toman
+                        </div>
+
+
+                        {{-- Place Order --}}
+                        <button
+                            type="submit"
+                            form="checkout-form"
+                            class="btn btn-dark btn-lg w-100 mt-4"
+                            @disabled($addresses->isEmpty())
+                        >
+                            Place Order
+                        </button>
+
+
+                        <a
+                            href="{{ route('cart.index') }}"
+                            class="btn btn-outline-secondary w-100 mt-2"
+                        >
+                            Back to Cart
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
 
@@ -523,6 +620,11 @@
             justify-content: space-between;
             align-items: center;
             font-size: 20px;
+        }
+
+        .coupon-input {
+            direction: ltr;
+            text-align: left;
         }
 
         @media (max-width: 767px) {

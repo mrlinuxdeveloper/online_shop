@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Address;
 use App\Models\Invoice;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use App\Models\Coupon;
 
 class CheckoutController extends Controller
 {
@@ -18,7 +20,10 @@ class CheckoutController extends Controller
      */
     public function index()
     {
-        $cart = Cart::where('user_id', auth()->id())
+        $cart = Cart::where(
+            'user_id',
+            auth()->id()
+        )
             ->with([
                 'items.product.images',
                 'items.variant.size',
@@ -27,7 +32,6 @@ class CheckoutController extends Controller
             ->first();
 
         if (!$cart || $cart->items->isEmpty()) {
-
             return redirect()
                 ->route('cart.index')
                 ->with(
@@ -35,7 +39,6 @@ class CheckoutController extends Controller
                     'Your cart is empty.'
                 );
         }
-
 
         $addresses = Address::where(
             'user_id',
@@ -45,27 +48,116 @@ class CheckoutController extends Controller
             ->latest()
             ->get();
 
-
+        /*
+         * محاسبه Subtotal
+         */
         $subtotal = $cart->items->sum(function ($item) {
-
             return $item->price * $item->quantity;
-
         });
 
+        /*
+         * Coupon ذخیره‌شده در Session
+         */
+        $checkoutCoupon = session(
+            'checkout_coupon'
+        );
 
+        /*
+         * مقدار اولیه تخفیف
+         */
         $discount = 0;
 
+        /*
+         * بررسی مجدد Coupon
+         */
+        if ($checkoutCoupon) {
+
+            $coupon = Coupon::find(
+                $checkoutCoupon['id'] ?? null
+            );
+
+            if (
+                $coupon &&
+                $coupon->status &&
+                (
+                    !$coupon->starts_at ||
+                    now()->gte($coupon->starts_at)
+                ) &&
+                (
+                    !$coupon->expires_at ||
+                    now()->lte($coupon->expires_at)
+                ) &&
+                (
+                    $coupon->usage_limit === null ||
+                    $coupon->used_count < $coupon->usage_limit
+                ) &&
+                (
+                    $coupon->min_order_amount === null ||
+                    $subtotal >= $coupon->min_order_amount
+                )
+            ) {
+
+                /*
+                 * محاسبه دوباره Discount
+                 */
+                if ($coupon->type === 'percent') {
+
+                    $discount =
+                        ($subtotal * $coupon->value) / 100;
+
+                } elseif ($coupon->type === 'fixed') {
+
+                    $discount =
+                        $coupon->value;
+                }
+
+                /*
+                 * تخفیف بیشتر از Subtotal نباشد
+                 */
+                $discount = min(
+                    $discount,
+                    $subtotal
+                );
+
+            } else {
+
+                /*
+                 * Coupon دیگر معتبر نیست
+                 */
+                session()->forget(
+                    'checkout_coupon'
+                );
+
+                $checkoutCoupon = null;
+            }
+        }
+
+        /*
+         * هزینه ارسال
+         */
         $shippingCost = 0;
 
+        /*
+         * مالیات
+         */
         $tax = 0;
 
-
+        /*
+         * مبلغ نهایی
+         */
         $total =
             $subtotal
             - $discount
             + $shippingCost
             + $tax;
 
+        /*
+         * جلوگیری از مبلغ منفی
+         */
+        $total = max(
+            0,
+            $total
+        );
 
         return view(
             'checkout.index',
@@ -83,10 +175,205 @@ class CheckoutController extends Controller
 
 
     /**
+     * اعمال Coupon
+     */
+    public function applyCoupon(Request $request)
+    {
+        $validated = $request->validate([
+            'coupon_code' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+        ]);
+
+        /*
+         * دریافت Cart
+         */
+        $cart = Cart::where(
+            'user_id',
+            auth()->id()
+        )
+            ->with('items')
+            ->first();
+
+        if (!$cart || $cart->items->isEmpty()) {
+            return back()
+                ->with(
+                    'error',
+                    'Your cart is empty.'
+                );
+        }
+
+        /*
+         * محاسبه Subtotal
+         */
+        $subtotal = $cart->items->sum(function ($item) {
+            return $item->price * $item->quantity;
+        });
+
+        /*
+         * جستجوی Coupon
+         */
+        $coupon = Coupon::where(
+            'code',
+            $validated['coupon_code']
+        )->first();
+
+        if (!$coupon) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'coupon_code' =>
+                        'کد تخفیف معتبر نیست.'
+                ]);
+        }
+
+        /*
+         * بررسی وضعیت
+         */
+        if (!$coupon->status) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'coupon_code' =>
+                        'این کد تخفیف فعال نیست.'
+                ]);
+        }
+
+        /*
+         * بررسی تاریخ شروع
+         */
+        if (
+            $coupon->starts_at &&
+            now()->lt($coupon->starts_at)
+        ) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'coupon_code' =>
+                        'این کد تخفیف هنوز فعال نشده است.'
+                ]);
+        }
+
+        /*
+         * بررسی تاریخ پایان
+         */
+        if (
+            $coupon->expires_at &&
+            now()->gt($coupon->expires_at)
+        ) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'coupon_code' =>
+                        'تاریخ اعتبار این کد تخفیف تمام شده است.'
+                ]);
+        }
+
+        /*
+         * بررسی محدودیت استفاده
+         */
+        if (
+            $coupon->usage_limit !== null &&
+            $coupon->used_count >= $coupon->usage_limit
+        ) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'coupon_code' =>
+                        'ظرفیت استفاده از این کد تخفیف تکمیل شده است.'
+                ]);
+        }
+
+        /*
+         * بررسی حداقل مبلغ سفارش
+         */
+        if (
+            $coupon->min_order_amount !== null &&
+            $subtotal < $coupon->min_order_amount
+        ) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'coupon_code' =>
+                        'حداقل مبلغ سفارش برای این کد تخفیف ' .
+                        number_format(
+                            $coupon->min_order_amount
+                        ) .
+                        ' تومان است.'
+                ]);
+        }
+
+        /*
+         * محاسبه تخفیف
+         */
+        if ($coupon->type === 'percent') {
+
+            $discount =
+                ($subtotal * $coupon->value) / 100;
+
+        } elseif ($coupon->type === 'fixed') {
+
+            $discount =
+                $coupon->value;
+
+        } else {
+
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'coupon_code' =>
+                        'نوع کد تخفیف معتبر نیست.'
+                ]);
+        }
+
+        /*
+         * تخفیف بیشتر از Subtotal نباشد
+         */
+        $discount = min(
+            $discount,
+            $subtotal
+        );
+
+        /*
+         * ذخیره Coupon در Session
+         *
+         * این اطلاعات تا زمان ایجاد Order
+         * در Session باقی می‌ماند.
+         */
+        session([
+            'checkout_coupon' => [
+                'id' =>
+                    $coupon->id,
+
+                'code' =>
+                    $coupon->code,
+
+                'discount' =>
+                    $discount,
+            ],
+        ]);
+
+        return back()
+            ->with(
+                'success',
+                'کد تخفیف با موفقیت اعمال شد.'
+            );
+    }
+
+
+    /**
      * ایجاد Order
      */
     public function store(Request $request)
     {
+        /*
+         * coupon_code از این فرم دریافت نمی‌شود.
+         *
+         * Coupon قبلاً توسط applyCoupon
+         * در Session ذخیره شده است.
+         */
         $validated = $request->validate([
             'address_id' => [
                 'required',
@@ -100,7 +387,6 @@ class CheckoutController extends Controller
             ],
         ]);
 
-
         /*
          * بررسی مالکیت Address
          */
@@ -113,7 +399,6 @@ class CheckoutController extends Controller
                 auth()->id()
             )
             ->firstOrFail();
-
 
         /*
          * دریافت Cart
@@ -129,9 +414,7 @@ class CheckoutController extends Controller
             ])
             ->first();
 
-
         if (!$cart || $cart->items->isEmpty()) {
-
             return redirect()
                 ->route('cart.index')
                 ->with(
@@ -140,149 +423,276 @@ class CheckoutController extends Controller
                 );
         }
 
-
         DB::beginTransaction();
-
 
         try {
 
             /*
              * بررسی دوباره موجودی و Variant
-             *
-             * این بررسی مهم است چون ممکن است
-             * بعد از اضافه شدن محصول به Cart،
-             * موجودی تغییر کرده باشد.
              */
             foreach ($cart->items as $cartItem) {
 
-                $variant = $cartItem->variant;
+                $variant =
+                    $cartItem->variant;
 
-                $product = $cartItem->product;
-
+                $product =
+                    $cartItem->product;
 
                 if (!$product) {
-
                     throw new \RuntimeException(
                         'A product in your cart no longer exists.'
                     );
                 }
 
-
                 if (!$variant) {
-
                     throw new \RuntimeException(
                         'A product variant in your cart no longer exists.'
                     );
                 }
 
-
                 if (!$variant->status) {
-
                     throw new \RuntimeException(
                         "The product variant {$variant->sku} is no longer available."
                     );
                 }
 
-
-                if ($variant->stock < $cartItem->quantity) {
-
+                if (
+                    $variant->stock <
+                    $cartItem->quantity
+                ) {
                     throw new \RuntimeException(
                         "Not enough stock available for {$product->name}."
                     );
                 }
-
             }
 
-
             /*
-             * محاسبه قیمت در سمت سرور
+             * محاسبه Subtotal
              */
             $subtotal = $cart->items->sum(function ($item) {
-
                 return $item->price * $item->quantity;
-
             });
 
-
+            /*
+             * مقادیر اولیه
+             */
             $discount = 0;
 
             $shippingCost = 0;
 
             $tax = 0;
 
+            $coupon = null;
 
+            /*
+             * دریافت Coupon از Session
+             */
+            $checkoutCoupon = session(
+                'checkout_coupon'
+            );
+
+            /*
+             * بررسی Coupon
+             */
+            if ($checkoutCoupon) {
+
+                /*
+                 * دریافت Coupon با Lock
+                 */
+                $coupon = Coupon::where(
+                    'id',
+                    $checkoutCoupon['id'] ?? null
+                )
+                    ->lockForUpdate()
+                    ->first();
+
+                if (!$coupon) {
+                    throw new \RuntimeException(
+                        'کد تخفیف دیگر معتبر نیست.'
+                    );
+                }
+
+                /*
+                 * بررسی فعال بودن
+                 */
+                if (!$coupon->status) {
+                    throw new \RuntimeException(
+                        'این کد تخفیف دیگر فعال نیست.'
+                    );
+                }
+
+                /*
+                 * بررسی تاریخ شروع
+                 */
+                if (
+                    $coupon->starts_at &&
+                    now()->lt($coupon->starts_at)
+                ) {
+                    throw new \RuntimeException(
+                        'این کد تخفیف هنوز فعال نشده است.'
+                    );
+                }
+
+                /*
+                 * بررسی تاریخ پایان
+                 */
+                if (
+                    $coupon->expires_at &&
+                    now()->gt($coupon->expires_at)
+                ) {
+                    throw new \RuntimeException(
+                        'تاریخ اعتبار این کد تخفیف تمام شده است.'
+                    );
+                }
+
+                /*
+                 * بررسی تعداد استفاده
+                 */
+                if (
+                    $coupon->usage_limit !== null &&
+                    $coupon->used_count >= $coupon->usage_limit
+                ) {
+                    throw new \RuntimeException(
+                        'ظرفیت استفاده از این کد تخفیف تکمیل شده است.'
+                    );
+                }
+
+                /*
+                 * بررسی حداقل مبلغ
+                 */
+                if (
+                    $coupon->min_order_amount !== null &&
+                    $subtotal < $coupon->min_order_amount
+                ) {
+                    throw new \RuntimeException(
+                        'حداقل مبلغ سفارش برای این کد تخفیف ' .
+                        number_format(
+                            $coupon->min_order_amount
+                        ) .
+                        ' تومان است.'
+                    );
+                }
+
+                /*
+                 * محاسبه دوباره Discount
+                 *
+                 * به مبلغ Session اعتماد نمی‌کنیم.
+                 */
+                if ($coupon->type === 'percent') {
+
+                    $discount =
+                        ($subtotal * $coupon->value) / 100;
+
+                } elseif ($coupon->type === 'fixed') {
+
+                    $discount =
+                        $coupon->value;
+
+                } else {
+
+                    throw new \RuntimeException(
+                        'نوع کد تخفیف معتبر نیست.'
+                    );
+                }
+
+                /*
+                 * تخفیف بیشتر از Subtotal نباشد
+                 */
+                $discount = min(
+                    $discount,
+                    $subtotal
+                );
+            }
+
+            /*
+             * محاسبه مبلغ نهایی
+             */
             $total =
                 $subtotal
                 - $discount
                 + $shippingCost
                 + $tax;
 
+            /*
+             * جلوگیری از مبلغ منفی
+             */
+            $total = max(
+                0,
+                $total
+            );
 
             /*
              * ایجاد Order
              */
             $order = Order::create([
-                'user_id' => auth()->id(),
+                'user_id' =>
+                    auth()->id(),
 
-                'address_id' => $address->id,
+                'address_id' =>
+                    $address->id,
 
                 'order_number' =>
                     'ORD-' . strtoupper(
                         Str::random(10)
                     ),
 
-                'subtotal' => $subtotal,
+                'subtotal' =>
+                    $subtotal,
 
-                'discount' => $discount,
+                'discount' =>
+                    $discount,
 
-                'shipping_cost' => $shippingCost,
+                'shipping_cost' =>
+                    $shippingCost,
 
-                'tax' => $tax,
+                'tax' =>
+                    $tax,
 
-                'total_price' => $total,
+                'total_price' =>
+                    $total,
 
-                'status' => 'pending',
+                'status' =>
+                    'pending',
 
-                'payment_status' => 'pending',
+                'payment_status' =>
+                    'pending',
 
                 'note' =>
                     $validated['note'] ?? null,
             ]);
-
 
             /*
              * ایجاد Order Items
              */
             foreach ($cart->items as $cartItem) {
 
-                $variant = $cartItem->variant;
+                $variant =
+                    $cartItem->variant;
 
-                $product = $cartItem->product;
-
-
-                $productImage = $product->images
-                    ->firstWhere(
-                        'is_primary',
-                        true
-                    );
-
+                $product =
+                    $cartItem->product;
 
                 /*
-                 * اگر Primary Image وجود نداشت،
-                 * اولین تصویر را بردار
+                 * تصویر محصول
                  */
-                if (!$productImage) {
+                $productImage =
+                    $product->images
+                        ->firstWhere(
+                            'is_primary',
+                            true
+                        );
 
+                if (!$productImage) {
                     $productImage =
                         $product->images->first();
-
                 }
 
-
                 OrderItem::create([
-                    'order_id' => $order->id,
+                    'order_id' =>
+                        $order->id,
 
-                    'product_id' => $product->id,
+                    'product_id' =>
+                        $product->id,
 
                     'product_variant_id' =>
                         $variant->id,
@@ -305,7 +715,8 @@ class CheckoutController extends Controller
                     'price' =>
                         $cartItem->price,
 
-                    'discount' => 0,
+                    'discount' =>
+                        0,
 
                     'quantity' =>
                         $cartItem->quantity,
@@ -316,55 +727,80 @@ class CheckoutController extends Controller
                 ]);
             }
 
-
             /*
              * ایجاد Invoice
              */
             Invoice::create([
-                'order_id' => $order->id,
-                'invoice_number' => 'INV-' . strtoupper(Str::random(10)),
-                'subtotal' => $subtotal,
-                'discount' => $discount,
-                'shipping_cost' => $shippingCost,
-                'tax' => $tax,
-                'total_price' => $total,
-                'status' => 'issued',
-                'issued_at' => now(),
+                'order_id' =>
+                    $order->id,
+
+                'invoice_number' =>
+                    'INV-' . strtoupper(
+                        Str::random(10)
+                    ),
+
+                'subtotal' =>
+                    $subtotal,
+
+                'discount' =>
+                    $discount,
+
+                'shipping_cost' =>
+                    $shippingCost,
+
+                'tax' =>
+                    $tax,
+
+                'total_price' =>
+                    $total,
+
+                'status' =>
+                    'issued',
+
+                'issued_at' =>
+                    now(),
             ]);
 
-//            Invoice::create([
-//                'order_id' => $order->id,
-//
-//                'invoice_number' =>
-//                    'INV-' . strtoupper(
-//                        Str::random(10)
-//                    ),
-//
-//                'subtotal' =>
-//                    $subtotal,
-//
-//                'discount' =>
-//                    $discount,
-//
-//                'shipping_cost' =>
-//                    $shippingCost,
-//
-//                'tax' =>
-//                    $tax,
-//
-//                'total_price' =>
-//                    $total,
-//
-//                'status' =>
-//                    'pending',
-//
-//                'issued_at' =>
-//                    now(),
-//            ]);
-
-
+            /*
+             * Commit
+             */
             DB::commit();
 
+            /*
+             * اگر Coupon وجود داشته باشد،
+             * اطلاعات آن را برای مرحله پرداخت
+             * نگه می‌داریم.
+             *
+             * PaymentController بعد از Verify موفق
+             * از این اطلاعات برای ثبت CouponUsage
+             * استفاده می‌کند.
+             */
+            if ($checkoutCoupon) {
+
+                session([
+                    'payment_coupon' => [
+                        'order_id' =>
+                            $order->id,
+
+                        'coupon_id' =>
+                            $checkoutCoupon['id'],
+                    ],
+                ]);
+            }
+
+            /*
+             * Coupon مربوط به Checkout را پاک می‌کنیم.
+             *
+             * توجه:
+             * Coupon هنوز مصرف نشده است.
+             *
+             * used_count و CouponUsage
+             * فقط بعد از پرداخت موفق
+             * در PaymentController ثبت می‌شوند.
+             */
+            session()->forget(
+                'checkout_coupon'
+            );
 
             /*
              * انتقال به پرداخت
@@ -375,13 +811,11 @@ class CheckoutController extends Controller
                     $order
                 );
 
-
         } catch (\Throwable $e) {
 
             DB::rollBack();
 
             report($e);
-
 
             return back()
                 ->withInput()
@@ -399,28 +833,66 @@ class CheckoutController extends Controller
     public function success(Order $order)
     {
         /*
-         * فقط صاحب سفارش
+         * بررسی مالکیت سفارش
+         *
+         * کاربر فقط می‌تواند صفحه موفقیت
+         * سفارش خودش را مشاهده کند.
          */
         if (
-            $order->user_id !==
-            auth()->id()
+            (int)$order->user_id !==
+            (int)auth()->id()
         ) {
-
             abort(403);
-
         }
 
+        /*
+         * فقط سفارش پرداخت‌شده باید
+         * صفحه موفقیت واقعی داشته باشد.
+         */
+        if ($order->payment_status !== 'paid') {
 
+            return redirect()
+                ->route(
+                    'orders.show',
+                    $order
+                )
+                ->with(
+                    'error',
+                    'این سفارش هنوز پرداخت نشده است.'
+                );
+        }
+
+        /*
+         * اطلاعات مورد نیاز صفحه موفقیت
+         */
         $order->load([
-            'items',
+            'items.product.images',
+            'items.variant.size',
+            'items.variant.color',
             'address',
             'invoice',
+            'payments',
         ]);
 
+        /*
+         * آخرین پرداخت موفق
+         */
+        $payment = $order->payments()
+            ->where(
+                'status',
+                'paid'
+            )
+            ->latest()
+            ->first();
 
         return view(
             'checkout.success',
-            compact('order')
+            compact(
+                'order',
+                'payment'
+            )
         );
     }
+
+
 }

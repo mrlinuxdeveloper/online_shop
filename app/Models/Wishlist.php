@@ -1,9 +1,10 @@
 <?php
 
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Wishlist extends Model
 {
@@ -11,7 +12,6 @@ class Wishlist extends Model
 
     protected $fillable = [
         'user_id',
-        'name',
     ];
 
     public function user()
@@ -24,3 +24,29 @@ class Wishlist extends Model
         return $this->hasMany(WishlistItem::class);
     }
 }
+
+//
+//namespace App\Models;
+//
+//use Illuminate\Database\Eloquent\Model;
+//use Illuminate\Database\Eloquent\Factories\HasFactory;
+//
+//class Wishlist extends Model
+//{
+//    use HasFactory;
+//
+//    protected $fillable = [
+//        'user_id',
+//        'name',
+//    ];
+//
+//    public function user()
+//    {
+//        return $this->belongsTo(User::class);
+//    }
+//
+//    public function items()
+//    {
+//        return $this->hasMany(WishlistItem::class);
+//    }
+//}

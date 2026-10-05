@@ -8,7 +8,6 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\AddressController;
-
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\BrandController;
@@ -18,7 +17,15 @@ use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\User\OrderController as UserOrderController;
+use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\Shop\ProductController as ShopProductController;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\InventoryController;
+use App\Http\Controllers\Admin\CouponController;
+
+
 
 
 /*
@@ -185,27 +192,82 @@ Route::middleware('auth')->group(function () {
     | Payment Start
     |--------------------------------------------------------------------------
     */
-
+// payment
     Route::get('/payment/{order}', [
         PaymentController::class,
         'payment'
     ])->name('payment.start');
 
+    Route::get('/payment/failed/{order}', [
+        PaymentController::class,
+        'failed'
+    ])->name('payment.failed');
+
+    Route::get('/payment/retry/{order}', [
+        PaymentController::class,
+        'retry'
+    ])->name('payment.retry');
+
+    Route::get('/payment/failed/{order}', [
+        PaymentController::class,
+        'failed'
+    ])->name('payment.failed');
+
+    Route::get('/payment/retry/{order}', [
+        PaymentController::class,
+        'retry'
+    ])->name('payment.retry');
+
 
 // My Orders
-Route::get('/orders', [
-    UserOrderController::class,
-    'index'
-])->name('orders.index');
+    Route::get('/orders', [
+        UserOrderController::class,
+        'index'
+    ])->name('orders.index');
 
-Route::get('/orders/{order}', [
-    UserOrderController::class,
-    'show'
-])->name('orders.show');
-
-
+    Route::get('/orders/{order}/invoice', [
+        UserOrderController::class,
+        'invoice'
+    ])->name('orders.invoice');
 
 
+    Route::get('/orders/{order}', [
+        UserOrderController::class,
+        'show'
+    ])->name('orders.show');
+
+// wishlist
+    Route::get('/wishlist', [
+        WishlistController::class,
+        'index'
+    ])->name('wishlist.index');
+
+    Route::post('/wishlist/{product}', [
+        WishlistController::class,
+        'store'
+    ])->name('wishlist.store');
+
+    Route::delete('/wishlist/{product}', [
+        WishlistController::class,
+        'destroy'
+    ])->name('wishlist.destroy');
+
+    Route::post('/products/{product}/reviews', [
+        ReviewController::class,
+        'store'
+    ])->name('reviews.store');
+
+    Route::post(
+        '/checkout/coupon',
+        [CheckoutController::class, 'applyCoupon']
+    )->name('checkout.coupon');
+
+    Route::get('/checkout/success/{order}', [
+        CheckoutController::class,
+        'success'
+    ])->name('checkout.success');
+
+// end auth
 });
 
 
@@ -393,6 +455,108 @@ Route::middleware(['auth', 'admin'])
             [OrderController::class, 'updateShipment']
         )->name('orders.shipment');
 
+
+// reviews
+
+        Route::get('/reviews', [
+            AdminReviewController::class,
+            'index'
+        ])->name('reviews.index');
+
+        Route::patch('/reviews/{review}/approve', [
+            AdminReviewController::class,
+            'approve'
+        ])->name('reviews.approve');
+
+        Route::patch('/reviews/{review}/reject', [
+            AdminReviewController::class,
+            'reject'
+        ])->name('reviews.reject');
+
+        Route::delete('/reviews/{review}', [
+            AdminReviewController::class,
+            'destroy'
+        ])->name('reviews.destroy');
+
+// user
+
+        Route::get('/users', [
+            AdminUserController::class,
+            'index'
+        ])->name('users.index');
+
+        Route::patch('/users/{user}/make-admin', [
+            AdminUserController::class,
+            'makeAdmin'
+        ])->name('users.make-admin');
+
+        Route::patch('/users/{user}/remove-admin', [
+            AdminUserController::class,
+            'removeAdmin'
+        ])->name('users.remove-admin');
+
+// inventory
+        Route::get('/inventory', [
+            InventoryController::class,
+            'index'
+        ])->name('inventory.index');
+
+        Route::get('/inventory/transactions', [
+            InventoryController::class,
+            'transactions'
+        ])->name('inventory.transactions');
+
+        Route::patch('/inventory/{variant}/increase', [
+            InventoryController::class,
+            'adjust'
+        ])->name('inventory.increase');
+
+        Route::patch('/inventory/{variant}/decrease', [
+            InventoryController::class,
+            'decrease'
+        ])->name('inventory.decrease');
+
+
+
+Route::get('/coupons', [
+    CouponController::class,
+    'index'
+])->name('coupons.index');
+
+Route::get('/coupons/create', [
+    CouponController::class,
+    'create'
+])->name('coupons.create');
+
+Route::post('/coupons', [
+    CouponController::class,
+    'store'
+])->name('coupons.store');
+
+Route::get('/coupons/{coupon}/edit', [
+    CouponController::class,
+    'edit'
+])->name('coupons.edit');
+
+Route::put('/coupons/{coupon}', [
+    CouponController::class,
+    'update'
+])->name('coupons.update');
+
+Route::patch('/coupons/{coupon}/toggle-status', [
+    CouponController::class,
+    'toggleStatus'
+])->name('coupons.toggle-status');
+
+Route::delete('/coupons/{coupon}', [
+    CouponController::class,
+    'destroy'
+])->name('coupons.destroy');
+
+
+
+
+// end admin route
     });
 
 
