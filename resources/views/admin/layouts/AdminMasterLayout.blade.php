@@ -188,6 +188,16 @@
                 </a>
 
             </li>
+            <li class="nav-item">
+
+                <a
+                    href="{{ route('admin.reports.index') }}"
+                    class="nav-link"
+                >
+                    گزارشات
+                </a>
+
+            </li>
 
         </ul>
 
