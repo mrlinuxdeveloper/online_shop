@@ -1,650 +1,602 @@
-@extends('layouts.app')
+@extends('shop.layouts.app')
 
 @section('content')
-
-    <div class="container py-5">
-
-        <div class="mb-4">
-            <h2 class="fw-bold">Checkout</h2>
-            <p class="text-muted mb-0">
-                Review your order and select your shipping address.
-            </p>
-        </div>
-
-        {{-- Success --}}
-        @if(session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        {{-- Error --}}
-        @if(session('error'))
-            <div class="alert alert-danger">
-                {{ session('error') }}
-            </div>
-        @endif
-
-        {{-- Validation Errors --}}
-        @if($errors->any())
-            <div class="alert alert-danger">
-                <ul class="mb-0">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-        <div class="row g-4">
-
-            {{-- ========================= --}}
-            {{-- Left Side --}}
-            {{-- ========================= --}}
-
-            <div class="col-lg-8">
-
-                {{-- Main Checkout Form --}}
-                <form
-                    id="checkout-form"
-                    action="{{ route('checkout.store') }}"
-                    method="POST"
-                >
-                    @csrf
-
-                    {{-- Addresses --}}
-                    <div class="card border-0 shadow-sm mb-4">
-
-                        <div class="card-header bg-white py-3">
-                            <h5 class="mb-0 fw-bold">
-                                Shipping Address
-                            </h5>
-                        </div>
-
-                        <div class="card-body">
-
-                            @if($addresses->isEmpty())
-
-                                <div class="alert alert-warning mb-0">
-                                    <div class="d-flex justify-content-between align-items-center">
-
-                                    <span>
-                                        You don't have any saved addresses.
-                                    </span>
-
-                                        <a
-                                            href="{{ route('dashboard') }}"
-                                            class="btn btn-sm btn-primary"
-                                        >
-                                            Add Address
-                                        </a>
-
-                                    </div>
-                                </div>
-
-                            @else
-
-                                <div class="row g-3">
-
-                                    @foreach($addresses as $address)
-
-                                        <div class="col-md-6">
-
-                                            <label
-                                                class="address-card w-100"
-                                                for="address-{{ $address->id }}"
-                                            >
-
-                                                <input
-                                                    type="radio"
-                                                    name="address_id"
-                                                    value="{{ $address->id }}"
-                                                    id="address-{{ $address->id }}"
-                                                    class="address-radio"
-
-                                                    @checked(
-                                                        old(
-                                                            'address_id',
-                                                            $addresses->firstWhere(
-                                                                'is_default',
-                                                                true
-                                                            )?->id
-                                                            ?? $addresses->first()?->id
-                                                        ) == $address->id
-                                                    )
-                                                    required
-                                                >
-
-                                                <div class="address-content">
-
-                                                    <div class="d-flex justify-content-between align-items-center mb-2">
-
-                                                        <strong>
-                                                            {{ $address->title }}
-                                                        </strong>
-
-                                                        @if($address->is_default)
-                                                            <span class="badge bg-success">
-                                                            Default
-                                                        </span>
-                                                        @endif
-
-                                                    </div>
-
-                                                    <div class="small text-muted">
-
-                                                        <div class="mb-1">
-                                                            <strong>
-                                                                {{ $address->receiver_name }}
-                                                            </strong>
-                                                        </div>
-
-                                                        <div class="mb-1">
-                                                            {{ $address->receiver_phone }}
-                                                        </div>
-
-                                                        <div class="mb-1">
-                                                            {{ $address->province }}
-                                                            -
-                                                            {{ $address->city }}
-                                                        </div>
-
-                                                        <div class="mb-1">
-                                                            {{ $address->address }}
-                                                        </div>
-
-                                                        <div>
-                                                            Postal Code:
-                                                            {{ $address->postal_code }}
-                                                        </div>
-
-                                                    </div>
-
-                                                </div>
-
-                                            </label>
-
-                                        </div>
-
-                                    @endforeach
-
-                                </div>
-
-                            @endif
-
-                        </div>
-                    </div>
-
-
-                    {{-- Products --}}
-                    <div class="card border-0 shadow-sm mb-4">
-
-                        <div class="card-header bg-white py-3">
-                            <h5 class="mb-0 fw-bold">
-                                Order Items
-                            </h5>
-                        </div>
-
-                        <div class="card-body p-0">
-
-                            @foreach($cart->items as $item)
-
-                                <div class="checkout-item p-3">
-
-                                    <div class="row align-items-center g-3">
-
-                                        {{-- Image --}}
-                                        <div class="col-auto">
-
-                                            @php
-                                                $primaryImage = $item->product->images
-                                                    ->firstWhere('is_primary', true);
-
-                                                $image = $primaryImage
-                                                    ?? $item->product->images->first();
-                                            @endphp
-
-                                            @if($image)
-
-                                                <img
-                                                    src="{{ asset('storage/' . $image->image) }}"
-                                                    alt="{{ $item->product->name }}"
-                                                    class="product-image"
-                                                >
-
-                                            @else
-
-                                                <div class="product-image-placeholder">
-                                                    No Image
-                                                </div>
-
-                                            @endif
-
-                                        </div>
-
-
-                                        {{-- Product Information --}}
-                                        <div class="col">
-
-                                            <h6 class="fw-bold mb-2">
-                                                {{ $item->product->name }}
-                                            </h6>
-
-                                            <div class="small text-muted">
-
-                                                <div>
-                                                    Product Code:
-                                                    {{ $item->product->product_code }}
-                                                </div>
-
-                                                @if($item->variant?->size)
-                                                    <div>
-                                                        Size:
-                                                        {{ $item->variant->size->name }}
-                                                    </div>
-                                                @endif
-
-                                                @if($item->variant?->color)
-                                                    <div>
-                                                        Color:
-                                                        {{ $item->variant->color->name }}
-                                                    </div>
-                                                @endif
-
-                                                @if($item->variant?->sku)
-                                                    <div>
-                                                        SKU:
-                                                        {{ $item->variant->sku }}
-                                                    </div>
-                                                @endif
-
-                                            </div>
-
-                                        </div>
-
-
-                                        {{-- Quantity --}}
-                                        <div class="col-auto text-center">
-
-                                            <div class="small text-muted mb-1">
-                                                Quantity
-                                            </div>
-
-                                            <strong>
-                                                {{ $item->quantity }}
-                                            </strong>
-
-                                        </div>
-
-
-                                        {{-- Price --}}
-                                        <div class="col-auto text-end">
-
-                                            <div class="small text-muted mb-1">
-                                                Price
-                                            </div>
-
-                                            <strong>
-                                                {{ number_format($item->price) }}
-                                            </strong>
-
-                                        </div>
-
-
-                                        {{-- Total --}}
-                                        <div class="col-auto text-end">
-
-                                            <div class="small text-muted mb-1">
-                                                Total
-                                            </div>
-
-                                            <strong>
-                                                {{ number_format($item->price * $item->quantity) }}
-                                            </strong>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                            @endforeach
-
-                        </div>
-                    </div>
-
-
-                    {{-- Order Note --}}
-                    <div class="card border-0 shadow-sm mb-4">
-
-                        <div class="card-header bg-white py-3">
-                            <h5 class="mb-0 fw-bold">
-                                Order Note
-                            </h5>
-                        </div>
-
-                        <div class="card-body">
-
-                        <textarea
-                            name="note"
-                            class="form-control"
-                            rows="4"
-                            placeholder="Add a note for your order (optional)"
-                        >{{ old('note') }}</textarea>
-
-                        </div>
-
-                    </div>
-
-                </form>
-                {{-- End Main Checkout Form --}}
-
-
-                {{-- ========================= --}}
-                {{-- Coupon Form --}}
-                {{-- ========================= --}}
-
-                <div class="card border-0 shadow-sm mb-4">
-
-                    <div class="card-header bg-white py-3">
-                        <h5 class="mb-0 fw-bold">
-                            Discount Code
-                        </h5>
-                    </div>
-
-                    <div class="card-body">
-
-                        @if(session('checkout_coupon'))
-
-                            <div class="alert alert-success mb-0">
-
-                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-
-                                    <div>
-                                        <strong>
-                                            Coupon Applied
-                                        </strong>
-
-                                        <div class="small mt-1">
-                                            Code:
-                                            {{ session('checkout_coupon.code') }}
-                                        </div>
-                                    </div>
-
-                                    <strong>
-                                        -{{ number_format(session('checkout_coupon.discount')) }}
-                                        Toman
-                                    </strong>
-
-                                </div>
-
-                            </div>
-
-                        @else
-
-                            <form
-                                action="{{ route('checkout.coupon') }}"
-                                method="POST"
-                            >
-
-                                @csrf
-
-                                <label
-                                    for="coupon_code"
-                                    class="form-label"
-                                >
-                                    Coupon Code
-                                </label>
-
-                                <div class="input-group">
-
-                                    <input
-                                        type="text"
-                                        name="coupon_code"
-                                        id="coupon_code"
-                                        class="form-control coupon-input @error('coupon_code') is-invalid @enderror"
-                                        value="{{ old('coupon_code') }}"
-                                        placeholder="Enter your discount code"
-                                        autocomplete="off"
-                                        required
-                                    >
-
-                                    <button
-                                        type="submit"
-                                        class="btn btn-outline-dark"
-                                    >
-                                        Apply
-                                    </button>
-
-                                </div>
-
-                                @error('coupon_code')
-                                <div class="text-danger small mt-2">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-
-                                <div class="text-muted small mt-2">
-                                    Enter your discount code and click Apply.
-                                </div>
-
-                            </form>
-
-                        @endif
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            {{-- ========================= --}}
-            {{-- Right Side --}}
-            {{-- ========================= --}}
-
-            <div class="col-lg-4">
-
-                <div class="card border-0 shadow-sm checkout-summary">
-
-                    <div class="card-header bg-white py-3">
-                        <h5 class="mb-0 fw-bold">
-                            Order Summary
-                        </h5>
-                    </div>
-
-                    <div class="card-body">
-
-                        {{-- Subtotal --}}
-                        <div class="summary-row">
-                            <span>Subtotal</span>
-
-                            <strong>
-                                {{ number_format($subtotal) }}
-                            </strong>
-                        </div>
-
-
-                        {{-- Discount --}}
-                        <div class="summary-row">
-                            <span>Discount</span>
-
-                            <strong class="text-success">
-                                {{ number_format($discount) }}
-                            </strong>
-                        </div>
-
-
-                        {{-- Shipping --}}
-                        <div class="summary-row">
-                            <span>Shipping</span>
-
-                            <strong>
-                                {{ number_format($shippingCost) }}
-                            </strong>
-                        </div>
-
-
-                        {{-- Tax --}}
-                        <div class="summary-row">
-                            <span>Tax</span>
-
-                            <strong>
-                                {{ number_format($tax) }}
-                            </strong>
-                        </div>
-
-
-                        <hr>
-
-
-                        {{-- Total --}}
-                        <div class="summary-total">
-                            <span>Total</span>
-
-                            <strong>
-                                {{ number_format($total) }}
-                            </strong>
-                        </div>
-
-
-                        <div class="text-muted small mt-2">
-                            Currency: Toman
-                        </div>
-
-
-                        {{-- Place Order --}}
-                        <button
-                            type="submit"
-                            form="checkout-form"
-                            class="btn btn-dark btn-lg w-100 mt-4"
-                            @disabled($addresses->isEmpty())
-                        >
-                            Place Order
-                        </button>
-
-
-                        <a
-                            href="{{ route('cart.index') }}"
-                            class="btn btn-outline-secondary w-100 mt-2"
-                        >
-                            Back to Cart
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
     <style>
-
+        .checkout-page {
+            padding: 50px 0 80px;
+            background: #f8f6f1;
+            min-height: 70vh;
+        }
+        .checkout-title {
+            font-size: 30px;
+            font-weight: 800;
+            color: #25352d;
+        }
+        .checkout-subtitle {
+            color: #777;
+            font-size: 14px;
+        }
+        .checkout-card,
+        .summary-card {
+            background: #fff;
+            border: 1px solid #e8e3da;
+            border-radius: 18px;
+            box-shadow: 0 8px 30px rgba(0,0,0,.04);
+            overflow: hidden;
+        }
+        .card-heading {
+            padding: 20px 22px;
+            border-bottom: 1px solid #eee9e1;
+            color: #25352d;
+            font-size: 18px;
+            font-weight: 800;
+        }
+        .card-body-custom {
+            padding: 22px;
+        }
         .address-card {
-            cursor: pointer;
             display: block;
+            height: 100%;
+            cursor: pointer;
             margin: 0;
         }
-
         .address-radio {
             position: absolute;
             opacity: 0;
             pointer-events: none;
         }
-
         .address-content {
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 16px;
             height: 100%;
-            transition: all 0.2s ease;
+            padding: 18px;
+            border: 2px solid #e4dfd7;
+            border-radius: 14px;
             background: #fff;
+            transition: .2s;
         }
-
         .address-card:hover .address-content {
-            border-color: #999;
+            border-color: #9b8975;
         }
-
         .address-radio:checked + .address-content {
-            border-color: #212529;
-            background: #f8f9fa;
+            border-color: #25352d;
+            background: #f5f7f3;
+            box-shadow: 0 5px 18px rgba(37,53,45,.08);
         }
-
+        .address-title {
+            color: #25352d;
+            font-weight: 800;
+        }
+        .default-badge {
+            background: #25352d;
+            color: #fff;
+            border-radius: 20px;
+            padding: 4px 9px;
+            font-size: 11px;
+        }
+        .address-info {
+            color: #777;
+            font-size: 13px;
+            line-height: 1.9;
+        }
         .checkout-item {
-            border-bottom: 1px solid #eee;
+            padding: 20px 22px;
+            border-bottom: 1px solid #eee9e1;
         }
-
         .checkout-item:last-child {
             border-bottom: 0;
         }
-
         .product-image {
-            width: 90px;
-            height: 110px;
+            width: 85px;
+            height: 105px;
             object-fit: cover;
-            border-radius: 8px;
-            border: 1px solid #eee;
+            border-radius: 12px;
+            background: #f3f0eb;
         }
-
         .product-image-placeholder {
-            width: 90px;
-            height: 110px;
-            border-radius: 8px;
-            background: #f1f1f1;
+            width: 85px;
+            height: 105px;
+            border-radius: 12px;
+            background: #f3f0eb;
             display: flex;
             align-items: center;
             justify-content: center;
+            color: #999;
+            font-size: 12px;
+        }
+        .product-name {
+            color: #25352d;
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .product-meta {
             color: #777;
             font-size: 12px;
-            text-align: center;
+            line-height: 1.9;
         }
-
-        .checkout-summary {
+        .summary-card {
             position: sticky;
-            top: 20px;
+            top: 25px;
         }
-
+        .summary-body {
+            padding: 23px;
+        }
         .summary-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 9px 0;
+            color: #666;
         }
-
+        .summary-row strong {
+            color: #25352d;
+        }
         .summary-total {
+            border-top: 1px solid #eee9e1;
+            margin-top: 15px;
+            padding-top: 18px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            color: #25352d;
             font-size: 20px;
+            font-weight: 800;
         }
-
+        .checkout-submit {
+            width: 100%;
+            border: 0;
+            border-radius: 11px;
+            background: #25352d;
+            color: #fff;
+            padding: 14px;
+            font-weight: 700;
+            margin-top: 22px;
+            transition: .2s;
+        }
+        .checkout-submit:hover:not(:disabled) {
+            background: #6f5138;
+        }
+        .checkout-submit:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+        }
+        .back-cart {
+            display: block;
+            width: 100%;
+            text-align: center;
+            border: 1px solid #d8d1c8;
+            border-radius: 11px;
+            padding: 12px;
+            color: #555;
+            text-decoration: none;
+            margin-top: 10px;
+            transition: .2s;
+        }
+        .back-cart:hover {
+            background: #f4f1ed;
+            color: #25352d;
+        }
         .coupon-input {
             direction: ltr;
             text-align: left;
+            border-radius: 9px 0 0 9px !important;
         }
-
+        .coupon-btn {
+            border-radius: 0 9px 9px 0 !important;
+        }
+        .coupon-success {
+            background: #f1f7f1;
+            border: 1px solid #cfe1d1;
+            border-radius: 12px;
+            padding: 15px;
+        }
+        .note-input {
+            border: 1px solid #ddd6cc;
+            border-radius: 10px;
+            resize: vertical;
+        }
+        .note-input:focus,
+        .coupon-input:focus {
+            border-color: #25352d;
+            box-shadow: 0 0 0 .15rem rgba(37,53,45,.08);
+        }
+        .empty-address {
+            background: #fff8e8;
+            border: 1px solid #ead9ac;
+            border-radius: 12px;
+            padding: 16px;
+        }
+        @media (max-width: 991px) {
+            .summary-card {
+                position: static;
+            }
+        }
         @media (max-width: 767px) {
-
-            .checkout-item .row {
-                align-items: flex-start;
+            .checkout-title {
+                font-size: 24px;
             }
-
-            .checkout-item .col-auto.text-end {
-                text-align: left !important;
+            .checkout-item {
+                padding: 16px;
             }
-
             .product-image,
             .product-image-placeholder {
                 width: 70px;
                 height: 90px;
             }
-
         }
-
     </style>
 
+    <div class="checkout-page">
+        <div class="container">
+            <div class="mb-4">
+                <h1 class="checkout-title mb-1">Checkout</h1>
+                <p class="checkout-subtitle mb-0">
+                    Review your order and select your shipping address.
+                </p>
+            </div>
+
+            @if(session('success'))
+                <div class="alert alert-success rounded-3">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="alert alert-danger rounded-3">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="alert alert-danger rounded-3">
+                    <ul class="mb-0">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <form id="checkout-form"
+                          action="{{ route('checkout.store') }}"
+                          method="POST">
+                        @csrf
+
+                        <div class="checkout-card mb-4">
+                            <div class="card-heading">
+                                Shipping Address
+                            </div>
+
+                            <div class="card-body-custom">
+                                @if($addresses->isEmpty())
+                                    <div class="empty-address">
+                                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                                        <span>
+                                            You don't have any saved addresses.
+                                        </span>
+
+                                            <a href="{{ route('dashboard') }}"
+                                               class="btn btn-sm btn-dark">
+                                                Add Address
+                                            </a>
+                                        </div>
+                                    </div>
+                                @else
+                                    <div class="row g-3">
+                                        @foreach($addresses as $address)
+                                            <div class="col-md-6">
+                                                <label class="address-card w-100"
+                                                       for="address-{{ $address->id }}">
+                                                    <input
+                                                        type="radio"
+                                                        name="address_id"
+                                                        value="{{ $address->id }}"
+                                                        id="address-{{ $address->id }}"
+                                                        class="address-radio"
+                                                        @checked(
+                                                            old(
+                                                                'address_id',
+                                                                $addresses->firstWhere('is_default', true)?->id
+                                                                ?? $addresses->first()?->id
+                                                            ) == $address->id
+                                                        )
+                                                        required
+                                                    >
+
+                                                    <div class="address-content">
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <span class="address-title">
+                                                            {{ $address->title }}
+                                                        </span>
+
+                                                            @if($address->is_default)
+                                                                <span class="default-badge">
+                                                                Default
+                                                            </span>
+                                                            @endif
+                                                        </div>
+
+                                                        <div class="address-info">
+                                                            <div>
+                                                                <strong>
+                                                                    {{ $address->receiver_name }}
+                                                                </strong>
+                                                            </div>
+
+                                                            <div>
+                                                                {{ $address->receiver_phone }}
+                                                            </div>
+
+                                                            <div>
+                                                                {{ $address->province }}
+                                                                -
+                                                                {{ $address->city }}
+                                                            </div>
+
+                                                            <div>
+                                                                {{ $address->address }}
+                                                            </div>
+
+                                                            <div>
+                                                                Postal Code:
+                                                                {{ $address->postal_code }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="checkout-card mb-4">
+                            <div class="card-heading">
+                                Order Items
+                            </div>
+
+                            <div>
+                                @foreach($cart->items as $item)
+                                    <div class="checkout-item">
+                                        <div class="row align-items-center g-3">
+                                            <div class="col-auto">
+                                                @php
+                                                    $primaryImage = $item->product->images
+                                                        ->firstWhere('is_primary', true);
+                                                    $image = $primaryImage
+                                                        ?? $item->product->images->first();
+                                                @endphp
+
+                                                @if($image)
+                                                    <img
+                                                        src="{{ asset('storage/' . $image->image) }}"
+                                                        alt="{{ $item->product->name }}"
+                                                        class="product-image"
+                                                    >
+                                                @else
+                                                    <div class="product-image-placeholder">
+                                                        No Image
+                                                    </div>
+                                                @endif
+                                            </div>
+
+                                            <div class="col">
+                                                <div class="product-name mb-1">
+                                                    {{ $item->product->name }}
+                                                </div>
+
+                                                <div class="product-meta">
+                                                    <div>
+                                                        Product Code:
+                                                        {{ $item->product->product_code }}
+                                                    </div>
+
+                                                    @if($item->variant?->size)
+                                                        <div>
+                                                            Size:
+                                                            {{ $item->variant->size->name }}
+                                                        </div>
+                                                    @endif
+
+                                                    @if($item->variant?->color)
+                                                        <div>
+                                                            Color:
+                                                            {{ $item->variant->color->name }}
+                                                        </div>
+                                                    @endif
+
+                                                    @if($item->variant?->sku)
+                                                        <div>
+                                                            SKU:
+                                                            {{ $item->variant->sku }}
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                            <div class="col-auto text-center">
+                                                <div class="product-meta mb-1">
+                                                    Quantity
+                                                </div>
+                                                <strong>
+                                                    {{ $item->quantity }}
+                                                </strong>
+                                            </div>
+
+                                            <div class="col-auto text-end">
+                                                <div class="product-meta mb-1">
+                                                    Price
+                                                </div>
+                                                <strong>
+                                                    {{ number_format($item->price) }}
+                                                </strong>
+                                            </div>
+
+                                            <div class="col-auto text-end">
+                                                <div class="product-meta mb-1">
+                                                    Total
+                                                </div>
+                                                <strong class="text-dark">
+                                                    {{ number_format($item->price * $item->quantity) }}
+                                                </strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <div class="checkout-card mb-4">
+                            <div class="card-heading">
+                                Order Note
+                            </div>
+
+                            <div class="card-body-custom">
+                            <textarea
+                                name="note"
+                                class="form-control note-input"
+                                rows="4"
+                                placeholder="Add a note for your order (optional)"
+                            >{{ old('note') }}</textarea>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="checkout-card mb-4">
+                        <div class="card-heading">
+                            Discount Code
+                        </div>
+
+                        <div class="card-body-custom">
+                            @if(session('checkout_coupon'))
+                                <div class="coupon-success">
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                        <div>
+                                            <strong class="text-success">
+                                                Coupon Applied
+                                            </strong>
+
+                                            <div class="small mt-1">
+                                                Code:
+                                                <strong>
+                                                    {{ session('checkout_coupon.code') }}
+                                                </strong>
+                                            </div>
+                                        </div>
+
+                                        <strong class="text-success">
+                                            -{{ number_format(session('checkout_coupon.discount')) }}
+                                            Toman
+                                        </strong>
+                                    </div>
+                                </div>
+                            @else
+                                <form action="{{ route('checkout.coupon') }}"
+                                      method="POST">
+                                    @csrf
+
+                                    <label for="coupon_code"
+                                           class="form-label">
+                                        Coupon Code
+                                    </label>
+
+                                    <div class="input-group">
+                                        <input
+                                            type="text"
+                                            name="coupon_code"
+                                            id="coupon_code"
+                                            class="form-control coupon-input @error('coupon_code') is-invalid @enderror"
+                                            value="{{ old('coupon_code') }}"
+                                            placeholder="Enter your discount code"
+                                            autocomplete="off"
+                                            required
+                                        >
+
+                                        <button type="submit"
+                                                class="btn btn-dark coupon-btn">
+                                            Apply
+                                        </button>
+                                    </div>
+
+                                    @error('coupon_code')
+                                    <div class="text-danger small mt-2">
+                                        {{ $message }}
+                                    </div>
+                                    @enderror
+
+                                    <div class="text-muted small mt-2">
+                                        Enter your discount code and click Apply.
+                                    </div>
+                                </form>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="summary-card">
+                        <div class="card-heading">
+                            Order Summary
+                        </div>
+
+                        <div class="summary-body">
+                            <div class="summary-row">
+                                <span>Subtotal</span>
+                                <strong>
+                                    {{ number_format($subtotal) }}
+                                </strong>
+                            </div>
+
+                            <div class="summary-row">
+                                <span>Discount</span>
+                                <strong class="text-success">
+                                    -{{ number_format($discount) }}
+                                </strong>
+                            </div>
+
+                            <div class="summary-row">
+                                <span>Shipping</span>
+                                <strong>
+                                    {{ number_format($shippingCost) }}
+                                </strong>
+                            </div>
+
+                            <div class="summary-row">
+                                <span>Tax</span>
+                                <strong>
+                                    {{ number_format($tax) }}
+                                </strong>
+                            </div>
+
+                            <div class="summary-total">
+                                <span>Total</span>
+                                <strong>
+                                    {{ number_format($total) }}
+                                </strong>
+                            </div>
+
+                            <div class="text-muted small mt-2">
+                                Currency: Toman
+                            </div>
+
+                            <button
+                                type="submit"
+                                form="checkout-form"
+                                class="checkout-submit"
+                                @disabled($addresses->isEmpty())
+                            >
+                                Place Order
+                            </button>
+
+                            <a href="{{ route('cart.index') }}"
+                               class="back-cart">
+                                Back to Cart
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
