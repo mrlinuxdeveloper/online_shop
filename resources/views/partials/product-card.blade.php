@@ -20,7 +20,7 @@
                 @if($primaryImage)
 
                     <img
-                        src="{{ asset('storage/products/' . $primaryImage->image) }}"
+                        src="{{ asset('storage/' . $primaryImage->image) }}"
                         alt="{{ $product->name }}"
                     >
 

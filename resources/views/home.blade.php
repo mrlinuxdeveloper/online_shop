@@ -194,7 +194,7 @@
         </section>
 
 
-        {{-- Categories --}}
+        {{-- دسته‌بندی‌ها --}}
         <section class="mb-5">
 
             <div class="text-center mb-4">
@@ -266,7 +266,7 @@
         </section>
 
 
-        {{-- New Products --}}
+        {{-- محصولات جدید --}}
         <section class="mb-5">
 
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -316,7 +316,7 @@
         </section>
 
 
-        {{-- Discount Products --}}
+        {{-- تخفیف محصولات --}}
         <section class="mb-5">
 
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -361,7 +361,7 @@
         </section>
 
 
-        {{-- Featured Products --}}
+        {{-- محصولات ویژه --}}
         <section class="mb-5">
 
             <div class="text-center mb-4">

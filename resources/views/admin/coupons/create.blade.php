@@ -30,7 +30,7 @@
                         type="submit"
                         class="btn btn-dark"
                     >
-                        ایجاد Coupon
+                        ایجاد کد تخفیف
                     </button>
 
                     <a

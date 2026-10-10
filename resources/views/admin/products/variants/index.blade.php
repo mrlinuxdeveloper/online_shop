@@ -1,7 +1,7 @@
 @extends('admin.layouts.AdminMasterLayout')
 
-@section('title', 'Product Variants')
-@section('page-title', 'Product Variants')
+@section('title', 'تنوع‌های محصول')
+@section('page-title', 'تنوع‌های محصول')
 
 @section('content')
 
@@ -9,7 +9,7 @@
 
         <div>
             <h4 class="mb-1">
-                Product Variants
+                تنوع‌های محصول
             </h4>
 
             <div class="text-muted">
@@ -23,14 +23,14 @@
                 href="{{ route('admin.products.variants.create', $product) }}"
                 class="btn btn-primary"
             >
-                Add Variant
+                افزودن تنوع
             </a>
 
             <a
                 href="{{ route('admin.products.index') }}"
                 class="btn btn-secondary"
             >
-                Back
+                بازگشت
             </a>
 
         </div>
@@ -50,14 +50,14 @@
                         <thead>
                         <tr>
                             <th>#</th>
-                            <th>Size</th>
-                            <th>Color</th>
-                            <th>SKU</th>
-                            <th>Price</th>
-                            <th>Stock</th>
-                            <th>Weight</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th>سایز</th>
+                            <th>رنگ</th>
+                            <th>شناسهٔ کالا</th>
+                            <th>قیمت</th>
+                            <th>موجودی</th>
+                            <th>وزن</th>
+                            <th>وضعیت</th>
+                            <th>عملیات</th>
                         </tr>
                         </thead>
 
@@ -127,7 +127,7 @@
                                     @else
 
                                         <span class="badge bg-danger">
-                                        Out of stock
+                                        ناموجود
                                     </span>
 
                                     @endif
@@ -143,13 +143,13 @@
                                     @if($variant->status)
 
                                         <span class="badge bg-success">
-                                        Active
+                                        فعال
                                     </span>
 
                                     @else
 
                                         <span class="badge bg-secondary">
-                                        Inactive
+                                        غیرفعال
                                     </span>
 
                                     @endif
@@ -162,7 +162,7 @@
                                         href="{{ route('admin.products.variants.edit', [$product, $variant]) }}"
                                         class="btn btn-sm btn-outline-primary"
                                     >
-                                        Edit
+                                        ویرایش
                                     </a>
 
                                     <form
@@ -177,9 +177,9 @@
                                         <button
                                             type="submit"
                                             class="btn btn-sm btn-outline-danger"
-                                            onclick="return confirm('Delete this variant?')"
+                                            onclick="return confirm('حذف this variant?')"
                                         >
-                                            Delete
+                                            حذف
                                         </button>
 
                                     </form>
@@ -200,7 +200,7 @@
 
                 <div class="alert alert-info mb-0">
 
-                    No variants have been created for this product yet.
+                    هنوز تنوعی برای این محصول ثبت نشده است.
 
                 </div>
 

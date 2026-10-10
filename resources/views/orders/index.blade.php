@@ -1,4 +1,4 @@
-@extends('shop.layouts.app')
+@extends('layouts.app')
 
 @section('content')
     <style>
@@ -188,11 +188,11 @@
         <div class="container">
             <div class="mb-4">
                 <h1 class="page-title">
-                    My Orders
+                    سفارش‌های من
                 </h1>
 
                 <p class="page-subtitle">
-                    View and manage your orders.
+                    سفارش‌های خود را مشاهده و مدیریت کنید.
                 </p>
             </div>
 
@@ -203,7 +203,7 @@
                             <div class="order-top">
                                 <div>
                                     <div class="order-number">
-                                        Order #{{ $order->order_number }}
+                                        سفارش شمارهٔ {{ $order->order_number }}
                                     </div>
 
                                     <div class="order-date">
@@ -213,15 +213,15 @@
 
                                 @if($order->payment_status === 'paid')
                                     <span class="status status-paid">
-                                    Paid
+                                    پرداخت‌شده
                                 </span>
                                 @elseif($order->payment_status === 'pending')
                                     <span class="status status-pending">
-                                    Payment Pending
+                                    در انتظار پرداخت
                                 </span>
                                 @elseif($order->payment_status === 'failed')
                                     <span class="status status-failed">
-                                    Payment Failed
+                                    پرداخت ناموفق
                                 </span>
                                 @else
                                     <span class="status status-default">
@@ -233,31 +233,31 @@
                             <div class="order-info">
                                 <div class="info-box">
                                 <span class="info-label">
-                                    Order Status
+                                    وضعیت سفارش
                                 </span>
 
                                     @switch($order->status)
                                         @case('processing')
                                             <span class="status status-processing">
-                                            Processing
+                                            در حال پردازش
                                         </span>
                                             @break
 
                                         @case('shipped')
                                             <span class="status status-shipped">
-                                            Shipped
+                                            ارسال‌شده
                                         </span>
                                             @break
 
                                         @case('delivered')
                                             <span class="status status-delivered">
-                                            Delivered
+                                            تحویل‌شده
                                         </span>
                                             @break
 
                                         @case('pending')
                                             <span class="status status-pending">
-                                            Pending
+                                            در انتظار
                                         </span>
                                             @break
 
@@ -270,7 +270,7 @@
 
                                 <div class="info-box">
                                 <span class="info-label">
-                                    Items
+                                    اقلام
                                 </span>
 
                                     <span class="info-value">
@@ -280,11 +280,11 @@
 
                                 <div class="info-box">
                                 <span class="info-label">
-                                    Total
+                                    مبلغ نهایی
                                 </span>
 
                                     <span class="info-value">
-                                    {{ number_format($order->total_price) }} Toman
+                                    {{ number_format($order->total_price) }} تومان
                                 </span>
                                 </div>
                             </div>
@@ -292,20 +292,20 @@
                             <div class="order-actions">
                                 <a href="{{ route('orders.show', $order) }}"
                                    class="btn btn-details">
-                                    View Details
+                                    مشاهدهٔ جزئیات
                                 </a>
 
                                 @if($order->invoice)
                                     <a href="{{ route('orders.invoice', $order) }}"
                                        class="btn btn-outline-secondary">
-                                        Invoice
+                                        فاکتور
                                     </a>
                                 @endif
 
                                 @if($order->payment_status !== 'paid')
                                     <a href="{{ route('payment.start', $order) }}"
                                        class="btn btn-outline-success">
-                                        Pay Now
+                                        پرداخت
                                     </a>
                                 @endif
                             </div>
@@ -325,16 +325,16 @@
                     </div>
 
                     <h3>
-                        No Orders Yet
+                        هنوز سفارشی ثبت نکرده‌اید
                     </h3>
 
                     <p>
-                        You haven't placed any orders yet.
+                        هنوز سفارشی ثبت نکرده‌اید.
                     </p>
 
                     <a href="{{ route('shop.products.index') }}"
                        class="btn btn-details">
-                        Start Shopping
+                        شروع خرید
                     </a>
                 </div>
             @endif

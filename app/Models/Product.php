@@ -49,6 +49,16 @@ class Product extends Model
         return $this->hasMany(ProductVariant::class);
     }
 
+    public function salePrice($basePrice = null): float
+    {
+        $basePrice = (float) ($basePrice ?? $this->price);
+
+        return round(
+            $basePrice * (100 - (float) $this->discount) / 100,
+            2
+        );
+    }
+
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);

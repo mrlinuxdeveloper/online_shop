@@ -1,7 +1,7 @@
 @extends('admin.layouts.AdminMasterLayout')
 
-@section('title', 'Edit Color')
-@section('page-title', 'Edit Color')
+@section('title', 'ویرایش رنگ')
+@section('page-title', 'ویرایش رنگ')
 
 @section('content')
 
@@ -18,7 +18,7 @@
                 <div class="mb-3">
 
                     <label class="form-label">
-                        Color Name
+                        نام رنگ
                     </label>
 
                     <input
@@ -39,7 +39,7 @@
                 <div class="mb-3">
 
                     <label class="form-label">
-                        Code
+                        کد
                     </label>
 
                     <input
@@ -60,7 +60,7 @@
                 <div class="mb-3">
 
                     <label class="form-label">
-                        HEX Color
+                        کد رنگ HEX
                     </label>
 
                     <div class="d-flex gap-2">
@@ -92,12 +92,12 @@
 
                 <button type="submit"
                         class="btn btn-primary">
-                    Update
+                    به‌روزرسانی
                 </button>
 
                 <a href="{{ route('admin.colors.index') }}"
                    class="btn btn-secondary">
-                    Back
+                    بازگشت
                 </a>
 
             </form>

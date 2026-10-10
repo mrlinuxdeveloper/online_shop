@@ -101,7 +101,7 @@ class BrandController extends Controller
             ->route('admin.brands.index')
             ->with(
                 'success',
-                'Brand created successfully.'
+                'برند با موفقیت ایجاد شد.'
             );
     }
 
@@ -204,7 +204,7 @@ class BrandController extends Controller
             ->route('admin.brands.index')
             ->with(
                 'success',
-                'Brand updated successfully.'
+                'برند با موفقیت به‌روزرسانی شد.'
             );
     }
 
@@ -234,7 +234,7 @@ class BrandController extends Controller
             ->route('admin.brands.index')
             ->with(
                 'success',
-                'Brand deleted successfully.'
+                'برند با موفقیت حذف شد.'
             );
     }
 }

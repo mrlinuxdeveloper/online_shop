@@ -1,4 +1,4 @@
-@extends('shop.layouts.app')
+@extends('layouts.app')
 
 @section('content')
     <style>
@@ -285,7 +285,7 @@
                             <div class="wishlist-image-wrapper">
                                 @if($image)
                                     <img
-                                        src="{{ asset('images/products/' . $image->image) }}"
+                                        src="{{ asset('storage/' . $image->image) }}"
                                         alt="{{ $product->name }}"
                                         class="wishlist-image"
                                     >

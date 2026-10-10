@@ -1,4 +1,4 @@
-@extends('shop.layouts.app')
+@extends('layouts.app')
 
 @section('content')
     <style>
@@ -137,7 +137,7 @@
             font-weight: 700;
             white-space: nowrap;
         }
-        .invoice-total {
+        .invoice-مجموع {
             color: #6f5138;
             font-weight: 900;
             white-space: nowrap;
@@ -373,7 +373,7 @@
                     </div>
                 </div>
 
-                {{-- Customer / Address --}}
+                {{-- مشتری / نشانی --}}
                 <div class="info-section">
                     <div class="row g-4">
                         <div class="col-md-6">
@@ -428,7 +428,7 @@
                     </div>
                 </div>
 
-                {{-- Products --}}
+                {{-- محصولات --}}
                 <div class="invoice-table-wrapper">
                     <div class="table-responsive">
                         <table class="table table-bordered invoice-table">
@@ -493,7 +493,7 @@
                                     </td>
 
                                     <td>
-                                    <span class="invoice-total">
+                                    <span class="invoice-مجموع">
                                         {{ number_format($item->total) }}
                                         تومان
                                     </span>
@@ -558,7 +558,7 @@
                     </div>
                 </div>
 
-                {{-- Payment --}}
+                {{-- پرداخت --}}
                 <div class="payment-section">
                     <div class="section-title">
                         اطلاعات پرداخت
@@ -572,7 +572,7 @@
                             </span>
 
                                 <span class="payment-value">
-                                {{ $payment->gateway ?? 'ZarinPal' }}
+                                {{ $payment->gateway ?? 'زرین‌پال' }}
                             </span>
                             </div>
 

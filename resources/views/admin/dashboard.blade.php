@@ -6,8 +6,8 @@
 
         {{-- Header --}}
 
-        <div class="mb-4">
-
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+            <div>
             <h4 class="fw-bold mb-1">
                 داشبورد مدیریت
             </h4>
@@ -15,7 +15,8 @@
             <p class="text-muted mb-0">
                 نمای کلی وضعیت فروشگاه
             </p>
-
+            </div>
+            <a href="{{ route('admin.appearance.edit') }}" class="btn btn-primary">تنظیم ظاهر سایت</a>
         </div>
 
 
@@ -39,12 +40,12 @@
         @endif
 
 
-        {{-- Main Statistics --}}
+        {{-- آمار کلی --}}
 
         <div class="row g-4 mb-4">
 
 
-            {{-- Users --}}
+            {{-- کاربران --}}
 
             <div class="col-xl-3 col-md-6">
 
@@ -79,7 +80,7 @@
             </div>
 
 
-            {{-- Products --}}
+            {{-- محصولات --}}
 
             <div class="col-xl-3 col-md-6">
 
@@ -114,7 +115,7 @@
             </div>
 
 
-            {{-- Orders --}}
+            {{-- سفارش‌ها --}}
 
             <div class="col-xl-3 col-md-6">
 
@@ -149,7 +150,7 @@
             </div>
 
 
-            {{-- Low Stock --}}
+            {{-- موجودی کم --}}
 
             <div class="col-xl-3 col-md-6">
 
@@ -186,12 +187,12 @@
         </div>
 
 
-        {{-- Sales Statistics --}}
+        {{-- آمار فروش --}}
 
         <div class="row g-4 mb-4">
 
 
-            {{-- Total Sales --}}
+            {{-- مجموع فروش --}}
 
             <div class="col-lg-6">
 
@@ -251,12 +252,12 @@
         </div>
 
 
-        {{-- Orders & Payments --}}
+        {{-- سفارش‌ها & پرداخت‌ها --}}
 
         <div class="row g-4 mb-4">
 
 
-            {{-- Orders Status --}}
+            {{-- سفارش‌ها وضعیت --}}
 
             <div class="col-lg-6">
 
@@ -332,7 +333,7 @@
             </div>
 
 
-            {{-- Payment Status --}}
+            {{-- وضعیت پرداخت --}}
 
             <div class="col-lg-6">
 
@@ -397,7 +398,7 @@
         </div>
 
 
-        {{-- Shipment Status --}}
+        {{-- وضعیت ارسال --}}
 
         <div class="card border-0 shadow-sm mb-4">
 
@@ -518,7 +519,7 @@
         </div>
 
 
-        {{-- Recent Orders --}}
+        {{-- سفارش‌های اخیر --}}
 
         <div class="card border-0 shadow-sm mb-4">
 
@@ -722,7 +723,7 @@
         </div>
 
 
-        {{-- Recent Payments --}}
+        {{-- پرداخت‌های اخیر --}}
 
         <div class="card border-0 shadow-sm mb-4">
 
@@ -870,7 +871,7 @@
         </div>
 
 
-        {{-- Recent Shipments --}}
+        {{-- ارسال‌های اخیر --}}
 
         <div class="card border-0 shadow-sm">
 

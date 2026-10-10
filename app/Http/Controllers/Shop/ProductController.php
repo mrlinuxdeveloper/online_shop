@@ -92,6 +92,8 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
+        abort_unless($product->status, 404);
+
         $product->load([
             'category',
             'brand',

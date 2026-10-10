@@ -1,8 +1,8 @@
 @extends('admin.layouts.AdminMasterLayout')
 
-@section('title', 'Orders')
+@section('title', 'سفارش‌ها')
 
-@section('page-title', 'Orders')
+@section('page-title', 'سفارش‌ها')
 
 @section('content')
 
@@ -17,16 +17,16 @@
 
                     <div>
                         <h5 class="mb-1">
-                            Orders
+                            سفارش‌ها
                         </h5>
 
                         <small class="text-muted">
-                            Manage customer orders
+                            مدیریت سفارش‌های مشتریان
                         </small>
                     </div>
 
                     <span class="badge bg-dark">
-                    {{ $orders->total() }} Orders
+                    {{ $orders->total() }} سفارش‌ها
                 </span>
 
                 </div>
@@ -45,20 +45,20 @@
 
                             <th>#</th>
 
-                            <th>Order Number</th>
+                            <th>شمارهٔ سفارش</th>
 
-                            <th>Customer</th>
+                            <th>مشتری</th>
 
-                            <th>Total</th>
+                            <th>مبلغ کل</th>
 
-                            <th>Payment</th>
+                            <th>پرداخت</th>
 
-                            <th>Order Status</th>
+                            <th>وضعیت سفارش</th>
 
-                            <th>Date</th>
+                            <th>تاریخ</th>
 
                             <th class="text-end">
-                                Action
+                                عملیات
                             </th>
 
                         </tr>
@@ -97,7 +97,7 @@
                                     @else
 
                                         <span class="text-muted">
-                                        Unknown User
+                                        کاربر نامشخص
                                     </span>
 
                                     @endif
@@ -123,7 +123,7 @@
                                         @case('paid')
 
                                             <span class="badge bg-success">
-                                            Paid
+                                            پرداخت‌شده
                                         </span>
 
                                             @break
@@ -131,7 +131,7 @@
                                         @case('pending')
 
                                             <span class="badge bg-warning text-dark">
-                                            Pending
+                                            در انتظار
                                         </span>
 
                                             @break
@@ -139,7 +139,7 @@
                                         @case('failed')
 
                                             <span class="badge bg-danger">
-                                            Failed
+                                            ناموفق
                                         </span>
 
                                             @break
@@ -147,7 +147,7 @@
                                         @case('refunded')
 
                                             <span class="badge bg-info text-dark">
-                                            Refunded
+                                            بازپرداخت‌شده
                                         </span>
 
                                             @break
@@ -169,7 +169,7 @@
                                         @case('pending')
 
                                             <span class="badge bg-secondary">
-                                            Pending
+                                            در انتظار
                                         </span>
 
                                             @break
@@ -177,7 +177,7 @@
                                         @case('processing')
 
                                             <span class="badge bg-primary">
-                                            Processing
+                                            در حال پردازش
                                         </span>
 
                                             @break
@@ -185,7 +185,7 @@
                                         @case('shipped')
 
                                             <span class="badge bg-info text-dark">
-                                            Shipped
+                                            ارسال‌شده
                                         </span>
 
                                             @break
@@ -193,7 +193,7 @@
                                         @case('delivered')
 
                                             <span class="badge bg-success">
-                                            Delivered
+                                            تحویل‌شده
                                         </span>
 
                                             @break
@@ -201,7 +201,7 @@
                                         @case('cancelled')
 
                                             <span class="badge bg-danger">
-                                            Cancelled
+                                            لغوشده
                                         </span>
 
                                             @break
@@ -226,7 +226,7 @@
                                         href="{{ route('admin.orders.show', $order) }}"
                                         class="btn btn-sm btn-outline-primary"
                                     >
-                                        View
+                                        مشاهده
                                     </a>
 
                                 </td>
@@ -243,7 +243,7 @@
                                 >
 
                                     <div class="text-muted">
-                                        No orders found.
+                                        سفارشی پیدا نشد.
                                     </div>
 
                                 </td>
@@ -282,9 +282,9 @@
 
 {{--@extends('admin.layouts.AdminMasterLayout')--}}
 
-{{--@section('title', 'Orders')--}}
+{{--@section('title', 'سفارش‌ها')--}}
 
-{{--@section('page-title', 'Orders')--}}
+{{--@section('page-title', 'سفارش‌ها')--}}
 
 {{--@section('content')--}}
 
@@ -298,16 +298,16 @@
 
 {{--                    <div>--}}
 {{--                        <h5 class="mb-1">--}}
-{{--                            Orders--}}
+{{--                            سفارش‌ها--}}
 {{--                        </h5>--}}
 
 {{--                        <small class="text-muted">--}}
-{{--                            Manage customer orders--}}
+{{--                            مدیریت سفارش‌های مشتریان--}}
 {{--                        </small>--}}
 {{--                    </div>--}}
 
 {{--                    <span class="badge bg-dark">--}}
-{{--                    {{ $orders->total() }} Orders--}}
+{{--                    {{ $orders->total() }} سفارش‌ها--}}
 {{--                </span>--}}
 
 {{--                </div>--}}
@@ -327,20 +327,20 @@
 
 {{--                            <th>#</th>--}}
 
-{{--                            <th>Order Number</th>--}}
+{{--                            <th>شمارهٔ سفارش</th>--}}
 
-{{--                            <th>Customer</th>--}}
+{{--                            <th>مشتری</th>--}}
 
-{{--                            <th>Total</th>--}}
+{{--                            <th>مبلغ کل</th>--}}
 
-{{--                            <th>Payment</th>--}}
+{{--                            <th>پرداخت</th>--}}
 
-{{--                            <th>Order Status</th>--}}
+{{--                            <th>وضعیت سفارش</th>--}}
 
-{{--                            <th>Date</th>--}}
+{{--                            <th>تاریخ</th>--}}
 
 {{--                            <th class="text-end">--}}
-{{--                                Action--}}
+{{--                                عملیات--}}
 {{--                            </th>--}}
 
 {{--                        </tr>--}}
@@ -384,7 +384,7 @@
 {{--                                    @else--}}
 
 {{--                                        <span class="text-muted">--}}
-{{--                                        Unknown User--}}
+{{--                                        کاربر نامشخص--}}
 {{--                                    </span>--}}
 
 {{--                                    @endif--}}
@@ -408,13 +408,13 @@
 {{--                                    @if($order->payment_status === 'paid')--}}
 
 {{--                                        <span class="badge bg-success">--}}
-{{--                                        Paid--}}
+{{--                                        پرداخت‌شده--}}
 {{--                                    </span>--}}
 
 {{--                                    @elseif($order->payment_status === 'pending')--}}
 
 {{--                                        <span class="badge bg-warning text-dark">--}}
-{{--                                        Pending--}}
+{{--                                        در انتظار--}}
 {{--                                    </span>--}}
 
 {{--                                    @else--}}
@@ -435,7 +435,7 @@
 {{--                                        @case('pending')--}}
 
 {{--                                            <span class="badge bg-secondary">--}}
-{{--                                            Pending--}}
+{{--                                            در انتظار--}}
 {{--                                        </span>--}}
 
 {{--                                            @break--}}
@@ -443,7 +443,7 @@
 {{--                                        @case('processing')--}}
 
 {{--                                            <span class="badge bg-primary">--}}
-{{--                                            Processing--}}
+{{--                                            در حال پردازش--}}
 {{--                                        </span>--}}
 
 {{--                                            @break--}}
@@ -451,7 +451,7 @@
 {{--                                        @case('shipped')--}}
 
 {{--                                            <span class="badge bg-info text-dark">--}}
-{{--                                            Shipped--}}
+{{--                                            ارسال‌شده--}}
 {{--                                        </span>--}}
 
 {{--                                            @break--}}
@@ -459,7 +459,7 @@
 {{--                                        @case('delivered')--}}
 
 {{--                                            <span class="badge bg-success">--}}
-{{--                                            Delivered--}}
+{{--                                            تحویل‌شده--}}
 {{--                                        </span>--}}
 
 {{--                                            @break--}}
@@ -467,7 +467,7 @@
 {{--                                        @case('cancelled')--}}
 
 {{--                                            <span class="badge bg-danger">--}}
-{{--                                            Cancelled--}}
+{{--                                            لغوشده--}}
 {{--                                        </span>--}}
 
 {{--                                            @break--}}
@@ -498,7 +498,7 @@
 {{--                                ) }}"--}}
 {{--                                       class="btn btn-sm btn-outline-primary">--}}
 
-{{--                                        View--}}
+{{--                                        مشاهده--}}
 
 {{--                                    </a>--}}
 
@@ -517,7 +517,7 @@
 
 {{--                                    <div class="text-muted">--}}
 
-{{--                                        No orders found.--}}
+{{--                                        سفارشی پیدا نشد.--}}
 
 {{--                                    </div>--}}
 

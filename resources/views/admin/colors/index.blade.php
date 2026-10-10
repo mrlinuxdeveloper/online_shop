@@ -1,17 +1,17 @@
 @extends('admin.layouts.AdminMasterLayout')
 
-@section('title', 'Colors')
-@section('page-title', 'Colors')
+@section('title', 'رنگ‌ها')
+@section('page-title', 'رنگ‌ها')
 
 @section('content')
 
     <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <h4 class="mb-0">Colors</h4>
+        <h4 class="mb-0">رنگ‌ها</h4>
 
         <a href="{{ route('admin.colors.create') }}"
            class="btn btn-primary">
-            Add Color
+            افزودن رنگ
         </a>
 
     </div>
@@ -29,11 +29,11 @@
                         <thead>
                         <tr>
                             <th>#</th>
-                            <th>Color</th>
-                            <th>Code</th>
-                            <th>Hex</th>
-                            <th>Preview</th>
-                            <th>Actions</th>
+                            <th>رنگ</th>
+                            <th>کد</th>
+                            <th>کد رنگ</th>
+                            <th>پیش‌نمایش</th>
+                            <th>عملیات</th>
                         </tr>
                         </thead>
 
@@ -80,7 +80,7 @@
 
                                     <a href="{{ route('admin.colors.edit', $color) }}"
                                        class="btn btn-sm btn-outline-primary">
-                                        Edit
+                                        ویرایش
                                     </a>
 
                                     <form
@@ -94,8 +94,8 @@
                                         <button
                                             type="submit"
                                             class="btn btn-sm btn-outline-danger"
-                                            onclick="return confirm('Delete this color?')">
-                                            Delete
+                                            onclick="return confirm('حذف this color?')">
+                                            حذف
                                         </button>
 
                                     </form>
@@ -117,7 +117,7 @@
             @else
 
                 <div class="alert alert-info mb-0">
-                    No colors found.
+                    رنگی پیدا نشد.
                 </div>
 
             @endif

@@ -83,9 +83,16 @@ class CartController extends Controller
 
             return back()->with(
                 'error',
-                'This product variant is not available.'
+                'این تنوع محصول در دسترس نیست.'
             );
 
+        }
+
+        if (!$product->status) {
+            return back()->with(
+                'error',
+                'این محصول در دسترس نیست.'
+            );
         }
 
 
@@ -96,7 +103,7 @@ class CartController extends Controller
 
             return back()->with(
                 'error',
-                'Not enough stock available.'
+                'موجودی کافی نیست.'
             );
 
         }
@@ -137,7 +144,7 @@ class CartController extends Controller
 
                 return back()->with(
                     'error',
-                    'Requested quantity exceeds available stock.'
+                    'تعداد درخواستی از موجودی بیشتر است.'
                 );
 
             }
@@ -145,7 +152,7 @@ class CartController extends Controller
 
             $item->update([
                 'quantity' => $newQuantity,
-                'price' => $variant->price ?? $product->price,
+                'price' => $product->salePrice($variant->price),
             ]);
 
         } else {
@@ -158,7 +165,7 @@ class CartController extends Controller
                 'product_id' => $product->id,
                 'product_variant_id' => $variant->id,
                 'quantity' => $validated['quantity'],
-                'price' => $variant->price ?? $product->price,
+                'price' => $product->salePrice($variant->price),
             ]);
 
         }
@@ -168,7 +175,7 @@ class CartController extends Controller
             ->route('cart.index')
             ->with(
                 'success',
-                'Product added to cart successfully.'
+                'محصول با موفقیت به سبد خرید اضافه شد.'
             );
     }
 
@@ -209,9 +216,16 @@ class CartController extends Controller
 
             return back()->with(
                 'error',
-                'Product variant not found.'
+                'تنوع محصول پیدا نشد.'
             );
 
+        }
+
+        if (!$variant->status || !$cartItem->product?->status) {
+            return back()->with(
+                'error',
+                'این محصول دیگر در دسترس نیست.'
+            );
         }
 
 
@@ -222,7 +236,7 @@ class CartController extends Controller
 
             return back()->with(
                 'error',
-                'Requested quantity exceeds available stock.'
+                'تعداد درخواستی از موجودی بیشتر است.'
             );
 
         }
@@ -233,13 +247,13 @@ class CartController extends Controller
          */
         $cartItem->update([
             'quantity' => $validated['quantity'],
-            'price' => $variant->price ?? $cartItem->product->price,
+            'price' => $cartItem->product->salePrice($variant->price),
         ]);
 
 
         return back()->with(
             'success',
-            'Cart updated successfully.'
+            'سبد خرید با موفقیت به‌روزرسانی شد.'
         );
     }
 
@@ -262,7 +276,7 @@ class CartController extends Controller
 
         return back()->with(
             'success',
-            'Item removed from cart.'
+            'محصول از سبد خرید حذف شد.'
         );
     }
 }

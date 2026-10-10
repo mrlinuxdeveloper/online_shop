@@ -12,7 +12,7 @@
             </button>
         </div>
 
-        {{-- Filters --}}
+        {{-- فیلترها --}}
         <div class="card shadow-sm mb-4">
             <div class="card-header">
                 <h5 class="mb-0">فیلتر گزارش</h5>
@@ -90,7 +90,7 @@
             </div>
         </div>
 
-        {{-- Sales Statistics --}}
+        {{-- آمار فروش --}}
         <div class="row g-3 mb-4">
             <div class="col-md-6">
                 <div class="card shadow-sm h-100">
@@ -204,7 +204,7 @@
             </div>
         </div>
 
-        {{-- Best Selling Products --}}
+        {{-- محصولات پرفروش --}}
         <div class="card shadow-sm mb-4">
             <div class="card-header">
                 <h5 class="mb-0">پرفروش‌ترین محصولات</h5>

@@ -1,8 +1,8 @@
 @extends('admin.layouts.AdminMasterLayout')
 
-@section('title', 'Edit Product')
+@section('title', 'ویرایش محصول')
 
-@section('page-title', 'Edit Product')
+@section('page-title', 'ویرایش محصول')
 
 @section('content')
 
@@ -25,12 +25,12 @@
                     <div class="row">
 
 
-                        {{-- Name --}}
+                        {{-- نام --}}
 
                         <div class="col-md-6 mb-3">
 
                             <label class="form-label">
-                                Product Name
+                                نام محصول
                             </label>
 
                             <input
@@ -51,12 +51,12 @@
                         </div>
 
 
-                        {{-- Product Code --}}
+                        {{-- کد محصول --}}
 
                         <div class="col-md-6 mb-3">
 
                             <label class="form-label">
-                                Product Code
+                                کد محصول
                             </label>
 
                             <input
@@ -77,12 +77,12 @@
                         </div>
 
 
-                        {{-- Category --}}
+                        {{-- دسته‌بندی --}}
 
                         <div class="col-md-6 mb-3">
 
                             <label class="form-label">
-                                Category
+                                دسته‌بندی
                             </label>
 
                             <select
@@ -91,7 +91,7 @@
                             >
 
                                 <option value="">
-                                    -- Select Category --
+                                    — انتخاب دسته‌بندی —
                                 </option>
 
                                 @foreach($categories as $category)
@@ -123,12 +123,12 @@
                         </div>
 
 
-                        {{-- Brand --}}
+                        {{-- برند --}}
 
                         <div class="col-md-6 mb-3">
 
                             <label class="form-label">
-                                Brand
+                                برند
                             </label>
 
                             <select
@@ -137,7 +137,7 @@
                             >
 
                                 <option value="">
-                                    -- Select Brand --
+                                    — انتخاب برند —
                                 </option>
 
                                 @foreach($brands as $brand)
@@ -169,12 +169,12 @@
                         </div>
 
 
-                        {{-- Slug --}}
+                        {{-- نامک --}}
 
                         <div class="col-md-12 mb-3">
 
                             <label class="form-label">
-                                Slug
+                                نامک
                             </label>
 
                             <input
@@ -195,12 +195,12 @@
                         </div>
 
 
-                        {{-- Price --}}
+                        {{-- قیمت --}}
 
                         <div class="col-md-6 mb-3">
 
                             <label class="form-label">
-                                Price
+                                قیمت
                             </label>
 
                             <input
@@ -223,12 +223,12 @@
                         </div>
 
 
-                        {{-- Discount --}}
+                        {{-- تخفیف --}}
 
                         <div class="col-md-6 mb-3">
 
                             <label class="form-label">
-                                Discount (%)
+                                تخفیف (درصد)
                             </label>
 
                             <input
@@ -252,12 +252,12 @@
                         </div>
 
 
-                        {{-- Description --}}
+                        {{-- توضیحات --}}
 
                         <div class="col-md-12 mb-3">
 
                             <label class="form-label">
-                                Description
+                                توضیحات
                             </label>
 
                             <textarea
@@ -277,12 +277,12 @@
                         </div>
 
 
-                        {{-- Status --}}
+                        {{-- وضعیت --}}
 
                         <div class="col-md-12 mb-4">
 
                             <label class="form-label">
-                                Status
+                                وضعیت
                             </label>
 
                             <select
@@ -299,7 +299,7 @@
                                         ) == 1
                                     )
                                 >
-                                    Active
+                                    فعال
                                 </option>
 
                                 <option
@@ -311,7 +311,7 @@
                                         ) == 0
                                     )
                                 >
-                                    Inactive
+                                    غیرفعال
                                 </option>
 
                             </select>
@@ -327,14 +327,14 @@
                             type="submit"
                             class="btn btn-primary"
                         >
-                            Update Product
+                            به‌روزرسانی محصول
                         </button>
 
                         <a
                             href="{{ route('admin.products.index') }}"
                             class="btn btn-secondary"
                         >
-                            Cancel
+                            لغو
                         </a>
 
                     </div>

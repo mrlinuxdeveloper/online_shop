@@ -1,7 +1,7 @@
 @extends('admin.layouts.AdminMasterLayout')
 
-@section('title', 'Add Size')
-@section('page-title', 'Add Size')
+@section('title', 'افزودن سایز')
+@section('page-title', 'افزودن سایز')
 
 @section('content')
 
@@ -17,7 +17,7 @@
                 <div class="mb-3">
 
                     <label class="form-label">
-                        Size Name
+                        نام سایز
                     </label>
 
                     <input
@@ -25,7 +25,7 @@
                         name="name"
                         value="{{ old('name') }}"
                         class="form-control @error('name') is-invalid @enderror"
-                        placeholder="Example: Medium"
+                        placeholder="مثلاً متوسط"
                     >
 
                     @error('name')
@@ -39,7 +39,7 @@
                 <div class="mb-3">
 
                     <label class="form-label">
-                        Code
+                        کد
                     </label>
 
                     <input
@@ -47,7 +47,7 @@
                         name="code"
                         value="{{ old('code') }}"
                         class="form-control @error('code') is-invalid @enderror"
-                        placeholder="Example: M"
+                        placeholder="مثلاً M"
                     >
 
                     @error('code')
@@ -60,12 +60,12 @@
 
                 <button type="submit"
                         class="btn btn-primary">
-                    Save
+                    ذخیره
                 </button>
 
                 <a href="{{ route('admin.sizes.index') }}"
                    class="btn btn-secondary">
-                    Back
+                    بازگشت
                 </a>
 
             </form>

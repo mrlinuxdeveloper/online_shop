@@ -1,8 +1,8 @@
 @extends('admin.layouts.AdminMasterLayout')
 
-@section('title', 'Product Images')
+@section('title', 'تصاویر محصول')
 
-@section('page-title', 'Product Images')
+@section('page-title', 'تصاویر محصول')
 
 @section('content')
 
@@ -19,7 +19,7 @@
                 </h2>
 
                 <p class="text-muted mb-0">
-                    Product images management
+                    مدیریت تصاویر محصول
                 </p>
 
             </div>
@@ -28,20 +28,20 @@
                 href="{{ route('admin.products.index') }}"
                 class="btn btn-secondary"
             >
-                Back to Products
+                بازگشت به محصولات
             </a>
 
         </div>
 
 
-        {{-- Upload --}}
+        {{-- بارگذاری --}}
 
         <div class="card border-0 shadow-sm mb-4">
 
             <div class="card-header bg-white">
 
                 <h5 class="mb-0">
-                    Upload New Image
+                    بارگذاری تصویر جدید
                 </h5>
 
             </div>
@@ -63,7 +63,7 @@
                         <div class="col-md-7">
 
                             <label class="form-label">
-                                Image
+                                تصویر
                             </label>
 
                             <input
@@ -101,7 +101,7 @@
                                     class="form-check-label"
                                     for="is_primary"
                                 >
-                                    Set as primary image
+                                    انتخاب به‌عنوان تصویر اصلی
                                 </label>
 
                             </div>
@@ -115,7 +115,7 @@
                                 type="submit"
                                 class="btn btn-primary w-100"
                             >
-                                Upload
+                                بارگذاری
                             </button>
 
                         </div>
@@ -129,14 +129,14 @@
         </div>
 
 
-        {{-- Images --}}
+        {{-- تصاویر --}}
 
         <div class="card border-0 shadow-sm">
 
             <div class="card-header bg-white">
 
                 <h5 class="mb-0">
-                    Product Images
+                    تصاویر محصول
                 </h5>
 
             </div>
@@ -170,7 +170,7 @@
                                         @if($image->is_primary)
 
                                             <span class="badge text-bg-success mb-3">
-                                            Primary Image
+                                            تصویر اصلی
                                         </span>
 
                                         @else
@@ -195,7 +195,7 @@
                                                     type="submit"
                                                     class="btn btn-sm btn-outline-primary w-100"
                                                 >
-                                                    Set as Primary
+                                                    انتخاب به‌عنوان اصلی
                                                 </button>
 
                                             </form>
@@ -212,7 +212,7 @@
                                             ]
                                         ) }}"
                                             method="POST"
-                                            onsubmit="return confirm('Delete this image?')"
+                                            onsubmit="return confirm('این تصویر حذف شود؟')"
                                         >
 
                                             @csrf
@@ -223,7 +223,7 @@
                                                 type="submit"
                                                 class="btn btn-sm btn-outline-danger w-100"
                                             >
-                                                Delete
+                                                حذف
                                             </button>
 
                                         </form>
@@ -243,7 +243,7 @@
                     <div class="text-center py-5">
 
                         <p class="text-muted mb-0">
-                            No images found for this product.
+                            تصویری برای این محصول ثبت نشده است.
                         </p>
 
                     </div>

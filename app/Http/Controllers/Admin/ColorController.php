@@ -46,7 +46,7 @@ class ColorController extends Controller
 
         return redirect()
             ->route('admin.colors.index')
-            ->with('success', 'Color created successfully.');
+            ->with('success', 'رنگ با موفقیت ایجاد شد.');
     }
 
     public function edit(Color $color)
@@ -80,7 +80,7 @@ class ColorController extends Controller
 
         return redirect()
             ->route('admin.colors.index')
-            ->with('success', 'Color updated successfully.');
+            ->with('success', 'رنگ با موفقیت به‌روزرسانی شد.');
     }
 
     public function destroy(Color $color)
@@ -88,13 +88,13 @@ class ColorController extends Controller
         if ($color->variants()->exists()) {
             return redirect()
                 ->route('admin.colors.index')
-                ->with('error', 'This color is used by product variants.');
+                ->with('error', 'این رنگ در تنوع محصولات استفاده شده و قابل حذف نیست.');
         }
 
         $color->delete();
 
         return redirect()
             ->route('admin.colors.index')
-            ->with('success', 'Color deleted successfully.');
+            ->with('success', 'رنگ با موفقیت حذف شد.');
     }
 }

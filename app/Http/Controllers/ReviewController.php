@@ -11,6 +11,15 @@ class ReviewController extends Controller
 {
     public function store(Request $request, Product $product)
     {
+        abort_unless($product->status, 404);
+
+        if ($product->reviews()->where('user_id', Auth::id())->exists()) {
+            return back()->with(
+                'info',
+                'شما قبلاً برای این محصول نظر ثبت کرده‌اید.'
+            );
+        }
+
         $validated = $request->validate([
             'rating' => [
                 'required',

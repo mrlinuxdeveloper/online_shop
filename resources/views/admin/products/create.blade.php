@@ -1,8 +1,8 @@
 @extends('admin.layouts.AdminMasterLayout')
 
-@section('title', 'Create Product')
+@section('title', 'ایجاد محصول')
 
-@section('page-title', 'Create Product')
+@section('page-title', 'ایجاد محصول')
 
 @section('content')
 
@@ -23,12 +23,12 @@
                     <div class="row">
 
 
-                        {{-- Product Name --}}
+                        {{-- نام محصول --}}
 
                         <div class="col-md-6 mb-3">
 
                             <label class="form-label">
-                                Product Name
+                                نام محصول
                             </label>
 
                             <input
@@ -36,7 +36,7 @@
                                 name="name"
                                 value="{{ old('name') }}"
                                 class="form-control @error('name') is-invalid @enderror"
-                                placeholder="Product name"
+                                placeholder="نام محصول"
                             >
 
                             @error('name')
@@ -50,12 +50,12 @@
                         </div>
 
 
-                        {{-- Product Code --}}
+                        {{-- کد محصول --}}
 
                         <div class="col-md-6 mb-3">
 
                             <label class="form-label">
-                                Product Code
+                                کد محصول
                             </label>
 
                             <input
@@ -63,7 +63,7 @@
                                 name="product_code"
                                 value="{{ old('product_code') }}"
                                 class="form-control @error('product_code') is-invalid @enderror"
-                                placeholder="SKU-001"
+                                placeholder="شناسهٔ کالا-001"
                             >
 
                             @error('product_code')
@@ -77,12 +77,12 @@
                         </div>
 
 
-                        {{-- Category --}}
+                        {{-- دسته‌بندی --}}
 
                         <div class="col-md-6 mb-3">
 
                             <label class="form-label">
-                                Category
+                                دسته‌بندی
                             </label>
 
                             <select
@@ -91,7 +91,7 @@
                             >
 
                                 <option value="">
-                                    -- Select Category --
+                                    — انتخاب دسته‌بندی —
                                 </option>
 
                                 @foreach($categories as $category)
@@ -120,12 +120,12 @@
                         </div>
 
 
-                        {{-- Brand --}}
+                        {{-- برند --}}
 
                         <div class="col-md-6 mb-3">
 
                             <label class="form-label">
-                                Brand
+                                برند
                             </label>
 
                             <select
@@ -134,7 +134,7 @@
                             >
 
                                 <option value="">
-                                    -- Select Brand --
+                                    — انتخاب برند —
                                 </option>
 
                                 @foreach($brands as $brand)
@@ -163,12 +163,12 @@
                         </div>
 
 
-                        {{-- Slug --}}
+                        {{-- نامک --}}
 
                         <div class="col-md-12 mb-3">
 
                             <label class="form-label">
-                                Slug
+                                نامک
                             </label>
 
                             <input
@@ -176,11 +176,11 @@
                                 name="slug"
                                 value="{{ old('slug') }}"
                                 class="form-control @error('slug') is-invalid @enderror"
-                                placeholder="product-slug"
+                                placeholder="نامک-محصول"
                             >
 
                             <small class="text-muted">
-                                Leave empty to generate automatically.
+                                برای ساخت خودکار، این بخش را خالی بگذارید.
                             </small>
 
                             @error('slug')
@@ -194,12 +194,12 @@
                         </div>
 
 
-                        {{-- Price --}}
+                        {{-- قیمت --}}
 
                         <div class="col-md-6 mb-3">
 
                             <label class="form-label">
-                                Price
+                                قیمت
                             </label>
 
                             <input
@@ -223,12 +223,12 @@
                         </div>
 
 
-                        {{-- Discount --}}
+                        {{-- تخفیف --}}
 
                         <div class="col-md-6 mb-3">
 
                             <label class="form-label">
-                                Discount (%)
+                                تخفیف (درصد)
                             </label>
 
                             <input
@@ -252,19 +252,19 @@
                         </div>
 
 
-                        {{-- Description --}}
+                        {{-- توضیحات --}}
 
                         <div class="col-md-12 mb-3">
 
                             <label class="form-label">
-                                Description
+                                توضیحات
                             </label>
 
                             <textarea
                                 name="description"
                                 rows="6"
                                 class="form-control @error('description') is-invalid @enderror"
-                                placeholder="Product description"
+                                placeholder="توضیحات محصول"
                             >{{ old('description') }}</textarea>
 
                             @error('description')
@@ -278,12 +278,12 @@
                         </div>
 
 
-                        {{-- Status --}}
+                        {{-- وضعیت --}}
 
                         <div class="col-md-12 mb-4">
 
                             <label class="form-label">
-                                Status
+                                وضعیت
                             </label>
 
                             <select
@@ -295,14 +295,14 @@
                                     value="1"
                                     @selected(old('status', 1) == 1)
                                 >
-                                    Active
+                                    فعال
                                 </option>
 
                                 <option
                                     value="0"
                                     @selected(old('status') === '0')
                                 >
-                                    Inactive
+                                    غیرفعال
                                 </option>
 
                             </select>
@@ -318,14 +318,14 @@
                             type="submit"
                             class="btn btn-primary"
                         >
-                            Create Product
+                            ایجاد محصول
                         </button>
 
                         <a
                             href="{{ route('admin.products.index') }}"
                             class="btn btn-secondary"
                         >
-                            Cancel
+                            لغو
                         </a>
 
                     </div>

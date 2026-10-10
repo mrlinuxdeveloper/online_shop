@@ -1,4 +1,4 @@
-@extends('shop.layouts.app')
+@extends('layouts.app')
 
 @section('content')
     <style>
@@ -202,15 +202,15 @@
         <div class="container">
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
                 <div>
-                    <h1 class="cart-title mb-1">Shopping Cart</h1>
+                    <h1 class="cart-title mb-1">سبد خرید</h1>
                     <div class="cart-subtitle">
-                        {{ $cart->items->count() }} item(s) in your cart
+                        {{ $cart->items->count() }} قلم در سبد خرید شما
                     </div>
                 </div>
 
                 <a href="{{ route('shop.products.index') }}"
                    class="btn btn-outline-dark continue-btn">
-                    Continue Shopping
+                    ادامه خرید
                 </a>
             </div>
 
@@ -252,7 +252,7 @@
                                                 >
                                             @else
                                                 <div class="product-placeholder">
-                                                    No Image
+                                                    بدون تصویر
                                                 </div>
                                             @endif
                                         </div>
@@ -265,7 +265,7 @@
                                                 </a>
                                             @else
                                                 <div class="text-danger fw-bold">
-                                                    Product unavailable
+                                                    محصول در دسترس نیست
                                                 </div>
                                             @endif
 
@@ -273,14 +273,14 @@
                                                 <div class="variant-info mt-2">
                                                     @if($variant->size)
                                                         <div>
-                                                            <strong>Size:</strong>
+                                                            <strong>سایز:</strong>
                                                             {{ $variant->size->name }}
                                                         </div>
                                                     @endif
 
                                                     @if($variant->color)
                                                         <div>
-                                                            <strong>Color:</strong>
+                                                            <strong>رنگ:</strong>
                                                             {{ $variant->color->name }}
 
                                                             <span
@@ -291,7 +291,7 @@
                                                     @endif
 
                                                     <div>
-                                                        <strong>SKU:</strong>
+                                                        <strong>شناسهٔ کالا:</strong>
                                                         {{ $variant->sku ?? '-' }}
                                                     </div>
                                                 </div>
@@ -299,14 +299,14 @@
                                         </div>
 
                                         <div class="col-6 col-md-2">
-                                            <span class="price-label">Unit Price</span>
+                                            <span class="price-label">قیمت واحد</span>
                                             <span class="price-value">
                                             {{ number_format($item->price) }}
                                         </span>
                                         </div>
 
                                         <div class="col-6 col-md-2">
-                                            <span class="price-label">Quantity</span>
+                                            <span class="price-label">تعداد</span>
 
                                             <form action="{{ route('cart.update', $item) }}"
                                                   method="POST"
@@ -327,14 +327,14 @@
 
                                                 <button type="submit"
                                                         class="btn btn-outline-dark btn-sm update-btn"
-                                                        title="Update quantity">
+                                                        title="به‌روزرسانی تعداد">
                                                     ✓
                                                 </button>
                                             </form>
                                         </div>
 
                                         <div class="col-12 col-md-2 text-md-end">
-                                            <span class="price-label">Total</span>
+                                            <span class="price-label">مبلغ نهایی</span>
 
                                             <div class="item-total">
                                                 {{ number_format($itemTotal) }}
@@ -348,7 +348,7 @@
 
                                                 <button type="submit"
                                                         class="remove-btn">
-                                                    Remove
+                                                    حذف
                                                 </button>
                                             </form>
                                         </div>
@@ -360,26 +360,26 @@
 
                     <div class="col-lg-4">
                         <div class="summary-card">
-                            <h2 class="summary-title">Order Summary</h2>
+                            <h2 class="summary-title">خلاصه سفارش</h2>
 
                             <div class="summary-row">
-                                <span>Subtotal</span>
+                                <span>جمع جزء</span>
                                 <strong>{{ number_format($total) }}</strong>
                             </div>
 
                             <div class="summary-row">
-                                <span>Shipping</span>
-                                <strong>Free</strong>
+                                <span>هزینه ارسال</span>
+                                <strong>رایگان</strong>
                             </div>
 
                             <div class="summary-row summary-total">
-                                <strong>Total</strong>
+                                <strong>مبلغ نهایی</strong>
                                 <strong>{{ number_format($total) }}</strong>
                             </div>
 
                             <a href="{{ route('checkout.index') }}"
                                class="checkout-btn">
-                                Proceed to Checkout
+                                ادامه و ثبت سفارش
                             </a>
                         </div>
                     </div>
@@ -388,15 +388,15 @@
                 <div class="empty-cart">
                     <div class="empty-icon">🛒</div>
 
-                    <h3>Your cart is empty</h3>
+                    <h3>سبد خرید شما خالی است</h3>
 
                     <p class="text-muted mb-4">
-                        You haven't added any products yet.
+                        هنوز محصولی به سبد خرید اضافه نکرده‌اید.
                     </p>
 
                     <a href="{{ route('shop.products.index') }}"
                        class="btn btn-dark px-4 py-2 rounded-3">
-                        Start Shopping
+                        شروع خرید
                     </a>
                 </div>
             @endif

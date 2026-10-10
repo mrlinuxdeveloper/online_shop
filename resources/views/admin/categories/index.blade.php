@@ -1,27 +1,31 @@
 @extends('admin.layouts.AdminMasterLayout')
 
-@section('title', 'Categories')
+@section('title', 'دسته‌بندی‌ها')
 
-@section('page-title', 'Categories')
+@section('page-title', 'دسته‌بندی‌ها')
 
 @section('content')
 
     <div class="container-fluid">
 
+        @if(session('error'))
+            <div class="alert alert-warning" role="alert">{{ session('error') }}</div>
+        @endif
+
         <div class="d-flex justify-content-between align-items-center mb-4">
 
             <div>
-                <h2>Categories</h2>
+                <h2>دسته‌بندی‌ها</h2>
 
                 <p class="text-muted mb-0">
-                    Manage product categories
+                    مدیریت دسته‌بندی‌های محصولات
                 </p>
             </div>
 
             <a href="{{ route('admin.categories.create') }}"
                class="btn btn-primary">
 
-                + Add Category
+                + افزودن دسته‌بندی
 
             </a>
 
@@ -42,17 +46,19 @@
 
                             <th>#</th>
 
-                            <th>Image</th>
+                            <th>تصویر</th>
 
-                            <th>Name</th>
+                            <th>نام</th>
 
-                            <th>Slug</th>
+                            <th>نامک</th>
 
-                            <th>Parent</th>
+                            <th>والد</th>
 
-                            <th>Status</th>
+                            <th>وابستگی‌ها</th>
 
-                            <th width="180">Actions</th>
+                            <th>وضعیت</th>
+
+                            <th width="180">عملیات</th>
 
                         </tr>
 
@@ -89,7 +95,7 @@
                                             class="bg-light rounded d-flex align-items-center justify-content-center"
                                             style="width:60px;height:60px;"
                                         >
-                                            No Image
+                                            بدون تصویر
                                         </div>
 
                                     @endif
@@ -121,19 +127,25 @@
 
                                 </td>
 
+                                <td>
+                                    <span class="badge text-bg-light">{{ $category->products_count }} محصول</span>
+                                    @if($category->children_count)
+                                        <span class="badge text-bg-light">{{ $category->children_count }} زیرشاخه</span>
+                                    @endif
+                                </td>
 
                                 <td>
 
                                     @if($category->status)
 
                                         <span class="badge text-bg-success">
-                                        Active
+                                        فعال
                                     </span>
 
                                     @else
 
                                         <span class="badge text-bg-secondary">
-                                        Inactive
+                                        غیرفعال
                                     </span>
 
                                     @endif
@@ -147,7 +159,7 @@
                                         href="{{ route('admin.categories.edit', $category) }}"
                                         class="btn btn-sm btn-outline-primary"
                                     >
-                                        Edit
+                                        ویرایش
                                     </a>
 
 
@@ -155,7 +167,7 @@
                                         action="{{ route('admin.categories.destroy', $category) }}"
                                         method="POST"
                                         class="d-inline"
-                                        onsubmit="return confirm('Delete this category?')"
+                                        onsubmit="return confirm('این دسته‌بندی حذف شود؟')"
                                     >
 
                                         @csrf
@@ -165,8 +177,10 @@
                                         <button
                                             type="submit"
                                             class="btn btn-sm btn-outline-danger"
+                                            @disabled($category->products_count > 0 || $category->children_count > 0)
+                                            title="{{ $category->products_count || $category->children_count ? 'ابتدا محصولات یا زیرشاخه‌ها را منتقل کنید یا دسته‌بندی را غیرفعال کنید.' : 'حذف دسته‌بندی' }}"
                                         >
-                                            Delete
+                                            حذف
                                         </button>
 
                                     </form>
@@ -180,11 +194,11 @@
                             <tr>
 
                                 <td
-                                    colspan="7"
+                                    colspan="8"
                                     class="text-center py-5"
                                 >
 
-                                    No categories found.
+                                    دسته‌بندی‌ای پیدا نشد.
 
                                 </td>
 

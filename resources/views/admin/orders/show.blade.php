@@ -1,8 +1,8 @@
 @extends('admin.layouts.AdminMasterLayout')
 
-@section('title', 'Order Details')
+@section('title', 'جزئیات سفارش')
 
-@section('page-title', 'Order Details')
+@section('page-title', 'جزئیات سفارش')
 
 @section('content')
 
@@ -31,14 +31,14 @@
                         href="{{ route('admin.orders.invoice', $order) }}"
                         class="btn btn-primary"
                     >
-                        Invoice
+                        فاکتور
                     </a>
 
                     <a
                         href="{{ route('admin.orders.index') }}"
                         class="btn btn-outline-secondary"
                     >
-                        Back
+                        بازگشت
                     </a>
 
                 </div>
@@ -50,13 +50,13 @@
 
         <div class="row g-4">
 
-            {{-- Customer --}}
+            {{-- مشتری --}}
             <div class="col-md-6">
 
                 <div class="card shadow-sm border-0 h-100">
 
                     <div class="card-header bg-white">
-                        <strong>Customer</strong>
+                        <strong>مشتری</strong>
                     </div>
 
                     <div class="card-body">
@@ -64,25 +64,25 @@
                         @if($order->user)
 
                             <p class="mb-2">
-                                <strong>Name:</strong>
+                                <strong>نام:</strong>
                                 {{ $order->user->name }}
                                 {{ $order->user->lastname }}
                             </p>
 
                             <p class="mb-2">
-                                <strong>Email:</strong>
+                                <strong>رایانامه:</strong>
                                 {{ $order->user->email }}
                             </p>
 
                             <p class="mb-0">
-                                <strong>Phone:</strong>
+                                <strong>تلفن:</strong>
                                 {{ $order->user->tel ?? '-' }}
                             </p>
 
                         @else
 
                             <span class="text-muted">
-                            User not found.
+                            کاربر پیدا نشد.
                         </span>
 
                         @endif
@@ -94,13 +94,13 @@
             </div>
 
 
-            {{-- Address --}}
+            {{-- نشانی --}}
             <div class="col-md-6">
 
                 <div class="card shadow-sm border-0 h-100">
 
                     <div class="card-header bg-white">
-                        <strong>Shipping Address</strong>
+                        <strong>نشانی ارسال</strong>
                     </div>
 
                     <div class="card-body">
@@ -118,19 +118,19 @@
                             </p>
 
                             <p class="mb-2">
-                                <strong>Receiver:</strong>
+                                <strong>گیرنده:</strong>
                                 {{ $order->address->receiver_name }}
                             </p>
 
                             <p class="mb-0">
-                                <strong>Phone:</strong>
+                                <strong>تلفن:</strong>
                                 {{ $order->address->receiver_phone }}
                             </p>
 
                         @else
 
                             <span class="text-muted">
-                            Address not found.
+                            نشانی پیدا نشد.
                         </span>
 
                         @endif
@@ -144,13 +144,13 @@
         </div>
 
 
-        {{-- Products --}}
+        {{-- محصولات --}}
         <div class="card shadow-sm border-0 mt-4">
 
             <div class="card-header bg-white">
 
                 <strong>
-                    Order Items
+                    اقلام سفارش
                 </strong>
 
             </div>
@@ -164,19 +164,19 @@
 
                     <tr>
 
-                        <th>Product</th>
+                        <th>محصول</th>
 
-                        <th>Code</th>
+                        <th>کد</th>
 
-                        <th>Size</th>
+                        <th>سایز</th>
 
-                        <th>Color</th>
+                        <th>رنگ</th>
 
-                        <th>Price</th>
+                        <th>قیمت</th>
 
-                        <th>Quantity</th>
+                        <th>تعداد</th>
 
-                        <th>Total</th>
+                        <th>مبلغ کل</th>
 
                     </tr>
 
@@ -197,7 +197,7 @@
 
                                         <img
                                             src="{{ asset(
-                                            'storage/products/' .
+                                            'storage/' .
                                             $item->product_image
                                         ) }}"
                                             width="60"
@@ -254,7 +254,7 @@
         </div>
 
 
-        {{-- Total --}}
+        {{-- مبلغ کل --}}
         <div class="row justify-content-end mt-4">
 
             <div class="col-md-5">
@@ -266,7 +266,7 @@
                         <div class="d-flex justify-content-between mb-2">
 
                         <span>
-                            Subtotal
+                            جمع جزء
                         </span>
 
                             <strong>
@@ -279,7 +279,7 @@
                         <div class="d-flex justify-content-between mb-2">
 
                         <span>
-                            Discount
+                            تخفیف
                         </span>
 
                             <strong>
@@ -292,7 +292,7 @@
                         <div class="d-flex justify-content-between mb-2">
 
                         <span>
-                            Shipping
+                            هزینهٔ ارسال
                         </span>
 
                             <strong>
@@ -308,7 +308,7 @@
                         <div class="d-flex justify-content-between">
 
                             <strong>
-                                Total
+                                مبلغ کل
                             </strong>
 
                             <strong class="fs-5">
@@ -327,11 +327,11 @@
         </div>
 
 
-        {{-- Status --}}
+        {{-- وضعیت --}}
         <div class="card shadow-sm border-0 mt-4">
 
             <div class="card-header bg-white">
-                <strong>Order Status</strong>
+                <strong>وضعیت سفارش</strong>
             </div>
 
             <div class="card-body">
@@ -352,7 +352,7 @@
                         <div class="col-md-5">
 
                             <label class="form-label">
-                                Status
+                                وضعیت
                             </label>
 
                             <select
@@ -364,35 +364,35 @@
                                     value="pending"
                                     @selected($order->status === 'pending')
                                 >
-                                    Pending
+                                    در انتظار
                                 </option>
 
                                 <option
                                     value="processing"
                                     @selected($order->status === 'processing')
                                 >
-                                    Processing
+                                    در حال پردازش
                                 </option>
 
                                 <option
                                     value="shipped"
                                     @selected($order->status === 'shipped')
                                 >
-                                    Shipped
+                                    ارسال‌شده
                                 </option>
 
                                 <option
                                     value="delivered"
                                     @selected($order->status === 'delivered')
                                 >
-                                    Delivered
+                                    تحویل‌شده
                                 </option>
 
                                 <option
                                     value="cancelled"
                                     @selected($order->status === 'cancelled')
                                 >
-                                    Cancelled
+                                    لغوشده
                                 </option>
 
                             </select>
@@ -406,7 +406,7 @@
                                 type="submit"
                                 class="btn btn-primary"
                             >
-                                Update Status
+                                به‌روزرسانی وضعیت
                             </button>
 
                         </div>
@@ -420,13 +420,13 @@
         </div>
 // payment status
 
-        {{-- Payment --}}
+        {{-- پرداخت --}}
 
         <div class="card shadow-sm border-0 mt-4">
 
 
             <div class="card-header bg-white">
-                <strong>Payment</strong>
+                <strong>پرداخت</strong>
             </div>
 
             <div class="card-body">
@@ -436,32 +436,32 @@
                     <div class="col-md-4">
 
                         <small class="text-muted d-block mb-1">
-                            Payment Status
+                            وضعیت پرداخت
                         </small>
 
                         @switch($order->payment_status)
 
                             @case('paid')
                                 <span class="badge bg-success">
-                        Paid
+                        پرداخت‌شده
                     </span>
                                 @break
 
                             @case('pending')
                                 <span class="badge bg-warning text-dark">
-                        Pending
+                        در انتظار
                     </span>
                                 @break
 
                             @case('failed')
                                 <span class="badge bg-danger">
-                        Failed
+                        ناموفق
                     </span>
                                 @break
 
                             @case('refunded')
                                 <span class="badge bg-info text-dark">
-                        Refunded
+                        بازپرداخت‌شده
                     </span>
                                 @break
 
@@ -477,7 +477,7 @@
                     <div class="col-md-4">
 
                         <small class="text-muted d-block mb-1">
-                            Order Total
+                            مبلغ کل سفارش
                         </small>
 
                         <strong>
@@ -490,7 +490,7 @@
                     <div class="col-md-4">
 
                         <small class="text-muted d-block mb-1">
-                            Payment Records
+                            سوابق پرداخت
                         </small>
 
                         <strong>
@@ -515,7 +515,7 @@
                         <div class="col-md-5">
 
                             <label class="form-label">
-                                Change Payment Status
+                                تغییر وضعیت پرداخت
                             </label>
 
                             <select
@@ -527,28 +527,28 @@
                                     value="pending"
                                     @selected($order->payment_status === 'pending')
                                 >
-                                    Pending
+                                    در انتظار
                                 </option>
 
                                 <option
                                     value="paid"
                                     @selected($order->payment_status === 'paid')
                                 >
-                                    Paid
+                                    پرداخت‌شده
                                 </option>
 
                                 <option
                                     value="failed"
                                     @selected($order->payment_status === 'failed')
                                 >
-                                    Failed
+                                    ناموفق
                                 </option>
 
                                 <option
                                     value="refunded"
                                     @selected($order->payment_status === 'refunded')
                                 >
-                                    Refunded
+                                    بازپرداخت‌شده
                                 </option>
 
                             </select>
@@ -561,7 +561,7 @@
                                 type="submit"
                                 class="btn btn-primary"
                             >
-                                Update Payment Status
+                                به‌روزرسانی وضعیت پرداخت
                             </button>
 
                         </div>
@@ -578,7 +578,7 @@
 
 {{--        <div class="card mb-4">--}}
 {{--            <div class="card-header">--}}
-{{--                <h5 class="mb-0">Payment Status</h5>--}}
+{{--                <h5 class="mb-0">وضعیت پرداخت</h5>--}}
 {{--            </div>--}}
 
 {{--            <div class="card-body">--}}
@@ -594,7 +594,7 @@
 {{--                        <div class="col-md-6">--}}
 
 {{--                            <label class="form-label">--}}
-{{--                                Payment Status--}}
+{{--                                وضعیت پرداخت--}}
 {{--                            </label>--}}
 
 {{--                            <select name="payment_status"--}}
@@ -602,22 +602,22 @@
 
 {{--                                <option value="pending"--}}
 {{--                                    {{ $order->payment_status === 'pending' ? 'selected' : '' }}>--}}
-{{--                                    Pending--}}
+{{--                                    در انتظار--}}
 {{--                                </option>--}}
 
 {{--                                <option value="paid"--}}
 {{--                                    {{ $order->payment_status === 'paid' ? 'selected' : '' }}>--}}
-{{--                                    Paid--}}
+{{--                                    پرداخت‌شده--}}
 {{--                                </option>--}}
 
 {{--                                <option value="failed"--}}
 {{--                                    {{ $order->payment_status === 'failed' ? 'selected' : '' }}>--}}
-{{--                                    Failed--}}
+{{--                                    ناموفق--}}
 {{--                                </option>--}}
 
 {{--                                <option value="refunded"--}}
 {{--                                    {{ $order->payment_status === 'refunded' ? 'selected' : '' }}>--}}
-{{--                                    Refunded--}}
+{{--                                    بازپرداخت‌شده--}}
 {{--                                </option>--}}
 
 {{--                            </select>--}}
@@ -628,7 +628,7 @@
 
 {{--                            <button type="submit"--}}
 {{--                                    class="btn btn-primary">--}}
-{{--                                Update Payment Status--}}
+{{--                                به‌روزرسانی وضعیت پرداخت--}}
 {{--                            </button>--}}
 
 {{--                        </div>--}}
@@ -649,7 +649,7 @@
             <div class="card-header bg-white">
 
                 <strong>
-                    Shipment
+                    ارسال
                 </strong>
 
             </div>
@@ -669,11 +669,11 @@
                     <div class="row g-3">
 
 
-                        {{-- Shipping Method --}}
+                        {{-- روش ارسال --}}
                         <div class="col-md-4">
 
                             <label class="form-label">
-                                Shipping Company / Method
+                                شرکت یا روش ارسال
                             </label>
 
                             <input
@@ -681,17 +681,17 @@
                                 name="shipping_method"
                                 class="form-control"
                                 value="{{ $order->shipment?->shipping_method }}"
-                                placeholder="Post, Tipax, ..."
+                                placeholder="مثلاً پست، تیپاکس و ..."
                             >
 
                         </div>
 
 
-                        {{-- Tracking Code --}}
+                        {{-- کد رهگیری --}}
                         <div class="col-md-4">
 
                             <label class="form-label">
-                                Tracking Code
+                                کد رهگیری
                             </label>
 
                             <input
@@ -699,17 +699,17 @@
                                 name="tracking_code"
                                 class="form-control"
                                 value="{{ $order->shipment?->tracking_code }}"
-                                placeholder="Tracking number"
+                                placeholder="شمارهٔ رهگیری"
                             >
 
                         </div>
 
 
-                        {{-- Status --}}
+                        {{-- وضعیت --}}
                         <div class="col-md-4">
 
                             <label class="form-label">
-                                Shipment Status
+                                وضعیت ارسال
                             </label>
 
                             <select
@@ -724,7 +724,7 @@
                                         || !$order->shipment
                                     )
                                 >
-                                    Pending
+                                    در انتظار
                                 </option>
 
 
@@ -734,7 +734,7 @@
                                         $order->shipment?->status === 'processing'
                                     )
                                 >
-                                    Processing
+                                    در حال پردازش
                                 </option>
 
 
@@ -744,7 +744,7 @@
                                         $order->shipment?->status === 'shipped'
                                     )
                                 >
-                                    Shipped
+                                    ارسال‌شده
                                 </option>
 
 
@@ -754,7 +754,7 @@
                                         $order->shipment?->status === 'delivered'
                                     )
                                 >
-                                    Delivered
+                                    تحویل‌شده
                                 </option>
 
 
@@ -764,7 +764,7 @@
                                         $order->shipment?->status === 'returned'
                                     )
                                 >
-                                    Returned
+                                    مرجوع‌شده
                                 </option>
 
                             </select>
@@ -774,7 +774,7 @@
                     </div>
 
 
-                    {{-- Current Shipment Information --}}
+                    {{-- Current اطلاعات ارسال --}}
                     @if($order->shipment)
 
                         <div class="row mt-4">
@@ -782,7 +782,7 @@
                             <div class="col-md-4">
 
                                 <small class="text-muted d-block mb-1">
-                                    Shipped At
+                                    تاریخ ارسال
                                 </small>
 
                                 <strong>
@@ -795,7 +795,7 @@
                             <div class="col-md-4">
 
                                 <small class="text-muted d-block mb-1">
-                                    Delivered At
+                                    تاریخ تحویل
                                 </small>
 
                                 <strong>
@@ -808,7 +808,7 @@
                             <div class="col-md-4">
 
                                 <small class="text-muted d-block mb-1">
-                                    Current Status
+                                    وضعیت فعلی
                                 </small>
 
 
@@ -817,7 +817,7 @@
                                     @case('pending')
 
                                         <span class="badge bg-secondary">
-                                Pending
+                                در انتظار
                             </span>
 
                                         @break
@@ -826,7 +826,7 @@
                                     @case('processing')
 
                                         <span class="badge bg-primary">
-                                Processing
+                                در حال پردازش
                             </span>
 
                                         @break
@@ -835,7 +835,7 @@
                                     @case('shipped')
 
                                         <span class="badge bg-info text-dark">
-                                Shipped
+                                ارسال‌شده
                             </span>
 
                                         @break
@@ -844,7 +844,7 @@
                                     @case('delivered')
 
                                         <span class="badge bg-success">
-                                Delivered
+                                تحویل‌شده
                             </span>
 
                                         @break
@@ -853,7 +853,7 @@
                                     @case('returned')
 
                                         <span class="badge bg-danger">
-                                Returned
+                                مرجوع‌شده
                             </span>
 
                                         @break
@@ -880,7 +880,7 @@
                             type="submit"
                             class="btn btn-primary"
                         >
-                            Update Shipment
+                            به‌روزرسانی ارسال
                         </button>
 
                     </div>
@@ -896,4 +896,3 @@
     </div>
 
 @endsection
-

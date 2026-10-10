@@ -1,8 +1,8 @@
 @extends('admin.layouts.AdminMasterLayout')
 
-@section('title', 'Brands')
+@section('title', 'برندها')
 
-@section('page-title', 'Brands')
+@section('page-title', 'برندها')
 
 @section('content')
 
@@ -12,10 +12,10 @@
 
             <div>
 
-                <h2>Brands</h2>
+                <h2>برندها</h2>
 
                 <p class="text-muted mb-0">
-                    Manage product brands
+                    مدیریت برندهای محصولات
                 </p>
 
             </div>
@@ -24,7 +24,7 @@
                 href="{{ route('admin.brands.create') }}"
                 class="btn btn-primary"
             >
-                + Add Brand
+                + افزودن برند
             </a>
 
         </div>
@@ -44,18 +44,18 @@
 
                             <th>#</th>
 
-                            <th>Image</th>
+                            <th>تصویر</th>
 
-                            <th>Name</th>
+                            <th>نام</th>
 
-                            <th>Slug</th>
+                            <th>نامک</th>
 
-                            <th>Products</th>
+                            <th>محصولات</th>
 
-                            <th>Status</th>
+                            <th>وضعیت</th>
 
                             <th width="180">
-                                Actions
+                                عملیات
                             </th>
 
                         </tr>
@@ -93,7 +93,7 @@
                                             class="bg-light rounded d-flex align-items-center justify-content-center"
                                             style="width:60px;height:60px;"
                                         >
-                                            No Image
+                                            بدون تصویر
                                         </div>
 
                                     @endif
@@ -131,13 +131,13 @@
                                     @if($brand->status)
 
                                         <span class="badge text-bg-success">
-                                        Active
+                                        فعال
                                     </span>
 
                                     @else
 
                                         <span class="badge text-bg-secondary">
-                                        Inactive
+                                        غیرفعال
                                     </span>
 
                                     @endif
@@ -151,7 +151,7 @@
                                         href="{{ route('admin.brands.edit', $brand) }}"
                                         class="btn btn-sm btn-outline-primary"
                                     >
-                                        Edit
+                                        ویرایش
                                     </a>
 
 
@@ -159,7 +159,7 @@
                                         action="{{ route('admin.brands.destroy', $brand) }}"
                                         method="POST"
                                         class="d-inline"
-                                        onsubmit="return confirm('Delete this brand?')"
+                                        onsubmit="return confirm('این برند حذف شود؟')"
                                     >
 
                                         @csrf
@@ -170,7 +170,7 @@
                                             type="submit"
                                             class="btn btn-sm btn-outline-danger"
                                         >
-                                            Delete
+                                            حذف
                                         </button>
 
                                     </form>
@@ -187,7 +187,7 @@
                                     colspan="7"
                                     class="text-center py-5"
                                 >
-                                    No brands found.
+                                    برندی پیدا نشد.
                                 </td>
 
                             </tr>

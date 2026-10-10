@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\SiteSetting;
 
 class HomeController extends Controller
 {
@@ -52,11 +53,19 @@ class HomeController extends Controller
             ->take(8)
             ->get();
 
+        $appearance = SiteSetting::getValue('appearance', []);
+        $slides = collect($appearance['slides'] ?? [])->where('active', true)->values();
+        $primaryColor = $appearance['primary_color'] ?? '#75172c';
+        $primaryColor = preg_match('/^#[0-9A-Fa-f]{6}$/', $primaryColor) ? $primaryColor : '#75172c';
+
         return view('shop.home.index', compact(
             'categories',
             'featuredProducts',
             'latestProducts',
-            'brands'
+            'brands',
+            'appearance',
+            'slides',
+            'primaryColor'
         ));
     }
 }

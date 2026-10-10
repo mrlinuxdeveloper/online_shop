@@ -91,7 +91,7 @@ class AddressController extends Controller
 
         return redirect()
             ->route('addresses.index')
-            ->with('success', 'Address added successfully.');
+            ->with('success', 'نشانی با موفقیت اضافه شد.');
     }
 
     public function edit(Address $address)
@@ -154,7 +154,9 @@ class AddressController extends Controller
             ],
         ]);
 
-        if ($request->boolean('is_default')) {
+        $makeDefault = $request->boolean('is_default') || $address->is_default;
+
+        if ($makeDefault) {
             Address::where('user_id', auth()->id())
                 ->where('id', '!=', $address->id)
                 ->update([
@@ -162,11 +164,13 @@ class AddressController extends Controller
                 ]);
         }
 
+        $validated['is_default'] = $makeDefault;
+
         $address->update($validated);
 
         return redirect()
             ->route('addresses.index')
-            ->with('success', 'Address updated successfully.');
+            ->with('success', 'نشانی با موفقیت به‌روزرسانی شد.');
     }
 
     public function destroy(Address $address)
@@ -194,7 +198,7 @@ class AddressController extends Controller
 
         return redirect()
             ->route('addresses.index')
-            ->with('success', 'Address deleted successfully.');
+            ->with('success', 'نشانی با موفقیت حذف شد.');
     }
 
     private function authorizeAddress(Address $address)

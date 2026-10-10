@@ -4,15 +4,15 @@
 
     <style>
         .shop-page {
-            background: #fafafa;
+            background: #fff;
             min-height: 100vh;
         }
 
-        .shop-header {
-            background: #f3f1ed;
-            border-radius: 18px;
-            padding: 40px;
-            margin-bottom: 30px;
+        .shop-intro {
+            background: #fff;
+            border-bottom: 1px solid #e9e9e9;
+            padding: 24px 0;
+            margin-bottom: 24px;
         }
 
         .shop-title {
@@ -28,11 +28,11 @@
 
         .filter-box {
             background: white;
-            border-radius: 16px;
+            border: 1px solid #e9e9e9;
+            border-radius: 3px;
             padding: 22px;
-            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05);
             position: sticky;
-            top: 20px;
+            top: 15px;
         }
 
         .filter-title {
@@ -47,22 +47,21 @@
         }
 
         .product-card {
-            border: 0;
-            border-radius: 16px;
+            border: 1px solid #eee;
+            border-radius: 2px;
             overflow: hidden;
             background: white;
-            transition: 0.3s;
+            transition: 0.25s;
             height: 100%;
-            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.06);
         }
 
         .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px);
+            border-color: #bbb;
         }
 
         .product-image {
-            height: 280px;
+            aspect-ratio: 3 / 4;
             background: #f5f5f5;
             overflow: hidden;
             position: relative;
@@ -83,32 +82,44 @@
             position: absolute;
             top: 12px;
             right: 12px;
-            background: #b24c3c;
+            background: var(--shop-accent, #d7193f);
             color: white;
             padding: 5px 10px;
-            border-radius: 20px;
+            border-radius: 2px;
             font-size: 13px;
         }
 
         .product-info {
             padding: 18px;
+            min-height: 158px;
+            display: flex;
+            flex-direction: column;
         }
 
         .product-category {
             font-size: 13px;
             color: #888;
+            height: 19px;
+            overflow: hidden;
         }
 
         .product-name {
             font-size: 17px;
             font-weight: 700;
-            margin: 7px 0;
+            line-height: 1.6;
+            height: 54px;
+            margin: 4px 0;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
         }
 
         .product-price {
             font-weight: 700;
-            color: #2e5e4e;
+            color: var(--shop-primary, #75172c);
             font-size: 18px;
+            margin-top: auto;
         }
 
         .old-price {
@@ -116,6 +127,7 @@
             text-decoration: line-through;
             font-size: 14px;
             margin-right: 8px;
+            display: inline-block;
         }
 
         .empty-products {
@@ -125,6 +137,13 @@
             text-align: center;
             color: #777;
         }
+
+        @media (max-width: 575px) {
+            .product-info { min-height: 145px; padding: 12px; }
+            .product-name { height: 46px; font-size: 14px; }
+            .product-price { font-size: 15px; }
+            .old-price { font-size: 11px; }
+        }
     </style>
 
 
@@ -133,7 +152,7 @@
         <div class="container py-4">
 
             {{-- Header --}}
-            <div class="shop-header">
+            <div class="shop-intro">
 
                 <h1 class="shop-title">
                     فروشگاه
@@ -148,7 +167,7 @@
 
             <div class="row g-4">
 
-                {{-- Filters --}}
+                {{-- فیلترها --}}
                 <div class="col-lg-3">
 
                     <div class="filter-box">
@@ -162,7 +181,7 @@
                             method="GET"
                         >
 
-                            {{-- Search --}}
+                            {{-- جستجو --}}
                             <div class="mb-4">
 
                                 <label class="filter-label">
@@ -180,7 +199,7 @@
                             </div>
 
 
-                            {{-- Category --}}
+                            {{-- دسته‌بندی --}}
                             <div class="mb-4">
 
                                 <label class="filter-label">
@@ -212,7 +231,7 @@
                             </div>
 
 
-                            {{-- Brand --}}
+                            {{-- برند --}}
                             <div class="mb-4">
 
                                 <label class="filter-label">
@@ -311,7 +330,7 @@
                 </div>
 
 
-                {{-- Products --}}
+                {{-- محصولات --}}
                 <div class="col-lg-9">
 
                     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -354,7 +373,7 @@
                                                 @if($primaryImage)
 
                                                     <img
-                                                        src="{{ asset('storage/products/' . $primaryImage->image) }}"
+                                                        src="{{ asset('storage/' . $primaryImage->image) }}"
                                                         alt="{{ $product->name }}"
                                                     >
 
@@ -391,6 +410,10 @@
                                                     <div class="product-category">
                                                         {{ $product->category->name }}
                                                     </div>
+
+                                                @else
+
+                                                    <div class="product-category" aria-hidden="true"></div>
 
                                                 @endif
 

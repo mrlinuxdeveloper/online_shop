@@ -1,8 +1,8 @@
 @extends('admin.layouts.AdminMasterLayout')
 
-@section('title', 'Edit Category')
+@section('title', 'ویرایش دسته‌بندی')
 
-@section('page-title', 'Edit Category')
+@section('page-title', 'ویرایش دسته‌بندی')
 
 @section('content')
 
@@ -23,12 +23,12 @@
                     @method('PUT')
 
 
-                    {{-- Name --}}
+                    {{-- نام --}}
 
                     <div class="mb-3">
 
                         <label class="form-label">
-                            Category Name
+                            نام دسته‌بندی
                         </label>
 
                         <input
@@ -47,12 +47,12 @@
                     </div>
 
 
-                    {{-- Slug --}}
+                    {{-- نامک --}}
 
                     <div class="mb-3">
 
                         <label class="form-label">
-                            Slug
+                            نامک
                         </label>
 
                         <input
@@ -71,12 +71,12 @@
                     </div>
 
 
-                    {{-- Parent --}}
+                    {{-- والد --}}
 
                     <div class="mb-3">
 
                         <label class="form-label">
-                            Parent Category
+                            دسته‌بندی والد
                         </label>
 
                         <select
@@ -85,7 +85,7 @@
                         >
 
                             <option value="">
-                                -- No Parent --
+                                — بدون والد —
                             </option>
 
                             @foreach($categories as $parent)
@@ -115,14 +115,14 @@
                     </div>
 
 
-                    {{-- Current Image --}}
+                    {{-- تصویر فعلی --}}
 
                     @if($category->image)
 
                         <div class="mb-3">
 
                             <label class="form-label d-block">
-                                Current Image
+                                تصویر فعلی
                             </label>
 
                             <img
@@ -139,12 +139,12 @@
                     @endif
 
 
-                    {{-- New Image --}}
+                    {{-- New تصویر --}}
 
                     <div class="mb-3">
 
                         <label class="form-label">
-                            Replace Image
+                            جایگزینی تصویر
                         </label>
 
                         <input
@@ -163,12 +163,12 @@
                     </div>
 
 
-                    {{-- Description --}}
+                    {{-- توضیحات --}}
 
                     <div class="mb-3">
 
                         <label class="form-label">
-                            Description
+                            توضیحات
                         </label>
 
                         <textarea
@@ -186,12 +186,12 @@
                     </div>
 
 
-                    {{-- Status --}}
+                    {{-- وضعیت --}}
 
                     <div class="mb-4">
 
                         <label class="form-label">
-                            Status
+                            وضعیت
                         </label>
 
                         <select
@@ -203,14 +203,14 @@
                                 value="1"
                                 @selected(old('status', $category->status) == 1)
                             >
-                                Active
+                                فعال
                             </option>
 
                             <option
                                 value="0"
                                 @selected(old('status', $category->status) == 0)
                             >
-                                Inactive
+                                غیرفعال
                             </option>
 
                         </select>
@@ -224,14 +224,14 @@
                             type="submit"
                             class="btn btn-primary"
                         >
-                            Update Category
+                            به‌روزرسانی دسته‌بندی
                         </button>
 
                         <a
                             href="{{ route('admin.categories.index') }}"
                             class="btn btn-secondary"
                         >
-                            Cancel
+                            لغو
                         </a>
 
                     </div>

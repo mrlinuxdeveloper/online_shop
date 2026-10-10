@@ -1,538 +1,160 @@
 @extends('layouts.app')
 
-@section('title', config('app.name', 'Companymod'))
+@section('title', config('app.name', 'فروشگاه آنلاین'))
 
 @section('content')
-
+    @php
+        $heroProduct = $featuredProducts->first() ?? $latestProducts->first();
+        $heroImage = $heroProduct?->images?->firstWhere('is_primary', true) ?? $heroProduct?->images?->first();
+        if ($slides->isEmpty()) {
+            $slides = collect([[
+                'eyebrow' => 'تازه رسیده‌ها · انتخاب فصل',
+                'title' => 'هر روز، یک استایل تازه',
+                'description' => 'از میان انتخاب‌های جدید فروشگاه، چیزی را پیدا کن که به حال‌وهوای تو نزدیک‌تر است.',
+                'button_text' => 'دیدن همه محصولات',
+                'button_url' => '/products',
+                'image' => null,
+                'active' => true,
+            ]]);
+        }
+    @endphp
     <style>
-        .home-hero {
-            background: linear-gradient(135deg, #2E5E4E 0%, #23483d 100%);
-            color: #fff;
-            border-radius: 0 0 28px 28px;
-            overflow: hidden;
-        }
-
-        .hero-content {
-            padding: 80px 0;
-        }
-
-        .hero-title {
-            font-size: 48px;
-            line-height: 1.3;
-            font-weight: 800;
-            margin-bottom: 20px;
-        }
-
-        .hero-text {
-            color: rgba(255,255,255,.8);
-            font-size: 17px;
-            line-height: 2;
-            max-width: 520px;
-        }
-
-        .hero-button {
-            display: inline-block;
-            background: #fff;
-            color: #2E5E4E;
-            padding: 13px 28px;
-            border-radius: 10px;
-            font-weight: 700;
-            margin-top: 20px;
-        }
-
-        .hero-button:hover {
-            background: #FAF7F1;
-            color: #B24C3C;
-        }
-
-        .hero-box {
-            min-height: 300px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 120px;
-            opacity: .9;
-        }
-
-        .section {
-            padding: 65px 0 0;
-        }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 28px;
-        }
-
-        .section-title {
-            font-size: 28px;
-            font-weight: 800;
-            margin: 0;
-        }
-
-        .section-link {
-            color: #2E5E4E;
-            font-weight: 700;
-        }
-
-        .section-link:hover {
-            color: #B24C3C;
-        }
-
-        .category-card {
-            display: block;
-            background: #fff;
-            border: 1px solid #e8e3da;
-            border-radius: 16px;
-            padding: 28px 15px;
-            text-align: center;
-            transition: .2s;
-            height: 100%;
-        }
-
-        .category-card:hover {
-            transform: translateY(-5px);
-            border-color: #2E5E4E;
-            box-shadow: 0 10px 30px rgba(0,0,0,.07);
-        }
-
-        .category-icon {
-            width: 65px;
-            height: 65px;
-            margin: 0 auto 15px;
-            border-radius: 50%;
-            background: #eef4f1;
-            color: #2E5E4E;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 27px;
-        }
-
-        .category-name {
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
-        .category-count {
-            color: #888;
-            font-size: 13px;
-        }
-
-        .product-card {
-            background: #fff;
-            border: 1px solid #e8e3da;
-            border-radius: 16px;
-            overflow: hidden;
-            height: 100%;
-            transition: .2s;
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(0,0,0,.08);
-        }
-
-        .product-image {
-            position: relative;
-            background: #f4f1eb;
-            aspect-ratio: 1 / 1;
-            overflow: hidden;
-        }
-
-        .product-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: .3s;
-        }
-
-        .product-card:hover .product-image img {
-            transform: scale(1.04);
-        }
-
-        .product-placeholder {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #aaa;
-            font-size: 45px;
-        }
-
-        .product-discount {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: #B24C3C;
-            color: #fff;
-            border-radius: 7px;
-            padding: 5px 9px;
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-        .product-body {
-            padding: 17px;
-        }
-
-        .product-category {
-            color: #888;
-            font-size: 12px;
-            margin-bottom: 7px;
-        }
-
-        .product-name {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            min-height: 42px;
-        }
-
-        .product-name a:hover {
-            color: #2E5E4E;
-        }
-
-        .product-price {
-            color: #2E5E4E;
-            font-size: 17px;
-            font-weight: 800;
-        }
-
-        .product-old-price {
-            color: #999;
-            text-decoration: line-through;
-            font-size: 12px;
-            margin-right: 7px;
-        }
-
-        .brand-card {
-            display: block;
-            background: #fff;
-            border: 1px solid #e8e3da;
-            border-radius: 14px;
-            padding: 25px 15px;
-            text-align: center;
-            height: 100%;
-            transition: .2s;
-        }
-
-        .brand-card:hover {
-            border-color: #2E5E4E;
-            transform: translateY(-4px);
-        }
-
-        .brand-logo {
-            width: 70px;
-            height: 70px;
-            margin: 0 auto 12px;
-            border-radius: 50%;
-            background: #f4f1eb;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            color: #2E5E4E;
-            font-weight: 800;
-            font-size: 22px;
-        }
-
-        .brand-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .brand-name {
-            font-weight: 700;
-        }
-
-        .brand-count {
-            color: #888;
-            font-size: 12px;
-            margin-top: 5px;
-        }
-
-        @media (max-width: 767px) {
-            .hero-content {
-                padding: 50px 20px;
-                text-align: center;
-            }
-
-            .hero-title {
-                font-size: 34px;
-            }
-
-            .hero-box {
-                min-height: 180px;
-                font-size: 80px;
-            }
-
-            .section {
-                padding-top: 45px;
-            }
-
-            .section-title {
-                font-size: 23px;
-            }
-        }
+        .fashion-home{--wine:{{ $primaryColor }};--accent:{{ preg_match('/^#[0-9A-Fa-f]{6}$/', $appearance['accent_color'] ?? '') ? $appearance['accent_color'] : '#d7193f' }};--ink:#191919;--muted:#777;--line:#e9e9e9}.fashion-wrap{max-width:1320px;margin:auto;padding-left:24px;padding-right:24px}
+        .fashion-hero{position:relative;min-height:440px;margin:22px auto 0;overflow:hidden;background:#f3eeeb;border-radius:3px}.fashion-slide{display:none;grid-template-columns:1fr 1fr;min-height:440px}.fashion-slide.active{display:grid}
+        .fashion-hero-copy{position:relative;z-index:1;padding:70px 8% 65px 4%;display:flex;flex-direction:column;align-items:flex-start;justify-content:center}
+        .fashion-kicker{font-size:12px;color:var(--wine);font-weight:700;letter-spacing:.4px;margin-bottom:18px}.fashion-hero h1{font-size:clamp(32px,4vw,55px);line-height:1.5;letter-spacing:-1.3px;font-weight:800;margin:0 0 10px;max-width:570px}.fashion-hero p{color:#626262;font-size:15px;line-height:2;margin:0;max-width:450px}.fashion-cta{display:inline-flex;align-items:center;gap:12px;margin-top:28px;background:var(--ink);color:white;padding:13px 24px;font-size:13px;font-weight:600;transition:.2s}.fashion-cta:hover{background:var(--wine);color:#fff;transform:translateY(-2px)}
+        .fashion-hero-visual{position:relative;min-height:440px;background:linear-gradient(135deg,#e9dfdb,#c5b2aa);overflow:hidden}.fashion-hero-visual img{height:100%;width:100%;position:absolute;inset:0;object-fit:cover;object-position:center 32%}.fashion-hero-visual:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#f3eeeb 0%,rgba(243,238,235,.12) 35%,transparent 72%)}.fashion-hero-mark{position:absolute;left:7%;bottom:8%;z-index:1;color:white;font-size:clamp(45px,8vw,100px);font-weight:800;line-height:1;opacity:.85;text-shadow:0 2px 20px #0003}
+        .fashion-slider-controls{position:absolute;z-index:3;bottom:18px;right:25px;display:flex;gap:7px}.fashion-slider-controls button{border:1px solid #222;background:#fff;color:#222;width:34px;height:34px;border-radius:50%;font-size:16px;line-height:1}.fashion-slider-controls button:hover{background:#222;color:white}.fashion-slider-dots{display:flex;gap:5px;align-items:center;padding:0 6px}.fashion-slider-dots button{width:7px;height:7px;border:0;padding:0;background:#aaa}.fashion-slider-dots button.active{width:20px;border-radius:5px;background:#222}
+        .fashion-cats{display:flex;gap:12px;overflow-x:auto;padding:18px 0 5px;scrollbar-width:none}.fashion-cats::-webkit-scrollbar{display:none}.fashion-cat{flex:0 0 155px;height:92px;border:1px solid var(--line);padding:16px;display:flex;flex-direction:column;justify-content:space-between;transition:.2s;background:#fff}.fashion-cat:hover{border-color:#222;transform:translateY(-2px)}.fashion-cat span:first-child{font-size:14px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fashion-cat span:last-child{font-size:11px;color:#888;white-space:nowrap}
+        .fashion-section{padding-top:54px}.fashion-section-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px}.fashion-section-head h2{font-size:22px;margin:0;font-weight:800;letter-spacing:-.4px}.fashion-section-head p{font-size:12px;color:var(--muted);margin:5px 0 0}.fashion-more{font-size:12px;font-weight:700;border-bottom:1px solid #222;padding-bottom:4px;white-space:nowrap}.fashion-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+        .fashion-product{min-width:0;display:flex;flex-direction:column}.fashion-product-image{position:relative;display:block;aspect-ratio:3/4;background:#f4f4f4;overflow:hidden}.fashion-product-image img{width:100%;height:100%;object-fit:cover;transition:transform .45s}.fashion-product:hover .fashion-product-image img{transform:scale(1.035)}.fashion-product-placeholder{height:100%;display:flex;align-items:center;justify-content:center;color:#bbb;font-size:45px}.fashion-discount{position:absolute;top:12px;right:12px;padding:5px 8px;background:var(--accent);color:white;font-size:11px;font-weight:700}.fashion-product-info{padding:12px 2px 0;display:flex;flex:1;flex-direction:column}.fashion-product-category{font-size:11px;color:#858585;margin-bottom:5px;height:18px;overflow:hidden}.fashion-product-name{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;height:46px;font-size:13px;font-weight:600;line-height:1.8}.fashion-product-price{display:flex;align-items:center;gap:9px;margin-top:auto;padding-top:8px;font-size:14px;font-weight:800}.fashion-old-price{font-size:11px;color:#999;text-decoration:line-through;font-weight:400}.fashion-toman{font-size:10px;color:#777;font-weight:500}
+        .fashion-benefits{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:60px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:22px 0}.fashion-benefit{display:flex;align-items:center;justify-content:center;gap:11px;font-size:12px;font-weight:600}.fashion-benefit b{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;border-radius:50%;background:#f6ecef;font-size:19px;line-height:1;color:var(--wine)}.fashion-benefit span{color:#777;font-size:11px;font-weight:400;display:block;margin-top:3px}
+        .fashion-brands{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-auto-rows:96px;gap:12px}.fashion-brand{height:96px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;text-align:center;padding:12px;font-size:13px;font-weight:700;transition:.2s;overflow:hidden}.fashion-brand:hover{border-color:#222}.fashion-brand img{max-width:100%;max-height:55px;object-fit:contain}
+        .fashion-empty{grid-column:1/-1;border:1px dashed #ddd;padding:34px;text-align:center;font-size:13px;color:#777}
+        @media(max-width:900px){.fashion-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.fashion-hero{min-height:380px}.fashion-slide{min-height:380px}.fashion-hero-visual{min-height:380px}.fashion-hero-copy{padding-right:7%}.fashion-brands{grid-template-columns:repeat(4,minmax(0,1fr))}}
+        @media(max-width:600px){.fashion-wrap{padding-left:15px;padding-right:15px}.fashion-hero{min-height:0;margin-top:14px}.fashion-slide,.fashion-slide.active{grid-template-columns:1fr;min-height:0}.fashion-hero-copy{grid-row:2;padding:24px 22px 42px}.fashion-hero h1{font-size:31px}.fashion-hero p{font-size:13px}.fashion-hero-visual{grid-row:1;min-height:240px;max-height:280px}.fashion-hero-visual:after{background:linear-gradient(0deg,rgba(0,0,0,.14),transparent 50%)}.fashion-hero-mark{font-size:56px}.fashion-slider-controls{bottom:10px;right:12px}.fashion-cat{flex-basis:135px;height:82px;padding:13px}.fashion-section{padding-top:38px}.fashion-section-head h2{font-size:19px}.fashion-section-head p{font-size:10px}.fashion-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 11px}.fashion-product-info{padding-top:9px}.fashion-product-name{font-size:12px;height:44px}.fashion-product-price{font-size:12px;gap:6px}.fashion-benefits{grid-template-columns:1fr;gap:15px;margin-top:40px;padding:18px 0}.fashion-benefit{justify-content:flex-start}.fashion-brands{grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:86px}.fashion-brand{height:86px}}
     </style>
 
-    {{-- Hero --}}
-    <section class="home-hero">
-        <div class="container">
-            <div class="row align-items-center hero-content">
-                <div class="col-lg-7">
-                    <h1 class="hero-title">
-                        استایل خودت را<br>
-                        متفاوت انتخاب کن
-                    </h1>
-
-                    <p class="hero-text">
-                        جدیدترین محصولات پوشاک را با کیفیت مناسب،
-                        تنوع بالا و امکان خرید آنلاین مشاهده کنید.
-                    </p>
-
-                    <a href="{{ route('shop.products.index') }}" class="hero-button">
-                        مشاهده فروشگاه
-                    </a>
-                </div>
-
-                <div class="col-lg-5">
-                    <div class="hero-box">
-                        👕
+    <div class="fashion-home">
+        <section class="fashion-wrap fashion-hero" aria-label="اسلایدر پیشنهادهای فروشگاه" data-fashion-slider>
+            @foreach($slides as $index => $slide)
+                <div class="fashion-slide {{ $index === 0 ? 'active' : '' }}" data-slide="{{ $index }}">
+                    <div class="fashion-hero-copy">
+                        @if(!empty($slide['eyebrow']))<div class="fashion-kicker">{{ $slide['eyebrow'] }}</div>@endif
+                        <h1>{{ $slide['title'] }}</h1>
+                        @if(!empty($slide['description']))<p>{{ $slide['description'] }}</p>@endif
+                        <a href="{{ $slide['button_url'] }}" class="fashion-cta">{{ $slide['button_text'] }} <span aria-hidden="true">←</span></a>
+                    </div>
+                    <div class="fashion-hero-visual">
+                        @php $slideImage = $slide['image'] ?? null; @endphp
+                        @if($slideImage)<img src="{{ asset('storage/' . $slideImage) }}" alt="{{ $slide['title'] }}">@elseif($heroImage)<img src="{{ asset('storage/' . $heroImage->image) }}" alt="{{ $heroProduct->name }}">@endif
+                        <div class="fashion-hero-mark">استایل<br>تازه</div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
+            @endforeach
+            @if($slides->count() > 1)
+                <div class="fashion-slider-controls" aria-label="کنترل اسلایدر">
+                    <button type="button" data-slider-prev aria-label="اسلاید قبلی">›</button>
+                    <div class="fashion-slider-dots">@foreach($slides as $index => $slide)<button type="button" class="{{ $index === 0 ? 'active' : '' }}" data-slider-dot="{{ $index }}" aria-label="رفتن به اسلاید {{ $index + 1 }}"></button>@endforeach</div>
+                    <button type="button" data-slider-next aria-label="اسلاید بعدی">‹</button>
+                </div>
+            @endif
+        </section>
 
-    {{-- Categories --}}
-    <section class="section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">دسته‌بندی‌ها</h2>
-
-                <a href="{{ route('shop.products.index') }}" class="section-link">
-                    مشاهده همه
-                </a>
-            </div>
-
-            <div class="row g-3">
-                @forelse($categories as $category)
-                    <div class="col-6 col-md-4 col-lg-3">
-                        <a
-                            href="{{ route('shop.products.index', ['category' => $category->id]) }}"
-                            class="category-card"
-                        >
-                            <div class="category-icon">
-                                👕
-                            </div>
-
-                            <div class="category-name">
-                                {{ $category->name }}
-                            </div>
-
-                            <div class="category-count">
-                                {{ $category->products_count }} محصول
-                            </div>
+        @if(($appearance['show_categories'] ?? true) && $categories->isNotEmpty())
+            <section class="fashion-wrap" aria-label="دسته‌بندی‌ها">
+                <div class="fashion-cats">
+                    @foreach($categories as $category)
+                        <a class="fashion-cat" href="{{ route('shop.products.index', ['category' => $category->id]) }}">
+                            <span>{{ $category->name }}</span><span>{{ $category->products_count }} محصول <b aria-hidden="true">←</b></span>
                         </a>
-                    </div>
-                @empty
-                    <div class="col-12">
-                        <div class="alert alert-light text-center">
-                            هنوز دسته‌بندی فعالی ثبت نشده است.
-                        </div>
-                    </div>
-                @endforelse
-            </div>
-        </div>
-    </section>
-
-    {{-- Featured Products --}}
-    @if($featuredProducts->isNotEmpty())
-        <section class="section">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">محصولات ویژه</h2>
-
-                    <a href="{{ route('shop.products.index') }}" class="section-link">
-                        مشاهده همه محصولات
-                    </a>
+                    @endforeach
+                    <a class="fashion-cat" href="{{ route('shop.products.index') }}"><span>همه محصولات</span><span>مشاهده فروشگاه <b aria-hidden="true">←</b></span></a>
                 </div>
+            </section>
+        @endif
 
-                <div class="row g-4">
+        @if(($appearance['show_featured'] ?? true) && $featuredProducts->isNotEmpty())
+            <section class="fashion-wrap fashion-section">
+                <div class="fashion-section-head"><div><h2>انتخاب‌های ویژه</h2><p>محصولاتی که برای دیدن انتخاب شده‌اند</p></div><a class="fashion-more" href="{{ route('shop.products.index') }}">مشاهده همه</a></div>
+                <div class="fashion-grid">
                     @foreach($featuredProducts as $product)
-                        <div class="col-6 col-md-4 col-lg-3">
-                            <div class="product-card">
-
-                                <a
-                                    href="{{ route('shop.products.show', $product) }}"
-                                    class="product-image"
-                                >
-                                    @if($product->images->first())
-                                        <img
-                                            src="{{ asset('images/products/' . $product->images->first()->image) }}"
-                                            alt="{{ $product->name }}"
-                                        >
-                                    @else
-                                        <div class="product-placeholder">
-                                            👕
-                                        </div>
-                                    @endif
-
-                                    @if($product->discount > 0)
-                                        <span class="product-discount">
-                                    {{ number_format($product->discount) }}٪ تخفیف
-                                </span>
-                                    @endif
-                                </a>
-
-                                <div class="product-body">
-                                    @if($product->category)
-                                        <div class="product-category">
-                                            {{ $product->category->name }}
-                                        </div>
-                                    @endif
-
-                                    <div class="product-name">
-                                        <a href="{{ route('shop.products.show', $product) }}">
-                                            {{ $product->name }}
-                                        </a>
-                                    </div>
-
-                                    <div>
-                                <span class="product-price">
-                                    {{ number_format($product->price) }}
-                                    تومان
-                                </span>
-                                    </div>
-                                </div>
-
+                        @php $primaryImage = $product->images->firstWhere('is_primary', true) ?? $product->images->first(); $finalPrice = $product->price * (1 - $product->discount / 100); @endphp
+                        <article class="fashion-product">
+                            <a href="{{ route('shop.products.show', $product) }}" class="fashion-product-image">
+                                @if($primaryImage)<img src="{{ asset('storage/' . $primaryImage->image) }}" alt="{{ $product->name }}" loading="lazy">@else<div class="fashion-product-placeholder">✧</div>@endif
+                                @if($product->discount > 0)<span class="fashion-discount">{{ number_format($product->discount) }}٪ تخفیف</span>@endif
+                            </a>
+                            <div class="fashion-product-info">
+                                @if($product->category)<div class="fashion-product-category">{{ $product->category->name }}</div>@endif
+                                <a class="fashion-product-name" href="{{ route('shop.products.show', $product) }}">{{ $product->name }}</a>
+                                <div class="fashion-product-price"><span>{{ number_format($finalPrice) }} <small class="fashion-toman">تومان</small></span>@if($product->discount > 0)<span class="fashion-old-price">{{ number_format($product->price) }}</span>@endif</div>
                             </div>
-                        </div>
+                        </article>
                     @endforeach
                 </div>
-            </div>
-        </section>
-    @endif
+            </section>
+        @endif
 
-    {{-- Latest Products --}}
-    <section class="section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">جدیدترین محصولات</h2>
+        @if($appearance['show_benefits'] ?? true)<section class="fashion-wrap fashion-benefits" aria-label="خدمات فروشگاه">
+            <div class="fashion-benefit"><b>↺</b><div>خرید آسان<span>انتخاب راحت از میان محصولات</span></div></div>
+            <div class="fashion-benefit"><b>◇</b><div>پرداخت امن<span>پرداخت آنلاین از درگاه بانکی</span></div></div>
+            <div class="fashion-benefit"><b>♧</b><div>پشتیبانی همراه شما<span>پیگیری سفارش در حساب کاربری</span></div></div>
+        </section>@endif
 
-                <a href="{{ route('shop.products.index') }}" class="section-link">
-                    مشاهده همه
-                </a>
-            </div>
-
-            <div class="row g-4">
+        @if($appearance['show_latest'] ?? true)<section class="fashion-wrap fashion-section">
+            <div class="fashion-section-head"><div><h2>تازه‌های فروشگاه</h2><p>جدیدترین محصولاتی که به فروشگاه اضافه شده‌اند</p></div><a class="fashion-more" href="{{ route('shop.products.index') }}">همه محصولات</a></div>
+            <div class="fashion-grid">
                 @forelse($latestProducts as $product)
-                    <div class="col-6 col-md-4 col-lg-3">
-                        <div class="product-card">
-
-                            <a
-                                href="{{ route('shop.products.show', $product) }}"
-                                class="product-image"
-                            >
-                                @if($product->images->first())
-                                    <img
-                                        src="{{ asset('images/products/' . $product->images->first()->image) }}"
-                                        alt="{{ $product->name }}"
-                                    >
-                                @else
-                                    <div class="product-placeholder">
-                                        👕
-                                    </div>
-                                @endif
-
-                                @if($product->discount > 0)
-                                    <span class="product-discount">
-                                    {{ number_format($product->discount) }}٪ تخفیف
-                                </span>
-                                @endif
-                            </a>
-
-                            <div class="product-body">
-                                @if($product->category)
-                                    <div class="product-category">
-                                        {{ $product->category->name }}
-                                    </div>
-                                @endif
-
-                                <div class="product-name">
-                                    <a href="{{ route('shop.products.show', $product) }}">
-                                        {{ $product->name }}
-                                    </a>
-                                </div>
-
-                                <div>
-                                <span class="product-price">
-                                    {{ number_format($product->price) }}
-                                    تومان
-                                </span>
-                                </div>
-                            </div>
-
+                    @php $primaryImage = $product->images->firstWhere('is_primary', true) ?? $product->images->first(); $finalPrice = $product->price * (1 - $product->discount / 100); @endphp
+                    <article class="fashion-product">
+                        <a href="{{ route('shop.products.show', $product) }}" class="fashion-product-image">
+                            @if($primaryImage)<img src="{{ asset('storage/' . $primaryImage->image) }}" alt="{{ $product->name }}" loading="lazy">@else<div class="fashion-product-placeholder">✧</div>@endif
+                            @if($product->discount > 0)<span class="fashion-discount">{{ number_format($product->discount) }}٪ تخفیف</span>@endif
+                        </a>
+                        <div class="fashion-product-info">
+                            @if($product->category)<div class="fashion-product-category">{{ $product->category->name }}</div>@endif
+                            <a class="fashion-product-name" href="{{ route('shop.products.show', $product) }}">{{ $product->name }}</a>
+                            <div class="fashion-product-price"><span>{{ number_format($finalPrice) }} <small class="fashion-toman">تومان</small></span>@if($product->discount > 0)<span class="fashion-old-price">{{ number_format($product->price) }}</span>@endif</div>
                         </div>
-                    </div>
+                    </article>
                 @empty
-                    <div class="col-12">
-                        <div class="alert alert-light text-center">
-                            هنوز محصولی ثبت نشده است.
-                        </div>
-                    </div>
+                    <div class="fashion-empty">هنوز محصولی به فروشگاه اضافه نشده است.</div>
                 @endforelse
             </div>
-        </div>
-    </section>
+        </section>@endif
 
-    {{-- Brands --}}
-    @if($brands->isNotEmpty())
-        <section class="section">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">برندها</h2>
-
-                    <a href="{{ route('shop.products.index') }}" class="section-link">
-                        مشاهده فروشگاه
-                    </a>
-                </div>
-
-                <div class="row g-3">
+        @if(($appearance['show_brands'] ?? true) && $brands->isNotEmpty())
+            <section class="fashion-wrap fashion-section">
+                <div class="fashion-section-head"><div><h2>برندهای فروشگاه</h2><p>انتخاب از میان برندهای موجود</p></div><a class="fashion-more" href="{{ route('shop.products.index') }}">مشاهده فروشگاه</a></div>
+                <div class="fashion-brands">
                     @foreach($brands as $brand)
-                        <div class="col-6 col-md-3 col-lg-2">
-                            <a href="{{ route('shop.products.index', ['brand' => $brand->id]) }}" class="brand-card">
-
-                                <div class="brand-logo">
-                                    @if($brand->logo)
-                                        <img
-                                            src="{{ asset('images/brands/' . $brand->logo) }}"
-                                            alt="{{ $brand->name }}"
-                                        >
-                                    @else
-                                        {{ mb_substr($brand->name, 0, 1) }}
-                                    @endif
-                                </div>
-
-                                <div class="brand-name">
-                                    {{ $brand->name }}
-                                </div>
-
-                                <div class="brand-count">
-                                    {{ $brand->products_count }} محصول
-                                </div>
-
-                            </a>
-                        </div>
+                        <a class="fashion-brand" href="{{ route('shop.products.index', ['brand' => $brand->id]) }}">
+                            @if($brand->logo)<img src="{{ asset('storage/' . $brand->logo) }}" alt="{{ $brand->name }}" loading="lazy">@else{{ $brand->name }}@endif
+                        </a>
                     @endforeach
                 </div>
-            </div>
-        </section>
+            </section>
+        @endif
+    </div>
+    @if($slides->count() > 1)
+        <script>
+            (() => {
+                const slider = document.querySelector('[data-fashion-slider]');
+                if (!slider) return;
+                const slides = [...slider.querySelectorAll('[data-slide]')];
+                const dots = [...slider.querySelectorAll('[data-slider-dot]')];
+                let current = 0;
+                const show = (index) => {
+                    current = (index + slides.length) % slides.length;
+                    slides.forEach((slide, i) => slide.classList.toggle('active', i === current));
+                    dots.forEach((dot, i) => dot.classList.toggle('active', i === current));
+                };
+                slider.querySelector('[data-slider-prev]').addEventListener('click', () => show(current - 1));
+                slider.querySelector('[data-slider-next]').addEventListener('click', () => show(current + 1));
+                dots.forEach((dot, i) => dot.addEventListener('click', () => show(i)));
+                if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) window.setInterval(() => show(current + 1), 6500);
+            })();
+        </script>
     @endif
-
 @endsection

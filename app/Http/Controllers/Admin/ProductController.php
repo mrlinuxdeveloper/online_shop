@@ -118,7 +118,7 @@ class ProductController extends Controller
             ->route('admin.products.index')
             ->with(
                 'success',
-                'Product created successfully.'
+                'محصول با موفقیت ایجاد شد.'
             );
     }
 
@@ -222,7 +222,7 @@ class ProductController extends Controller
             ->route('admin.products.index')
             ->with(
                 'success',
-                'Product updated successfully.'
+                'محصول با موفقیت به‌روزرسانی شد.'
             );
     }
 
@@ -234,7 +234,7 @@ class ProductController extends Controller
             ->route('admin.products.index')
             ->with(
                 'success',
-                'Product deleted successfully.'
+                'محصول با موفقیت حذف شد.'
             );
     }
     public function images(Product $product)
@@ -305,7 +305,7 @@ class ProductController extends Controller
             )
             ->with(
                 'success',
-                'Product image uploaded successfully.'
+                'تصویر محصول با موفقیت بارگذاری شد.'
             );
     }
     public function destroyImage(
@@ -330,7 +330,7 @@ class ProductController extends Controller
             )
             ->with(
                 'success',
-                'Product image deleted successfully.'
+                'تصویر محصول با موفقیت حذف شد.'
             );
     }
     public function setPrimaryImage(
@@ -357,7 +357,7 @@ class ProductController extends Controller
             )
             ->with(
                 'success',
-                'Primary image updated successfully.'
+                'تصویر اصلی با موفقیت به‌روزرسانی شد.'
             );
     }
 

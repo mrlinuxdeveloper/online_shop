@@ -1,8 +1,8 @@
 @extends('admin.layouts.AdminMasterLayout')
 
-@section('title', 'Edit Brand')
+@section('title', 'ویرایش برند')
 
-@section('page-title', 'Edit Brand')
+@section('page-title', 'ویرایش برند')
 
 @section('content')
 
@@ -23,12 +23,12 @@
                     @method('PUT')
 
 
-                    {{-- Name --}}
+                    {{-- نام --}}
 
                     <div class="mb-3">
 
                         <label class="form-label">
-                            Brand Name
+                            نام برند
                         </label>
 
                         <input
@@ -49,12 +49,12 @@
                     </div>
 
 
-                    {{-- Slug --}}
+                    {{-- نامک --}}
 
                     <div class="mb-3">
 
                         <label class="form-label">
-                            Slug
+                            نامک
                         </label>
 
                         <input
@@ -75,14 +75,14 @@
                     </div>
 
 
-                    {{-- Current Image --}}
+                    {{-- تصویر فعلی --}}
 
                     @if($brand->image)
 
                         <div class="mb-3">
 
                             <label class="form-label d-block">
-                                Current Image
+                                تصویر فعلی
                             </label>
 
                             <img
@@ -99,12 +99,12 @@
                     @endif
 
 
-                    {{-- New Image --}}
+                    {{-- New تصویر --}}
 
                     <div class="mb-3">
 
                         <label class="form-label">
-                            Replace Image
+                            جایگزینی تصویر
                         </label>
 
                         <input
@@ -125,12 +125,12 @@
                     </div>
 
 
-                    {{-- Description --}}
+                    {{-- توضیحات --}}
 
                     <div class="mb-3">
 
                         <label class="form-label">
-                            Description
+                            توضیحات
                         </label>
 
                         <textarea
@@ -150,12 +150,12 @@
                     </div>
 
 
-                    {{-- Status --}}
+                    {{-- وضعیت --}}
 
                     <div class="mb-4">
 
                         <label class="form-label">
-                            Status
+                            وضعیت
                         </label>
 
                         <select
@@ -167,14 +167,14 @@
                                 value="1"
                                 @selected(old('status', $brand->status) == 1)
                             >
-                                Active
+                                فعال
                             </option>
 
                             <option
                                 value="0"
                                 @selected(old('status', $brand->status) == 0)
                             >
-                                Inactive
+                                غیرفعال
                             </option>
 
                         </select>
@@ -190,14 +190,14 @@
                             type="submit"
                             class="btn btn-primary"
                         >
-                            Update Brand
+                            به‌روزرسانی برند
                         </button>
 
                         <a
                             href="{{ route('admin.brands.index') }}"
                             class="btn btn-secondary"
                         >
-                            Cancel
+                            لغو
                         </a>
 
                     </div>

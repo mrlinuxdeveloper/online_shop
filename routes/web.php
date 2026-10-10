@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\User\OrderController as UserOrderController;
+use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\Shop\ProductController as ShopProductController;
 use App\Http\Controllers\ReviewController;
@@ -26,6 +27,7 @@ use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\ShipmentController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\AppearanceController;
 use App\Http\Controllers\Shop\HomeController;
 
 
@@ -96,9 +98,7 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
 
 
     /*
@@ -208,16 +208,6 @@ Route::middleware('auth')->group(function () {
         'retry'
     ])->name('payment.retry');
 
-    Route::get('/payment/failed/{order}', [
-        PaymentController::class,
-        'failed'
-    ])->name('payment.failed');
-
-    Route::get('/payment/retry/{order}', [
-        PaymentController::class,
-        'retry'
-    ])->name('payment.retry');
-
 
 // My Orders
     Route::get('/orders', [
@@ -262,11 +252,6 @@ Route::middleware('auth')->group(function () {
         [CheckoutController::class, 'applyCoupon']
     )->name('checkout.coupon');
 
-    Route::get('/checkout/success/{order}', [
-        CheckoutController::class,
-        'success'
-    ])->name('checkout.success');
-
 // end auth
 });
 
@@ -295,6 +280,9 @@ Route::middleware(['auth', 'admin'])
 //        ])->name('dashboard');
 
         Route::get('/dashboard', [ DashboardController::class, 'index' ])->name('dashboard');
+
+        Route::get('/appearance', [AppearanceController::class, 'edit'])->name('appearance.edit');
+        Route::put('/appearance', [AppearanceController::class, 'update'])->name('appearance.update');
 
         /*
         |--------------------------------------------------------------------------
@@ -603,4 +591,3 @@ Route::middleware(['auth', 'admin'])
 
 // end admin route
     });
-

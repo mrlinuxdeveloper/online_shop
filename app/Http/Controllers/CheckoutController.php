@@ -36,7 +36,7 @@ class CheckoutController extends Controller
                 ->route('cart.index')
                 ->with(
                     'error',
-                    'Your cart is empty.'
+                    'سبد خرید شما خالی است.'
                 );
         }
 
@@ -201,7 +201,7 @@ class CheckoutController extends Controller
             return back()
                 ->with(
                     'error',
-                    'Your cart is empty.'
+                    'سبد خرید شما خالی است.'
                 );
         }
 
@@ -419,7 +419,7 @@ class CheckoutController extends Controller
                 ->route('cart.index')
                 ->with(
                     'error',
-                    'Your cart is empty.'
+                    'سبد خرید شما خالی است.'
                 );
         }
 
@@ -440,19 +440,25 @@ class CheckoutController extends Controller
 
                 if (!$product) {
                     throw new \RuntimeException(
-                        'A product in your cart no longer exists.'
+                        'یکی از محصولات سبد خرید دیگر در دسترس نیست.'
+                    );
+                }
+
+                if (!$product->status) {
+                    throw new \RuntimeException(
+                        "محصول {$product->name} دیگر در دسترس نیست."
                     );
                 }
 
                 if (!$variant) {
                     throw new \RuntimeException(
-                        'A product variant in your cart no longer exists.'
+                        'یکی از تنوع‌های محصول در سبد خرید دیگر در دسترس نیست.'
                     );
                 }
 
                 if (!$variant->status) {
                     throw new \RuntimeException(
-                        "The product variant {$variant->sku} is no longer available."
+                        "تنوع محصول {$variant->sku} دیگر در دسترس نیست."
                     );
                 }
 
@@ -461,7 +467,7 @@ class CheckoutController extends Controller
                     $cartItem->quantity
                 ) {
                     throw new \RuntimeException(
-                        "Not enough stock available for {$product->name}."
+                        "موجودی محصول {$product->name} کافی نیست."
                     );
                 }
             }
@@ -821,7 +827,7 @@ class CheckoutController extends Controller
                 ->withInput()
                 ->with(
                     'error',
-                    $e->getMessage()
+                    'ثبت سفارش انجام نشد. لطفاً دوباره تلاش کنید.'
                 );
         }
     }

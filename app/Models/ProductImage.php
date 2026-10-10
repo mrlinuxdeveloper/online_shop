@@ -12,12 +12,12 @@ class ProductImage extends Model
     protected $fillable = [
         'product_id',
         'image',
-        'is_main',
+        'is_primary',
         'sort_order',
     ];
 
     protected $casts = [
-        'is_main' => 'boolean',
+        'is_primary' => 'boolean',
     ];
 
     public function product()

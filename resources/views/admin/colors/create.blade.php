@@ -1,7 +1,7 @@
 @extends('admin.layouts.AdminMasterLayout')
 
-@section('title', 'Add Color')
-@section('page-title', 'Add Color')
+@section('title', 'افزودن رنگ')
+@section('page-title', 'افزودن رنگ')
 
 @section('content')
 
@@ -17,7 +17,7 @@
                 <div class="mb-3">
 
                     <label class="form-label">
-                        Color Name
+                        نام رنگ
                     </label>
 
                     <input
@@ -25,7 +25,7 @@
                         name="name"
                         value="{{ old('name') }}"
                         class="form-control @error('name') is-invalid @enderror"
-                        placeholder="Example: Black"
+                        placeholder="مثلاً مشکی"
                     >
 
                     @error('name')
@@ -39,7 +39,7 @@
                 <div class="mb-3">
 
                     <label class="form-label">
-                        Code
+                        کد
                     </label>
 
                     <input
@@ -47,7 +47,7 @@
                         name="code"
                         value="{{ old('code') }}"
                         class="form-control @error('code') is-invalid @enderror"
-                        placeholder="Example: BLK"
+                        placeholder="مثلاً BLK"
                     >
 
                     @error('code')
@@ -61,7 +61,7 @@
                 <div class="mb-3">
 
                     <label class="form-label">
-                        HEX Color
+                        کد رنگ HEX
                     </label>
 
                     <div class="d-flex gap-2">
@@ -94,12 +94,12 @@
 
                 <button type="submit"
                         class="btn btn-primary">
-                    Save
+                    ذخیره
                 </button>
 
                 <a href="{{ route('admin.colors.index') }}"
                    class="btn btn-secondary">
-                    Back
+                    بازگشت
                 </a>
 
             </form>

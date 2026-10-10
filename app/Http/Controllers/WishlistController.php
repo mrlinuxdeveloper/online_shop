@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Wishlist;
 use App\Models\WishlistItem;
+use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 
 class WishlistController extends Controller
@@ -30,14 +31,16 @@ class WishlistController extends Controller
     /**
      * اضافه کردن محصول به Wishlist
      */
-    public function store($productId)
+    public function store(Product $product)
     {
+        abort_unless($product->status, 404);
+
         $wishlist = Wishlist::firstOrCreate([
             'user_id' => Auth::id(),
         ]);
 
         $exists = WishlistItem::where('wishlist_id', $wishlist->id)
-            ->where('product_id', $productId)
+            ->where('product_id', $product->id)
             ->exists();
 
         if ($exists) {
@@ -49,7 +52,7 @@ class WishlistController extends Controller
 
         WishlistItem::create([
             'wishlist_id' => $wishlist->id,
-            'product_id' => $productId,
+            'product_id' => $product->id,
         ]);
 
         return back()->with(
@@ -62,7 +65,7 @@ class WishlistController extends Controller
     /**
      * حذف محصول از Wishlist
      */
-    public function destroy($productId)
+    public function destroy(Product $product)
     {
         $wishlist = Wishlist::where(
             'user_id',
@@ -74,7 +77,7 @@ class WishlistController extends Controller
         }
 
         WishlistItem::where('wishlist_id', $wishlist->id)
-            ->where('product_id', $productId)
+            ->where('product_id', $product->id)
             ->delete();
 
         return back()->with(

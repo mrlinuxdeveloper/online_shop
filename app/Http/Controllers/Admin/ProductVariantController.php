@@ -87,7 +87,7 @@ class ProductVariantController extends Controller
 
         return redirect()
             ->route('admin.products.variants.index', $product)
-            ->with('success', 'Product variant created successfully.');
+            ->with('success', 'تنوع محصول با موفقیت ایجاد شد.');
     }
 
     public function edit(Product $product, ProductVariant $variant)
@@ -164,7 +164,7 @@ class ProductVariantController extends Controller
 
         return redirect()
             ->route('admin.products.variants.index', $product)
-            ->with('success', 'Product variant updated successfully.');
+            ->with('success', 'تنوع محصول با موفقیت به‌روزرسانی شد.');
     }
 
     public function destroy(
@@ -177,7 +177,7 @@ class ProductVariantController extends Controller
 
         return redirect()
             ->route('admin.products.variants.index', $product)
-            ->with('success', 'Product variant deleted successfully.');
+            ->with('success', 'تنوع محصول با موفقیت حذف شد.');
     }
 
     private function checkVariant(

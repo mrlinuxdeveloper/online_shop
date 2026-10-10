@@ -1,4 +1,4 @@
-@extends('shop.layouts.app')
+@extends('layouts.app')
 
 @section('content')
     <style>
@@ -220,23 +220,23 @@
                             </div>
 
                             <h1 class="success-title">
-                                Order Created Successfully
+                                سفارش با موفقیت ثبت شد
                             </h1>
 
                             <p class="success-text">
-                                Your order has been created successfully.
+                                سفارش شما با موفقیت ثبت شد.
                             </p>
                         </div>
 
                         <div class="section">
                             <h2 class="section-title">
-                                Order Information
+                                اطلاعات سفارش
                             </h2>
 
                             <div class="order-info">
                                 <div class="info-row">
                                 <span class="info-label">
-                                    Order Number
+                                    شمارهٔ سفارش
                                 </span>
 
                                     <strong class="info-value">
@@ -246,7 +246,7 @@
 
                                 <div class="info-row">
                                 <span class="info-label">
-                                    Invoice Number
+                                    شمارهٔ فاکتور
                                 </span>
 
                                     <strong class="info-value">
@@ -256,7 +256,7 @@
 
                                 <div class="info-row">
                                 <span class="info-label">
-                                    Order Status
+                                    وضعیت سفارش
                                 </span>
 
                                     <span class="status-badge status-default">
@@ -266,20 +266,20 @@
 
                                 <div class="info-row">
                                 <span class="info-label">
-                                    Payment Status
+                                    وضعیت پرداخت
                                 </span>
 
                                     @if($order->payment_status === 'paid')
                                         <span class="status-badge status-paid">
-                                        Paid
+                                        پرداخت‌شده
                                     </span>
                                     @elseif($order->payment_status === 'pending')
                                         <span class="status-badge status-pending">
-                                        Pending
+                                        در انتظار
                                     </span>
                                     @elseif($order->payment_status === 'failed')
                                         <span class="status-badge status-failed">
-                                        Failed
+                                        ناموفق
                                     </span>
                                     @else
                                         <span class="status-badge status-default">
@@ -290,11 +290,11 @@
 
                                 <div class="info-row">
                                 <span class="info-label">
-                                    Total Price
+                                    مبلغ نهایی قیمت
                                 </span>
 
                                     <strong class="info-value">
-                                        {{ number_format($order->total_price) }} Toman
+                                        {{ number_format($order->total_price) }} تومان
                                     </strong>
                                 </div>
                             </div>
@@ -303,7 +303,7 @@
                         @if($order->address)
                             <div class="section">
                                 <h2 class="section-title">
-                                    Shipping Address
+                                    نشانی ارسال
                                 </h2>
 
                                 <div class="address-box">
@@ -331,7 +331,7 @@
                                         </div>
 
                                         <div>
-                                            Postal Code:
+                                            کد پستی:
                                             {{ $order->address->postal_code }}
                                         </div>
                                     </div>
@@ -341,7 +341,7 @@
 
                         <div class="section">
                             <h2 class="section-title">
-                                Order Items
+                                اقلام سفارش
                             </h2>
 
                             <div>
@@ -354,14 +354,14 @@
 
                                             <div class="item-meta">
                                                 @if($item->size)
-                                                    Size: {{ $item->size }}
+                                                    سایز: {{ $item->size }}
                                                 @endif
 
                                                 @if($item->color)
-                                                    | Color: {{ $item->color }}
+                                                    | رنگ: {{ $item->color }}
                                                 @endif
 
-                                                | Quantity: {{ $item->quantity }}
+                                                | تعداد: {{ $item->quantity }}
                                             </div>
                                         </div>
 
@@ -376,18 +376,18 @@
                         <div class="success-actions">
                             <a href="{{ route('dashboard') }}"
                                class="btn btn-shop-dark">
-                                Go to Dashboard
+                                رفتن به پیشخوان
                             </a>
 
                             <a href="{{ route('cart.index') }}"
                                class="btn btn-outline-secondary">
-                                Back to Cart
+                                بازگشت به سبد خرید
                             </a>
 
                             @if($order->payment_status !== 'paid')
                                 <a href="{{ route('payment.start', $order) }}"
                                    class="btn btn-pay">
-                                    Pay Now
+                                    پرداخت
                                 </a>
                             @endif
                         </div>

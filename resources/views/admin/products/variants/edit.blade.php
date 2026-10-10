@@ -1,7 +1,7 @@
 @extends('admin.layouts.AdminMasterLayout')
 
-@section('title', 'Edit Product Variant')
-@section('page-title', 'Edit Product Variant')
+    @section('title', 'ویرایش تنوع محصول')
+@section('page-title', 'ویرایش محصول تنوع')
 
 @section('content')
 
@@ -9,7 +9,7 @@
 
         <div class="card-header">
             <strong>
-                Edit Variant - {{ $product->name }}
+                ویرایش تنوع - {{ $product->name }}
             </strong>
         </div>
 
@@ -25,11 +25,11 @@
 
                 <div class="row">
 
-                    {{-- Size --}}
+                    {{-- سایز --}}
                     <div class="col-md-6 mb-3">
 
                         <label class="form-label">
-                            Size
+                            سایز
                         </label>
 
                         <select
@@ -38,7 +38,7 @@
                         >
 
                             <option value="">
-                                Select Size
+                                انتخاب سایز
                             </option>
 
                             @foreach($sizes as $size)
@@ -63,11 +63,11 @@
 
                     </div>
 
-                    {{-- Color --}}
+                    {{-- رنگ --}}
                     <div class="col-md-6 mb-3">
 
                         <label class="form-label">
-                            Color
+                            رنگ
                         </label>
 
                         <select
@@ -76,7 +76,7 @@
                         >
 
                             <option value="">
-                                Select Color
+                                انتخاب رنگ
                             </option>
 
                             @foreach($colors as $color)
@@ -101,11 +101,11 @@
 
                     </div>
 
-                    {{-- SKU --}}
+                    {{-- شناسهٔ کالا --}}
                     <div class="col-md-6 mb-3">
 
                         <label class="form-label">
-                            SKU
+                            شناسهٔ کالا
                         </label>
 
                         <input
@@ -123,11 +123,11 @@
 
                     </div>
 
-                    {{-- Price --}}
+                    {{-- قیمت --}}
                     <div class="col-md-6 mb-3">
 
                         <label class="form-label">
-                            Variant Price
+                            قیمت تنوع
                         </label>
 
                         <input
@@ -147,11 +147,11 @@
 
                     </div>
 
-                    {{-- Stock --}}
+                    {{-- موجودی --}}
                     <div class="col-md-6 mb-3">
 
                         <label class="form-label">
-                            Stock
+                            موجودی
                         </label>
 
                         <input
@@ -170,11 +170,11 @@
 
                     </div>
 
-                    {{-- Weight --}}
+                    {{-- وزن --}}
                     <div class="col-md-6 mb-3">
 
                         <label class="form-label">
-                            Weight
+                            وزن
                         </label>
 
                         <input
@@ -194,7 +194,7 @@
 
                     </div>
 
-                    {{-- Status --}}
+                    {{-- وضعیت --}}
                     <div class="col-md-6 mb-3">
 
                         <div class="form-check mt-4">
@@ -212,7 +212,7 @@
                                 for="status"
                                 class="form-check-label"
                             >
-                                Active
+                                فعال
                             </label>
 
                         </div>
@@ -225,14 +225,14 @@
                     type="submit"
                     class="btn btn-primary"
                 >
-                    Update Variant
+                    به‌روزرسانی تنوع
                 </button>
 
                 <a
                     href="{{ route('admin.products.variants.index', $product) }}"
                     class="btn btn-secondary"
                 >
-                    Back
+                    بازگشت
                 </a>
 
             </form>

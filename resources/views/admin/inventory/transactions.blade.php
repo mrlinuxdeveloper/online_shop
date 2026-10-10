@@ -51,7 +51,7 @@
                                 </th>
 
                                 <th>
-                                    Variant
+                                    تنوع
                                 </th>
 
                                 <th>

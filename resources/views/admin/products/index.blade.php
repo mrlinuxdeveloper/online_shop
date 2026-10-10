@@ -1,8 +1,8 @@
 @extends('admin.layouts.AdminMasterLayout')
 
-@section('title', 'Products')
+@section('title', 'محصولات')
 
-@section('page-title', 'Products')
+@section('page-title', 'محصولات')
 
 @section('content')
 
@@ -12,10 +12,10 @@
 
             <div>
 
-                <h2>Products</h2>
+                <h2>محصولات</h2>
 
                 <p class="text-muted mb-0">
-                    Manage store products
+                    مدیریت محصولات فروشگاه
                 </p>
 
             </div>
@@ -24,7 +24,7 @@
                 href="{{ route('admin.products.create') }}"
                 class="btn btn-primary"
             >
-                + Add Product
+                + افزودن محصول
             </a>
 
         </div>
@@ -44,22 +44,22 @@
 
                             <th>#</th>
 
-                            <th>Product</th>
+                            <th>محصول</th>
 
-                            <th>Code</th>
+                            <th>کد</th>
 
-                            <th>Category</th>
+                            <th>دسته‌بندی</th>
 
-                            <th>Brand</th>
+                            <th>برند</th>
 
-                            <th>Price</th>
+                            <th>قیمت</th>
 
-                            <th>Discount</th>
+                            <th>تخفیف</th>
 
-                            <th>Status</th>
+                            <th>وضعیت</th>
 
                             <th width="180">
-                                Actions
+                                عملیات
                             </th>
 
                         </tr>
@@ -141,13 +141,13 @@
                                     @if($product->status)
 
                                         <span class="badge text-bg-success">
-                                        Active
+                                        فعال
                                     </span>
 
                                     @else
 
                                         <span class="badge text-bg-secondary">
-                                        Inactive
+                                        غیرفعال
                                     </span>
 
                                     @endif
@@ -160,20 +160,20 @@
                                         href="{{ route('admin.products.images', $product) }}"
                                         class="btn btn-sm btn-outline-secondary"
                                     >
-                                        Images
+                                        تصاویر
                                     </a>
                                     <a
                                         href="{{ route('admin.products.variants.index', $product) }}"
                                         class="btn btn-sm btn-outline-info"
                                     >
-                                        Variants
+                                        تنوع‌ها
                                     </a>
 
                                     <a
                                         href="{{ route('admin.products.edit', $product) }}"
                                         class="btn btn-sm btn-outline-primary"
                                     >
-                                        Edit
+                                        ویرایش
                                     </a>
 
 
@@ -182,7 +182,7 @@
                                         action="{{ route('admin.products.destroy', $product) }}"
                                         method="POST"
                                         class="d-inline"
-                                        onsubmit="return confirm('Delete this product?')"
+                                        onsubmit="return confirm('حذف this product?')"
                                     >
 
                                         @csrf
@@ -193,7 +193,7 @@
                                             type="submit"
                                             class="btn btn-sm btn-outline-danger"
                                         >
-                                            Delete
+                                            حذف
                                         </button>
 
                                     </form>
@@ -211,7 +211,7 @@
                                     class="text-center py-5"
                                 >
 
-                                    No products found.
+                                    محصولی پیدا نشد.
 
                                 </td>
 

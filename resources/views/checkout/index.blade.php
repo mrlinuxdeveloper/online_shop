@@ -1,4 +1,4 @@
-@extends('shop.layouts.app')
+@extends('layouts.app')
 
 @section('content')
     <style>
@@ -227,9 +227,9 @@
     <div class="checkout-page">
         <div class="container">
             <div class="mb-4">
-                <h1 class="checkout-title mb-1">Checkout</h1>
+                <h1 class="checkout-title mb-1">تکمیل سفارش</h1>
                 <p class="checkout-subtitle mb-0">
-                    Review your order and select your shipping address.
+                    سفارش را مرور و نشانی ارسال را انتخاب کنید.
                 </p>
             </div>
 
@@ -264,7 +264,7 @@
 
                         <div class="checkout-card mb-4">
                             <div class="card-heading">
-                                Shipping Address
+                                نشانی ارسال
                             </div>
 
                             <div class="card-body-custom">
@@ -272,12 +272,12 @@
                                     <div class="empty-address">
                                         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                                         <span>
-                                            You don't have any saved addresses.
+                                            هنوز نشانی‌ای ذخیره نکرده‌اید.
                                         </span>
 
                                             <a href="{{ route('dashboard') }}"
                                                class="btn btn-sm btn-dark">
-                                                Add Address
+                                                افزودن نشانی
                                             </a>
                                         </div>
                                     </div>
@@ -311,7 +311,7 @@
 
                                                             @if($address->is_default)
                                                                 <span class="default-badge">
-                                                                Default
+                                                                پیش‌فرض
                                                             </span>
                                                             @endif
                                                         </div>
@@ -338,7 +338,7 @@
                                                             </div>
 
                                                             <div>
-                                                                Postal Code:
+                                                                کد پستی:
                                                                 {{ $address->postal_code }}
                                                             </div>
                                                         </div>
@@ -353,7 +353,7 @@
 
                         <div class="checkout-card mb-4">
                             <div class="card-heading">
-                                Order Items
+                                اقلام سفارش
                             </div>
 
                             <div>
@@ -376,7 +376,7 @@
                                                     >
                                                 @else
                                                     <div class="product-image-placeholder">
-                                                        No Image
+                                                        بدون تصویر
                                                     </div>
                                                 @endif
                                             </div>
@@ -388,27 +388,27 @@
 
                                                 <div class="product-meta">
                                                     <div>
-                                                        Product Code:
+                                                        کد محصول:
                                                         {{ $item->product->product_code }}
                                                     </div>
 
                                                     @if($item->variant?->size)
                                                         <div>
-                                                            Size:
+                                                            سایز:
                                                             {{ $item->variant->size->name }}
                                                         </div>
                                                     @endif
 
                                                     @if($item->variant?->color)
                                                         <div>
-                                                            Color:
+                                                            رنگ:
                                                             {{ $item->variant->color->name }}
                                                         </div>
                                                     @endif
 
                                                     @if($item->variant?->sku)
                                                         <div>
-                                                            SKU:
+                                                            شناسهٔ کالا:
                                                             {{ $item->variant->sku }}
                                                         </div>
                                                     @endif
@@ -417,7 +417,7 @@
 
                                             <div class="col-auto text-center">
                                                 <div class="product-meta mb-1">
-                                                    Quantity
+                                                    تعداد
                                                 </div>
                                                 <strong>
                                                     {{ $item->quantity }}
@@ -426,7 +426,7 @@
 
                                             <div class="col-auto text-end">
                                                 <div class="product-meta mb-1">
-                                                    Price
+                                                    قیمت
                                                 </div>
                                                 <strong>
                                                     {{ number_format($item->price) }}
@@ -435,7 +435,7 @@
 
                                             <div class="col-auto text-end">
                                                 <div class="product-meta mb-1">
-                                                    Total
+                                                    مبلغ نهایی
                                                 </div>
                                                 <strong class="text-dark">
                                                     {{ number_format($item->price * $item->quantity) }}
@@ -449,7 +449,7 @@
 
                         <div class="checkout-card mb-4">
                             <div class="card-heading">
-                                Order Note
+                                یادداشت سفارش
                             </div>
 
                             <div class="card-body-custom">
@@ -457,7 +457,7 @@
                                 name="note"
                                 class="form-control note-input"
                                 rows="4"
-                                placeholder="Add a note for your order (optional)"
+                                placeholder="یادداشتی برای سفارش بنویسید (اختیاری)"
                             >{{ old('note') }}</textarea>
                             </div>
                         </div>
@@ -465,7 +465,7 @@
 
                     <div class="checkout-card mb-4">
                         <div class="card-heading">
-                            Discount Code
+                            تخفیف کد
                         </div>
 
                         <div class="card-body-custom">
@@ -474,11 +474,11 @@
                                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                                         <div>
                                             <strong class="text-success">
-                                                Coupon Applied
+                                                کد تخفیف اعمال شد
                                             </strong>
 
                                             <div class="small mt-1">
-                                                Code:
+                                                کد:
                                                 <strong>
                                                     {{ session('checkout_coupon.code') }}
                                                 </strong>
@@ -487,7 +487,7 @@
 
                                         <strong class="text-success">
                                             -{{ number_format(session('checkout_coupon.discount')) }}
-                                            Toman
+                                            تومان
                                         </strong>
                                     </div>
                                 </div>
@@ -498,7 +498,7 @@
 
                                     <label for="coupon_code"
                                            class="form-label">
-                                        Coupon Code
+                                        کد تخفیف
                                     </label>
 
                                     <div class="input-group">
@@ -508,14 +508,14 @@
                                             id="coupon_code"
                                             class="form-control coupon-input @error('coupon_code') is-invalid @enderror"
                                             value="{{ old('coupon_code') }}"
-                                            placeholder="Enter your discount code"
+                                            placeholder="کد تخفیف را وارد کنید"
                                             autocomplete="off"
                                             required
                                         >
 
                                         <button type="submit"
                                                 class="btn btn-dark coupon-btn">
-                                            Apply
+                                            اعمال
                                         </button>
                                     </div>
 
@@ -526,7 +526,7 @@
                                     @enderror
 
                                     <div class="text-muted small mt-2">
-                                        Enter your discount code and click Apply.
+                                        کد تخفیف را وارد کنید و روی «اعمال» بزنید.
                                     </div>
                                 </form>
                             @endif
@@ -537,47 +537,47 @@
                 <div class="col-lg-4">
                     <div class="summary-card">
                         <div class="card-heading">
-                            Order Summary
+                            خلاصه سفارش
                         </div>
 
                         <div class="summary-body">
                             <div class="summary-row">
-                                <span>Subtotal</span>
+                                <span>جمع جزء</span>
                                 <strong>
                                     {{ number_format($subtotal) }}
                                 </strong>
                             </div>
 
                             <div class="summary-row">
-                                <span>Discount</span>
+                                <span>تخفیف</span>
                                 <strong class="text-success">
                                     -{{ number_format($discount) }}
                                 </strong>
                             </div>
 
                             <div class="summary-row">
-                                <span>Shipping</span>
+                                <span>هزینه ارسال</span>
                                 <strong>
                                     {{ number_format($shippingCost) }}
                                 </strong>
                             </div>
 
                             <div class="summary-row">
-                                <span>Tax</span>
+                                <span>مالیات</span>
                                 <strong>
                                     {{ number_format($tax) }}
                                 </strong>
                             </div>
 
-                            <div class="summary-total">
-                                <span>Total</span>
+                            <div class="summary-مجموع">
+                                <span>مبلغ نهایی</span>
                                 <strong>
                                     {{ number_format($total) }}
                                 </strong>
                             </div>
 
                             <div class="text-muted small mt-2">
-                                Currency: Toman
+                                واحد پول: تومان
                             </div>
 
                             <button
@@ -586,12 +586,12 @@
                                 class="checkout-submit"
                                 @disabled($addresses->isEmpty())
                             >
-                                Place Order
+                                ثبت سفارش
                             </button>
 
                             <a href="{{ route('cart.index') }}"
                                class="back-cart">
-                                Back to Cart
+                                بازگشت به سبد خرید
                             </a>
                         </div>
                     </div>

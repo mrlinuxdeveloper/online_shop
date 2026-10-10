@@ -1,4 +1,4 @@
-@extends('shop.layouts.app')
+@extends('layouts.app')
 
 @section('content')
     <style>
@@ -449,7 +449,7 @@
                 </div>
             </div>
 
-            {{-- Products --}}
+            {{-- محصولات --}}
             <div class="shop-card mb-4">
                 <div class="card-header-shop">
                     <h2 class="card-title">
@@ -475,11 +475,11 @@
                                 <td>
                                     <div class="product-cell">
                                         @if($item->product_image)
-                                            <img src="{{ asset('images/products/' . $item->product_image) }}"
+                                            <img src="{{ asset('storage/' . $item->product_image) }}"
                                                  alt="{{ $item->product_name }}"
                                                  class="product-image">
                                         @elseif($item->product && $item->product->images->count())
-                                            <img src="{{ asset('images/products/' . $item->product->images->first()->image) }}"
+                                            <img src="{{ asset('storage/' . $item->product->images->first()->image) }}"
                                                  alt="{{ $item->product_name }}"
                                                  class="product-image">
                                         @else
@@ -548,7 +548,7 @@
             </div>
 
             <div class="row g-4">
-                {{-- Address --}}
+                {{-- نشانی --}}
                 <div class="col-lg-6">
                     <div class="shop-card h-100">
                         <div class="card-header-shop">
@@ -603,7 +603,7 @@
                     </div>
                 </div>
 
-                {{-- Payment --}}
+                {{-- پرداخت --}}
                 <div class="col-lg-6">
                     <div class="shop-card h-100">
                         <div class="card-header-shop">
@@ -668,7 +668,7 @@
                 </div>
             </div>
 
-            {{-- Price Summary --}}
+            {{-- قیمت Summary --}}
             <div class="shop-card mt-4">
                 <div class="card-header-shop">
                     <h2 class="card-title">
@@ -746,7 +746,7 @@
                 </div>
             @endif
 
-            {{-- Actions --}}
+            {{-- عملیات --}}
             <div class="actions">
                 <a href="{{ route('orders.index') }}"
                    class="btn btn-outline-secondary">

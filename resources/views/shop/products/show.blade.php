@@ -1,6 +1,6 @@
-@extends('shop.layouts.app')
+@extends('layouts.app')
 
-@section('title', $product->name . ' | ' . config('app.name', 'Companymod'))
+@section('title', $product->name . ' | ' . config('app.name', 'فروشگاه آنلاین'))
 
 @section('content')
 
@@ -11,15 +11,15 @@
 
         .product-detail-card {
             background: #fff;
-            border: 1px solid #e8e3da;
-            border-radius: 20px;
+            border: 1px solid #e9e9e9;
+            border-radius: 3px;
             padding: 25px;
         }
 
         .product-gallery {
             position: relative;
-            background: #f4f1eb;
-            border-radius: 16px;
+            background: #f4f4f4;
+            border-radius: 2px;
             overflow: hidden;
         }
 
@@ -54,12 +54,12 @@
             border-radius: 9px;
             overflow: hidden;
             padding: 0;
-            background: #f4f1eb;
+            background: #f4f4f4;
             cursor: pointer;
         }
 
         .product-thumbnail.active {
-            border-color: #2E5E4E;
+            border-color: var(--shop-primary, #75172c);
         }
 
         .product-thumbnail img {
@@ -93,13 +93,13 @@
 
         .product-price-box {
             padding: 18px;
-            background: #faf7f1;
-            border-radius: 12px;
+            background: #f7f7f7;
+            border-radius: 3px;
             margin-bottom: 25px;
         }
 
         .product-price {
-            color: #2E5E4E;
+            color: var(--shop-primary, #75172c);
             font-size: 28px;
             font-weight: 800;
         }
@@ -113,7 +113,7 @@
 
         .discount-badge {
             display: inline-block;
-            background: #B24C3C;
+            background: var(--shop-accent, #d7193f);
             color: #fff;
             padding: 5px 9px;
             border-radius: 7px;
@@ -160,8 +160,8 @@
         }
 
         .variant-option input:checked + label {
-            border-color: #2E5E4E;
-            background: #2E5E4E;
+            border-color: var(--shop-primary, #75172c);
+            background: var(--shop-primary, #75172c);
             color: #fff;
         }
 
@@ -191,11 +191,11 @@
         }
 
         .stock-available {
-            color: #2E5E4E;
+            color: var(--shop-primary, #75172c);
         }
 
         .stock-unavailable {
-            color: #B24C3C;
+            color: var(--shop-primary, #75172c);
         }
 
         .quantity-box {
@@ -211,7 +211,7 @@
             width: 35px;
             height: 42px;
             border: 0;
-            background: #f4f1eb;
+            background: #f4f4f4;
             font-size: 18px;
         }
 
@@ -228,14 +228,14 @@
             border: 0;
             border-radius: 10px;
             padding: 13px;
-            background: #2E5E4E;
+            background: var(--shop-primary, #75172c);
             color: #fff;
             font-weight: 800;
             margin-top: 20px;
         }
 
         .add-cart-button:hover {
-            background: #23483d;
+            filter:brightness(.88);
         }
 
         .add-cart-button:disabled {
@@ -249,20 +249,20 @@
             border-radius: 10px;
             padding: 12px;
             background: #fff;
-            color: #B24C3C;
+            color: var(--shop-primary, #75172c);
             font-weight: 700;
             margin-top: 10px;
         }
 
         .wishlist-button:hover {
-            border-color: #B24C3C;
-            background: #fff8f6;
+            border-color: var(--shop-primary, #75172c);
+            background: #fbf5f6;
         }
 
         .product-description {
             margin-top: 35px;
             padding-top: 30px;
-            border-top: 1px solid #e8e3da;
+            border-top: 1px solid #e9e9e9;
             line-height: 2;
             color: #555;
         }
@@ -270,12 +270,12 @@
         .reviews-section {
             margin-top: 45px;
             padding-top: 35px;
-            border-top: 1px solid #e8e3da;
+            border-top: 1px solid #e9e9e9;
         }
 
         .review-card {
-            background: #faf7f1;
-            border-radius: 12px;
+            background: #f7f7f7;
+            border-radius: 3px;
             padding: 17px;
             margin-bottom: 12px;
         }
@@ -306,15 +306,20 @@
             <div class="product-detail-card">
                 <div class="row g-4">
 
-                    {{-- Product Gallery --}}
+                    {{-- محصول Gallery --}}
                     <div class="col-lg-6">
                         <div class="product-gallery">
 
-                            @if($product->images->first())
+                            @php
+                                $primaryImage = $product->images->firstWhere('is_primary', true)
+                                    ?? $product->images->first();
+                            @endphp
+
+                            @if($primaryImage)
                                 <img
                                     id="mainProductImage"
                                     class="product-main-image"
-                                    src="{{ asset('images/products/' . $product->images->first()->image) }}"
+                                    src="{{ asset('storage/' . $primaryImage->image) }}"
                                     alt="{{ $product->name }}"
                                 >
                             @else
@@ -330,11 +335,11 @@
                                 @foreach($product->images as $image)
                                     <button
                                         type="button"
-                                        class="product-thumbnail {{ $loop->first ? 'active' : '' }}"
-                                        onclick="changeProductImage(this, '{{ asset('images/products/' . $image->image) }}')"
+                                        class="product-thumbnail {{ $image->id === $primaryImage?->id ? 'active' : '' }}"
+                                        onclick="changeProductImage(this, '{{ asset('storage/' . $image->image) }}')"
                                     >
                                         <img
-                                            src="{{ asset('images/products/' . $image->image) }}"
+                                            src="{{ asset('storage/' . $image->image) }}"
                                             alt="{{ $product->name }}"
                                         >
                                     </button>
@@ -343,7 +348,7 @@
                         @endif
                     </div>
 
-                    {{-- Product Information --}}
+                    {{-- محصول Information --}}
                     <div class="col-lg-6">
                         <div class="product-info">
 
@@ -365,7 +370,7 @@
                                 </div>
                             @endif
 
-                            {{-- Price --}}
+                            {{-- قیمت --}}
                             <div class="product-price-box">
                                 @if($product->discount > 0)
                                     <span class="product-price">
@@ -388,6 +393,7 @@
                                 </span>
                                 @endif
                             </div>
+                            <div id="selectedVariantPrice" class="small text-muted mt-1" aria-live="polite"></div>
 
                             @if($variants->count())
 
@@ -398,7 +404,7 @@
                                 >
                                     @csrf
 
-                                    {{-- Variant --}}
+                                    {{-- تنوع --}}
                                     <input
                                         type="hidden"
                                         name="product_variant_id"
@@ -406,7 +412,7 @@
                                         value=""
                                     >
 
-                                    {{-- Size --}}
+                                    {{-- سایز --}}
                                     @php
                                         $sizes = $variants
                                             ->filter(fn($variant) => $variant->size)
@@ -439,7 +445,7 @@
                                         </div>
                                     @endif
 
-                                    {{-- Color --}}
+                                    {{-- رنگ --}}
                                     @php
                                         $colors = $variants
                                             ->filter(fn($variant) => $variant->color)
@@ -486,7 +492,7 @@
                                         لطفاً سایز و رنگ مورد نظر خود را انتخاب کنید.
                                     </div>
 
-                                    {{-- Quantity --}}
+                                    {{-- تعداد --}}
                                     <div class="option-group mt-4">
                                         <label class="option-label">
                                             تعداد
@@ -548,7 +554,7 @@
                                 </form>
                             @endauth
 
-                            {{-- Description --}}
+                            {{-- توضیحات --}}
                             @if($product->description)
                                 <div class="product-description">
                                     <h5 class="fw-bold mb-3">
@@ -564,7 +570,7 @@
 
                 </div>
 
-                {{-- Reviews --}}
+                {{-- دیدگاه‌ها --}}
                 <div class="reviews-section">
 
                     <h3 class="fw-bold mb-4">
@@ -672,19 +678,21 @@
         </div>
     </div>
 
-    <script>
-        const productVariants = @json(
-        $variants->map(function ($variant) {
+    @php
+        $productVariants = $variants->map(function ($variant) use ($product) {
             return [
                 'id' => $variant->id,
                 'size_id' => $variant->size_id,
                 'color_id' => $variant->color_id,
                 'stock' => $variant->stock,
-                'price' => (float) $variant->price,
+                'price' => $product->salePrice($variant->price),
                 'status' => (bool) $variant->status,
             ];
         })->values()
-    );
+    @endphp
+
+    <script>
+        const productVariants = @json($productVariants);
 
         const sizeInputs = document.querySelectorAll('input[name="size_option"]');
         const colorInputs = document.querySelectorAll('input[name="color_option"]');
@@ -692,6 +700,7 @@
         const quantityInput = document.getElementById('quantity');
         const addCartButton = document.getElementById('addCartButton');
         const variantMessage = document.getElementById('variantMessage');
+        const selectedVariantPrice = document.getElementById('selectedVariantPrice');
 
         function findSelectedVariant() {
             const selectedSize = document.querySelector('input[name="size_option"]:checked');
@@ -715,6 +724,7 @@
             addCartButton.disabled = true;
 
             if (!selectedVariant) {
+                selectedVariantPrice.textContent = '';
                 variantMessage.textContent = 'این ترکیب سایز و رنگ موجود نیست.';
                 variantMessage.className = 'stock-info stock-unavailable';
                 quantityInput.max = 1;
@@ -722,6 +732,7 @@
             }
 
             if (selectedVariant.stock <= 0) {
+                selectedVariantPrice.textContent = '';
                 variantMessage.textContent = 'این محصول در این ترکیب ناموجود است.';
                 variantMessage.className = 'stock-info stock-unavailable';
                 quantityInput.max = 1;
@@ -729,6 +740,7 @@
             }
 
             selectedVariantInput.value = selectedVariant.id;
+            selectedVariantPrice.textContent = `قیمت این ترکیب: ${new Intl.NumberFormat('fa-IR').format(selectedVariant.price)} تومان`;
             quantityInput.max = selectedVariant.stock;
 
             if (parseInt(quantityInput.value) > selectedVariant.stock) {

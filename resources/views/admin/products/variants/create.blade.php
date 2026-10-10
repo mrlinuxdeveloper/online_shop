@@ -1,7 +1,7 @@
 @extends('admin.layouts.AdminMasterLayout')
 
-@section('title', 'Add Product Variant')
-@section('page-title', 'Add Product Variant')
+    @section('title', 'افزودن تنوع محصول')
+@section('page-title', 'افزودن محصول تنوع')
 
 @section('content')
 
@@ -9,7 +9,7 @@
 
         <div class="card-header">
             <strong>
-                Add Variant - {{ $product->name }}
+                افزودن تنوع - {{ $product->name }}
             </strong>
         </div>
 
@@ -24,11 +24,11 @@
 
                 <div class="row">
 
-                    {{-- Size --}}
+                    {{-- سایز --}}
                     <div class="col-md-6 mb-3">
 
                         <label class="form-label">
-                            Size
+                            سایز
                         </label>
 
                         <select
@@ -37,7 +37,7 @@
                         >
 
                             <option value="">
-                                Select Size
+                                انتخاب سایز
                             </option>
 
                             @foreach($sizes as $size)
@@ -62,11 +62,11 @@
 
                     </div>
 
-                    {{-- Color --}}
+                    {{-- رنگ --}}
                     <div class="col-md-6 mb-3">
 
                         <label class="form-label">
-                            Color
+                            رنگ
                         </label>
 
                         <select
@@ -75,7 +75,7 @@
                         >
 
                             <option value="">
-                                Select Color
+                                انتخاب رنگ
                             </option>
 
                             @foreach($colors as $color)
@@ -100,11 +100,11 @@
 
                     </div>
 
-                    {{-- SKU --}}
+                    {{-- شناسهٔ کالا --}}
                     <div class="col-md-6 mb-3">
 
                         <label class="form-label">
-                            SKU
+                            شناسهٔ کالا
                         </label>
 
                         <input
@@ -112,7 +112,7 @@
                             name="sku"
                             value="{{ old('sku') }}"
                             class="form-control @error('sku') is-invalid @enderror"
-                            placeholder="Example: TS-M-BLK"
+                            placeholder="مثلاً TS-M-BLK"
                         >
 
                         @error('sku')
@@ -123,11 +123,11 @@
 
                     </div>
 
-                    {{-- Price --}}
+                    {{-- قیمت --}}
                     <div class="col-md-6 mb-3">
 
                         <label class="form-label">
-                            Variant Price
+                            قیمت تنوع
                         </label>
 
                         <input
@@ -137,7 +137,7 @@
                             min="0"
                             step="0.01"
                             class="form-control @error('price') is-invalid @enderror"
-                            placeholder="Leave empty to use product price"
+                            placeholder="برای استفاده از قیمت محصول خالی بگذارید"
                         >
 
                         @error('price')
@@ -147,16 +147,16 @@
                         @enderror
 
                         <small class="text-muted">
-                            If empty, product price will be used.
+                            اگر خالی بماند، قیمت محصول اعمال می‌شود.
                         </small>
 
                     </div>
 
-                    {{-- Stock --}}
+                    {{-- موجودی --}}
                     <div class="col-md-6 mb-3">
 
                         <label class="form-label">
-                            Stock
+                            موجودی
                         </label>
 
                         <input
@@ -175,11 +175,11 @@
 
                     </div>
 
-                    {{-- Weight --}}
+                    {{-- وزن --}}
                     <div class="col-md-6 mb-3">
 
                         <label class="form-label">
-                            Weight
+                            وزن
                         </label>
 
                         <input
@@ -189,7 +189,7 @@
                             min="0"
                             step="0.01"
                             class="form-control @error('weight') is-invalid @enderror"
-                            placeholder="Example: 0.5"
+                            placeholder="مثلاً ۰٫۵"
                         >
 
                         @error('weight')
@@ -200,7 +200,7 @@
 
                     </div>
 
-                    {{-- Status --}}
+                    {{-- وضعیت --}}
                     <div class="col-md-6 mb-3">
 
                         <div class="form-check mt-4">
@@ -218,7 +218,7 @@
                                 for="status"
                                 class="form-check-label"
                             >
-                                Active
+                                فعال
                             </label>
 
                         </div>
@@ -231,14 +231,14 @@
                     type="submit"
                     class="btn btn-primary"
                 >
-                    Save Variant
+                    ذخیرهٔ تنوع
                 </button>
 
                 <a
                     href="{{ route('admin.products.variants.index', $product) }}"
                     class="btn btn-secondary"
                 >
-                    Back
+                    بازگشت
                 </a>
 
             </form>

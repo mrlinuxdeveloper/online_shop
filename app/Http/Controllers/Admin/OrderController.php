@@ -82,7 +82,7 @@ class OrderController extends Controller
             ->back()
             ->with(
                 'success',
-                'Order status updated successfully.'
+                'وضعیت سفارش با موفقیت به‌روزرسانی شد.'
             );
     }
     public function updatePaymentStatus(Request $request, Order $order)
@@ -100,7 +100,7 @@ class OrderController extends Controller
 
         return redirect()
             ->back()
-            ->with('success', 'Payment status updated successfully.');
+            ->with('success', 'وضعیت پرداخت با موفقیت به‌روزرسانی شد.');
     }
     public function invoice(Order $order)
     {
@@ -165,7 +165,7 @@ class OrderController extends Controller
 
         return redirect()
             ->back()
-            ->with('success', 'Shipment updated successfully.');
+            ->with('success', 'اطلاعات ارسال با موفقیت به‌روزرسانی شد.');
 
     }
 

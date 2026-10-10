@@ -83,7 +83,7 @@ class PaymentController extends Controller
                 'gateway' => 'zarinpal',
                 'status' => 'pending',
                 'description' =>
-                    'Payment for order ' .
+                    'پرداخت سفارش ' .
                     $order->order_number,
             ]);
 
@@ -96,7 +96,7 @@ class PaymentController extends Controller
                 'amount' => $amount,
                 'status' => 'pending',
                 'description' =>
-                    'Payment for order ' .
+                    'پرداخت سفارش ' .
                     $order->order_number,
             ]);
         }
@@ -109,7 +109,7 @@ class PaymentController extends Controller
 
         $invoice->detail([
             'description' =>
-                'Payment for order ' .
+                'پرداخت سفارش ' .
                 $order->order_number,
 
             'order_id' =>
@@ -640,7 +640,7 @@ class PaymentController extends Controller
                 ->route('cart.index')
                 ->with(
                     'error',
-                    $exception->getMessage()
+                    'پرداخت تأیید نشد. لطفاً دوباره تلاش کنید.'
                 );
 
         } catch (

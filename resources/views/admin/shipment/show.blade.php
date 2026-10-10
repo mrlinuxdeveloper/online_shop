@@ -61,7 +61,7 @@
         <div class="row g-4">
 
 
-            {{-- Shipment Information --}}
+            {{-- اطلاعات ارسال --}}
 
             <div class="col-lg-6">
 
@@ -215,7 +215,7 @@
             </div>
 
 
-            {{-- Order Information --}}
+            {{-- اطلاعات سفارش --}}
 
             <div class="col-lg-6">
 
@@ -314,7 +314,7 @@
             </div>
 
 
-            {{-- Change Status --}}
+            {{-- Change وضعیت --}}
 
             <div class="col-12">
 
@@ -417,7 +417,7 @@
             </div>
 
 
-            {{-- Order Items --}}
+            {{-- اقلام سفارش --}}
 
             <div class="col-12">
 

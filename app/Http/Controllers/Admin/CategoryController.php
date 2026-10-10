@@ -4,16 +4,20 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Throwable;
 
 class CategoryController extends Controller
 {
     public function index()
     {
         $categories = Category::with('parent')
+            ->withCount(['products', 'children'])
             ->latest()
             ->paginate(10);
 
@@ -96,7 +100,7 @@ class CategoryController extends Controller
 
         return redirect()
             ->route('admin.categories.index')
-            ->with('success', 'Category created successfully.');
+            ->with('success', 'دسته‌بندی با موفقیت ایجاد شد.');
     }
 
     public function edit(Category $category)
@@ -165,54 +169,77 @@ class CategoryController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        if ($request->hasFile('image')) {
+        $previousImage = $category->image;
+        $newImage = null;
 
-            if ($category->image) {
-                Storage::disk('public')
-                    ->delete($category->image);
+        try {
+            if ($request->hasFile('image')) {
+                $newImage = $request
+                    ->file('image')
+                    ->store('categories', 'public');
+
+                $validated['image'] = $newImage;
             }
 
-            $validated['image'] = $request
-                ->file('image')
-                ->store('categories', 'public');
+            $category->update($validated);
+        } catch (Throwable $exception) {
+            if ($newImage) {
+                Storage::disk('public')->delete($newImage);
+            }
+
+            Log::error('Category update failed.', [
+                'category_id' => $category->id,
+                'exception' => $exception,
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', 'خطای ذخیره دسته‌بندی: ' . $exception::class . ' — ' . $exception->getMessage());
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Update category
-        |--------------------------------------------------------------------------
-        */
-
-        $category->update($validated);
+        if ($newImage && $previousImage) {
+            Storage::disk('public')->delete($previousImage);
+        }
 
         return redirect()
             ->route('admin.categories.index')
-            ->with('success', 'Category updated successfully.');
+            ->with('success', 'دسته‌بندی با موفقیت به‌روزرسانی شد.');
     }
 
     public function destroy(Category $category)
     {
-        /*
-        |--------------------------------------------------------------------------
-        | Delete image
-        |--------------------------------------------------------------------------
-        */
-
-        if ($category->image) {
-            Storage::disk('public')
-                ->delete($category->image);
+        if ($category->products()->exists()) {
+            return redirect()
+                ->route('admin.categories.index')
+                ->with('error', 'این دسته‌بندی محصول دارد و قابل حذف نیست. ابتدا محصولات را به دسته‌بندی دیگری منتقل کنید یا دسته‌بندی را غیرفعال کنید.');
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Delete category
-        |--------------------------------------------------------------------------
-        */
+        if ($category->children()->exists()) {
+            return redirect()
+                ->route('admin.categories.index')
+                ->with('error', 'این دسته‌بندی زیرشاخه دارد و قابل حذف نیست. ابتدا زیرشاخه‌ها را منتقل یا حذف کنید.');
+        }
 
-        $category->delete();
+        $image = $category->image;
+
+        try {
+            $category->delete();
+        } catch (QueryException $exception) {
+            if ($exception->getCode() !== '23000') {
+                throw $exception;
+            }
+
+            return redirect()
+                ->route('admin.categories.index')
+                ->with('error', 'به‌دلیل استفاده‌شدن این دسته‌بندی در محصولات یا زیرشاخه‌ها، امکان حذف آن وجود ندارد.');
+        }
+
+        if ($image) {
+            Storage::disk('public')->delete($image);
+        }
 
         return redirect()
             ->route('admin.categories.index')
-            ->with('success', 'Category deleted successfully.');
+            ->with('success', 'دسته‌بندی با موفقیت حذف شد.');
     }
 }

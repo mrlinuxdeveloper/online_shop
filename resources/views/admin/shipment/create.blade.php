@@ -95,7 +95,7 @@
                         </div>
 
 
-                        {{-- Shipping Method --}}
+                        {{-- روش ارسال --}}
 
                         <div class="col-md-6">
 
@@ -127,7 +127,7 @@
                         </div>
 
 
-                        {{-- Tracking Code --}}
+                        {{-- کد رهگیری --}}
 
                         <div class="col-md-6">
 
@@ -157,7 +157,7 @@
                         </div>
 
 
-                        {{-- Status --}}
+                        {{-- وضعیت --}}
 
                         <div class="col-md-6">
 
@@ -223,7 +223,7 @@
                         </div>
 
 
-                        {{-- Shipped At --}}
+                        {{-- تاریخ ارسال --}}
 
                         <div class="col-md-6">
 
@@ -253,7 +253,7 @@
                         </div>
 
 
-                        {{-- Delivered At --}}
+                        {{-- تاریخ تحویل --}}
 
                         <div class="col-md-6">
 

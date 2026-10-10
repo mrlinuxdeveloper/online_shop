@@ -7,10 +7,10 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
 
             <div>
-                <h2 class="mb-1">My Addresses</h2>
+                <h2 class="mb-1">نشانی‌های من</h2>
 
                 <p class="text-muted mb-0">
-                    Manage your delivery addresses
+                    نشانی‌های ارسال خود را مدیریت کنید
                 </p>
             </div>
 
@@ -18,7 +18,7 @@
                 href="{{ route('addresses.create') }}"
                 class="btn btn-dark"
             >
-                Add New Address
+                افزودن نشانی جدید
             </a>
 
         </div>
@@ -40,18 +40,18 @@
                 <div class="card-body text-center py-5">
 
                     <h5>
-                        You don't have any saved addresses.
+                        هنوز نشانی‌ای ذخیره نکرده‌اید.
                     </h5>
 
                     <p class="text-muted">
-                        Add an address to continue with checkout.
+                        برای ادامهٔ ثبت سفارش، یک نشانی اضافه کنید.
                     </p>
 
                     <a
                         href="{{ route('addresses.create') }}"
                         class="btn btn-dark"
                     >
-                        Add Address
+                        افزودن نشانی
                     </a>
 
                 </div>
@@ -81,7 +81,7 @@
                                         @if($address->is_default)
 
                                             <span class="badge bg-success">
-                                        Default
+                                        پیش‌فرض
                                     </span>
 
                                         @endif
@@ -95,32 +95,32 @@
 
 
                                 <div class="mb-2">
-                                    <strong>Receiver:</strong>
+                                    <strong>گیرنده:</strong>
                                     {{ $address->receiver_name }}
                                 </div>
 
                                 <div class="mb-2">
-                                    <strong>Phone:</strong>
+                                    <strong>تلفن:</strong>
                                     {{ $address->receiver_phone }}
                                 </div>
 
                                 <div class="mb-2">
-                                    <strong>Province:</strong>
+                                    <strong>استان:</strong>
                                     {{ $address->province }}
                                 </div>
 
                                 <div class="mb-2">
-                                    <strong>City:</strong>
+                                    <strong>شهر:</strong>
                                     {{ $address->city }}
                                 </div>
 
                                 <div class="mb-2">
-                                    <strong>Postal Code:</strong>
+                                    <strong>کد پستی:</strong>
                                     {{ $address->postal_code }}
                                 </div>
 
                                 <div class="mb-3">
-                                    <strong>Address:</strong>
+                                    <strong>نشانی:</strong>
                                     {{ $address->address }}
                                 </div>
 
@@ -131,13 +131,13 @@
                                         href="{{ route('addresses.edit', $address) }}"
                                         class="btn btn-outline-dark btn-sm"
                                     >
-                                        Edit
+                                        ویرایش
                                     </a>
 
                                     <form
                                         action="{{ route('addresses.destroy', $address) }}"
                                         method="POST"
-                                        onsubmit="return confirm('Delete this address?')"
+                                        onsubmit="return confirm('این نشانی حذف شود؟')"
                                     >
 
                                         @csrf
@@ -147,7 +147,7 @@
                                             type="submit"
                                             class="btn btn-outline-danger btn-sm"
                                         >
-                                            Delete
+                                            حذف
                                         </button>
 
                                     </form>

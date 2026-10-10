@@ -41,7 +41,7 @@ class SizeController extends Controller
 
         return redirect()
             ->route('admin.sizes.index')
-            ->with('success', 'Size created successfully.');
+            ->with('success', 'سایز با موفقیت ایجاد شد.');
     }
 
     public function edit(Size $size)
@@ -69,7 +69,7 @@ class SizeController extends Controller
 
         return redirect()
             ->route('admin.sizes.index')
-            ->with('success', 'Size updated successfully.');
+            ->with('success', 'سایز با موفقیت به‌روزرسانی شد.');
     }
 
     public function destroy(Size $size)
@@ -77,13 +77,13 @@ class SizeController extends Controller
         if ($size->variants()->exists()) {
             return redirect()
                 ->route('admin.sizes.index')
-                ->with('error', 'This sizes is used by product variants.');
+                ->with('error', 'این سایز در تنوع محصولات استفاده شده و قابل حذف نیست.');
         }
 
         $size->delete();
 
         return redirect()
             ->route('admin.sizes.index')
-            ->with('success', 'Size deleted successfully.');
+            ->with('success', 'سایز با موفقیت حذف شد.');
     }
 }

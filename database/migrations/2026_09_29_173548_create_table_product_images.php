@@ -23,7 +23,7 @@ return new class extends Migration
 
             $table->string('image');
 
-            $table->boolean('is_main')->default(false);
+            $table->boolean('is_primary')->default(false);
 
             $table->unsignedInteger('sort_order')->default(0);
 
@@ -36,6 +36,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('table_product_images');
+        Schema::dropIfExists('product_images');
     }
 };

@@ -1,4 +1,4 @@
-@extends('shop.layouts.app')
+@extends('layouts.app')
 
 @section('content')
     <style>
@@ -152,7 +152,7 @@
                         می‌توانید دوباره برای پرداخت سفارش تلاش کنید.
                     </p>
 
-                    {{-- Order Information --}}
+                    {{-- اطلاعات سفارش --}}
                     <div class="order-info">
                         <div class="order-info-row">
                         <span class="order-info-label">
@@ -183,7 +183,7 @@
                         </div>
                     @endif
 
-                    {{-- Actions --}}
+                    {{-- عملیات --}}
                     <div class="failed-actions">
                         <a href="{{ route('payment.retry', $order) }}"
                            class="btn retry-btn">

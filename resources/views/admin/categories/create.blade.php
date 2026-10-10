@@ -1,8 +1,8 @@
 @extends('admin.layouts.AdminMasterLayout')
 
-@section('title', 'Create Category')
+@section('title', 'ایجاد دسته‌بندی')
 
-@section('page-title', 'Create Category')
+@section('page-title', 'ایجاد دسته‌بندی')
 
 @section('content')
 
@@ -21,12 +21,12 @@
                     @csrf
 
 
-                    {{-- Name --}}
+                    {{-- نام --}}
 
                     <div class="mb-3">
 
                         <label class="form-label">
-                            Category Name
+                            نام دسته‌بندی
                         </label>
 
                         <input
@@ -34,7 +34,7 @@
                             name="name"
                             value="{{ old('name') }}"
                             class="form-control @error('name') is-invalid @enderror"
-                            placeholder="Category name"
+                            placeholder="نام دسته‌بندی"
                         >
 
                         @error('name')
@@ -46,12 +46,12 @@
                     </div>
 
 
-                    {{-- Slug --}}
+                    {{-- نامک --}}
 
                     <div class="mb-3">
 
                         <label class="form-label">
-                            Slug
+                            نامک
                         </label>
 
                         <input
@@ -59,7 +59,7 @@
                             name="slug"
                             value="{{ old('slug') }}"
                             class="form-control @error('slug') is-invalid @enderror"
-                            placeholder="category-slug"
+                            placeholder="نامک-دسته‌بندی"
                         >
 
                         @error('slug')
@@ -71,12 +71,12 @@
                     </div>
 
 
-                    {{-- Parent --}}
+                    {{-- والد --}}
 
                     <div class="mb-3">
 
                         <label class="form-label">
-                            Parent Category
+                            دسته‌بندی والد
                         </label>
 
                         <select
@@ -85,7 +85,7 @@
                         >
 
                             <option value="">
-                                -- No Parent --
+                                — بدون والد —
                             </option>
 
                             @foreach($categories as $parent)
@@ -110,12 +110,12 @@
                     </div>
 
 
-                    {{-- Image --}}
+                    {{-- تصویر --}}
 
                     <div class="mb-3">
 
                         <label class="form-label">
-                            Category Image
+                            تصویر دسته‌بندی
                         </label>
 
                         <input
@@ -134,19 +134,19 @@
                     </div>
 
 
-                    {{-- Description --}}
+                    {{-- توضیحات --}}
 
                     <div class="mb-3">
 
                         <label class="form-label">
-                            Description
+                            توضیحات
                         </label>
 
                         <textarea
                             name="description"
                             rows="5"
                             class="form-control @error('description') is-invalid @enderror"
-                            placeholder="Category description"
+                            placeholder="توضیحات دسته‌بندی"
                         >{{ old('description') }}</textarea>
 
                         @error('description')
@@ -158,12 +158,12 @@
                     </div>
 
 
-                    {{-- Status --}}
+                    {{-- وضعیت --}}
 
                     <div class="mb-4">
 
                         <label class="form-label">
-                            Status
+                            وضعیت
                         </label>
 
                         <select
@@ -173,12 +173,12 @@
 
                             <option value="1"
                                 @selected(old('status', 1) == 1)>
-                                Active
+                                فعال
                             </option>
 
                             <option value="0"
                                 @selected(old('status') === '0')>
-                                Inactive
+                                غیرفعال
                             </option>
 
                         </select>
@@ -192,14 +192,14 @@
                             type="submit"
                             class="btn btn-primary"
                         >
-                            Create Category
+                            ایجاد دسته‌بندی
                         </button>
 
                         <a
                             href="{{ route('admin.categories.index') }}"
                             class="btn btn-secondary"
                         >
-                            Cancel
+                            لغو
                         </a>
 
                     </div>

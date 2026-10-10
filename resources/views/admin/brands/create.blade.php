@@ -1,8 +1,8 @@
 @extends('admin.layouts.AdminMasterLayout')
 
-@section('title', 'Create Brand')
+@section('title', 'ایجاد برند')
 
-@section('page-title', 'Create Brand')
+@section('page-title', 'ایجاد برند')
 
 @section('content')
 
@@ -21,12 +21,12 @@
                     @csrf
 
 
-                    {{-- Name --}}
+                    {{-- نام --}}
 
                     <div class="mb-3">
 
                         <label class="form-label">
-                            Brand Name
+                            نام برند
                         </label>
 
                         <input
@@ -34,7 +34,7 @@
                             name="name"
                             value="{{ old('name') }}"
                             class="form-control @error('name') is-invalid @enderror"
-                            placeholder="Brand name"
+                            placeholder="نام برند"
                         >
 
                         @error('name')
@@ -48,12 +48,12 @@
                     </div>
 
 
-                    {{-- Slug --}}
+                    {{-- نامک --}}
 
                     <div class="mb-3">
 
                         <label class="form-label">
-                            Slug
+                            نامک
                         </label>
 
                         <input
@@ -61,11 +61,11 @@
                             name="slug"
                             value="{{ old('slug') }}"
                             class="form-control @error('slug') is-invalid @enderror"
-                            placeholder="brand-slug"
+                            placeholder="نامک-برند"
                         >
 
                         <small class="text-muted">
-                            Leave empty to generate automatically.
+                            برای ساخت خودکار، این بخش را خالی بگذارید.
                         </small>
 
                         @error('slug')
@@ -79,12 +79,12 @@
                     </div>
 
 
-                    {{-- Image --}}
+                    {{-- تصویر --}}
 
                     <div class="mb-3">
 
                         <label class="form-label">
-                            Brand Image
+                            تصویر برند
                         </label>
 
                         <input
@@ -105,19 +105,19 @@
                     </div>
 
 
-                    {{-- Description --}}
+                    {{-- توضیحات --}}
 
                     <div class="mb-3">
 
                         <label class="form-label">
-                            Description
+                            توضیحات
                         </label>
 
                         <textarea
                             name="description"
                             rows="5"
                             class="form-control @error('description') is-invalid @enderror"
-                            placeholder="Brand description"
+                            placeholder="توضیحات برند"
                         >{{ old('description') }}</textarea>
 
                         @error('description')
@@ -131,12 +131,12 @@
                     </div>
 
 
-                    {{-- Status --}}
+                    {{-- وضعیت --}}
 
                     <div class="mb-4">
 
                         <label class="form-label">
-                            Status
+                            وضعیت
                         </label>
 
                         <select
@@ -148,14 +148,14 @@
                                 value="1"
                                 @selected(old('status', 1) == 1)
                             >
-                                Active
+                                فعال
                             </option>
 
                             <option
                                 value="0"
                                 @selected(old('status') === '0')
                             >
-                                Inactive
+                                غیرفعال
                             </option>
 
                         </select>
@@ -171,14 +171,14 @@
                             type="submit"
                             class="btn btn-primary"
                         >
-                            Create Brand
+                            ایجاد برند
                         </button>
 
                         <a
                             href="{{ route('admin.brands.index') }}"
                             class="btn btn-secondary"
                         >
-                            Cancel
+                            لغو
                         </a>
 
                     </div>

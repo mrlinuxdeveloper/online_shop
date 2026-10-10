@@ -8,11 +8,11 @@
         <div class="mb-4">
 
             <h2>
-                Add New Address
+                افزودن نشانی جدید
             </h2>
 
             <p class="text-muted">
-                Enter your delivery information.
+                اطلاعات ارسال را وارد کنید.
             </p>
 
         </div>
@@ -30,7 +30,7 @@
                 <div class="col-md-6">
 
                     <label class="form-label">
-                        Address Title
+                        عنوان نشانی
                     </label>
 
                     <input
@@ -38,7 +38,7 @@
                         name="title"
                         value="{{ old('title') }}"
                         class="form-control"
-                        placeholder="Home"
+                        placeholder="خانه"
                         required
                     >
 
@@ -54,7 +54,7 @@
                 <div class="col-md-6">
 
                     <label class="form-label">
-                        Receiver Name
+                        نام گیرنده
                     </label>
 
                     <input
@@ -77,7 +77,7 @@
                 <div class="col-md-6">
 
                     <label class="form-label">
-                        Receiver Phone
+                        تلفن گیرنده
                     </label>
 
                     <input
@@ -100,7 +100,7 @@
                 <div class="col-md-6">
 
                     <label class="form-label">
-                        Province
+                        استان
                     </label>
 
                     <input
@@ -123,7 +123,7 @@
                 <div class="col-md-6">
 
                     <label class="form-label">
-                        City
+                        شهر
                     </label>
 
                     <input
@@ -146,7 +146,7 @@
                 <div class="col-md-6">
 
                     <label class="form-label">
-                        Postal Code
+                        کد پستی
                     </label>
 
                     <input
@@ -169,7 +169,7 @@
                 <div class="col-12">
 
                     <label class="form-label">
-                        Full Address
+                        نشانی کامل
                     </label>
 
                     <textarea
@@ -204,7 +204,7 @@
                             for="is_default"
                             class="form-check-label"
                         >
-                            Set as default address
+                            انتخاب به‌عنوان نشانی پیش‌فرض
                         </label>
 
                     </div>
@@ -218,14 +218,14 @@
                         type="submit"
                         class="btn btn-dark"
                     >
-                        Save Address
+                        ذخیرهٔ نشانی
                     </button>
 
                     <a
                         href="{{ route('addresses.index') }}"
                         class="btn btn-outline-secondary"
                     >
-                        Cancel
+                        لغو
                     </a>
 
                 </div>

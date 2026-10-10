@@ -1,8 +1,8 @@
 @extends('admin.layouts.AdminMasterLayout')
 
-@section('title', 'Invoice')
+@section('title', 'فاکتور')
 
-@section('page-title', 'Invoice')
+@section('page-title', 'فاکتور')
 
 @section('content')
 
@@ -18,7 +18,7 @@
                     <div>
 
                         <h4 class="mb-1">
-                            Invoice
+                            فاکتور
                         </h4>
 
                         <small class="text-muted">
@@ -34,14 +34,14 @@
                             onclick="window.print()"
                             class="btn btn-outline-secondary"
                         >
-                            Print
+                            چاپ
                         </button>
 
                         <a
                             href="{{ route('admin.orders.show', $order) }}"
                             class="btn btn-outline-primary"
                         >
-                            Back to Order
+                            بازگشت به سفارش
                         </a>
 
                     </div>
@@ -53,13 +53,13 @@
 
             <div class="card-body p-4">
 
-                {{-- Invoice Information --}}
+                {{-- فاکتور Information --}}
                 <div class="row mb-4">
 
                     <div class="col-md-6">
 
                         <h6 class="text-muted">
-                            Invoice Number
+                            شمارهٔ فاکتور
                         </h6>
 
                         <strong>
@@ -72,7 +72,7 @@
                     <div class="col-md-6 text-md-end">
 
                         <h6 class="text-muted">
-                            Date
+                            تاریخ
                         </h6>
 
                         <strong>
@@ -87,37 +87,37 @@
                 <hr>
 
 
-                {{-- Customer / Address --}}
+                {{-- مشتری / نشانی --}}
                 <div class="row my-4">
 
                     <div class="col-md-6">
 
                         <h6 class="mb-3">
-                            Customer
+                            مشتری
                         </h6>
 
                         @if($order->user)
 
                             <p class="mb-1">
-                                <strong>Name:</strong>
+                                <strong>نام:</strong>
                                 {{ $order->user->name }}
                                 {{ $order->user->lastname }}
                             </p>
 
                             <p class="mb-1">
-                                <strong>Email:</strong>
+                                <strong>رایانامه:</strong>
                                 {{ $order->user->email }}
                             </p>
 
                             <p class="mb-0">
-                                <strong>Phone:</strong>
+                                <strong>تلفن:</strong>
                                 {{ $order->user->tel ?? '-' }}
                             </p>
 
                         @else
 
                             <span class="text-muted">
-                            User not found.
+                            کاربر پیدا نشد.
                         </span>
 
                         @endif
@@ -128,7 +128,7 @@
                     <div class="col-md-6">
 
                         <h6 class="mb-3">
-                            Shipping Address
+                            نشانی ارسال
                         </h6>
 
                         @if($order->address)
@@ -144,19 +144,19 @@
                             </p>
 
                             <p class="mb-1">
-                                <strong>Receiver:</strong>
+                                <strong>گیرنده:</strong>
                                 {{ $order->address->receiver_name }}
                             </p>
 
                             <p class="mb-0">
-                                <strong>Phone:</strong>
+                                <strong>تلفن:</strong>
                                 {{ $order->address->receiver_phone }}
                             </p>
 
                         @else
 
                             <span class="text-muted">
-                            Address not found.
+                            نشانی پیدا نشد.
                         </span>
 
                         @endif
@@ -166,7 +166,7 @@
                 </div>
 
 
-                {{-- Products --}}
+                {{-- محصولات --}}
                 <div class="table-responsive">
 
                     <table class="table table-bordered align-middle">
@@ -177,19 +177,19 @@
 
                             <th>#</th>
 
-                            <th>Product</th>
+                            <th>محصول</th>
 
-                            <th>Code</th>
+                            <th>کد</th>
 
-                            <th>Size</th>
+                            <th>سایز</th>
 
-                            <th>Color</th>
+                            <th>رنگ</th>
 
-                            <th>Price</th>
+                            <th>قیمت</th>
 
-                            <th>Qty</th>
+                            <th>تعداد</th>
 
-                            <th>Total</th>
+                            <th>مبلغ کل</th>
 
                         </tr>
 
@@ -246,7 +246,7 @@
                 </div>
 
 
-                {{-- Totals --}}
+                {{-- مبلغ کل --}}
                 <div class="row justify-content-end mt-4">
 
                     <div class="col-md-5">
@@ -254,7 +254,7 @@
                         <div class="d-flex justify-content-between mb-2">
 
                         <span>
-                            Subtotal
+                            جمع جزء
                         </span>
 
                             <strong>
@@ -268,7 +268,7 @@
                         <div class="d-flex justify-content-between mb-2">
 
                         <span>
-                            Discount
+                            تخفیف
                         </span>
 
                             <strong>
@@ -282,7 +282,7 @@
                         <div class="d-flex justify-content-between mb-2">
 
                         <span>
-                            Shipping
+                            هزینهٔ ارسال
                         </span>
 
                             <strong>
@@ -296,7 +296,7 @@
                         <div class="d-flex justify-content-between mb-2">
 
                         <span>
-                            Tax
+                            مالیات
                         </span>
 
                             <strong>
@@ -313,7 +313,7 @@
                         <div class="d-flex justify-content-between">
 
                             <strong>
-                                Total
+                                مبلغ کل
                             </strong>
 
                             <strong class="fs-5">
@@ -328,11 +328,11 @@
                 </div>
 
 
-                {{-- Payment --}}
+                {{-- پرداخت --}}
                 <div class="mt-5">
 
                     <h6 class="mb-3">
-                        Payment
+                        پرداخت
                     </h6>
 
                     @switch($order->payment_status)
@@ -340,7 +340,7 @@
                         @case('paid')
 
                             <span class="badge bg-success">
-                            Paid
+                            پرداخت‌شده
                         </span>
 
                             @break
@@ -348,7 +348,7 @@
                         @case('pending')
 
                             <span class="badge bg-warning text-dark">
-                            Pending
+                            در انتظار
                         </span>
 
                             @break
@@ -356,7 +356,7 @@
                         @case('failed')
 
                             <span class="badge bg-danger">
-                            Failed
+                            ناموفق
                         </span>
 
                             @break
@@ -364,7 +364,7 @@
                         @case('refunded')
 
                             <span class="badge bg-info text-dark">
-                            Refunded
+                            بازپرداخت‌شده
                         </span>
 
                             @break

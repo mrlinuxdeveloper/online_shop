@@ -1,17 +1,17 @@
 @extends('admin.layouts.AdminMasterLayout')
 
-@section('title', 'Sizes')
-@section('page-title', 'Sizes')
+@section('title', 'سایزها')
+@section('page-title', 'سایزها')
 
 @section('content')
 
     <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <h4 class="mb-0">Sizes</h4>
+        <h4 class="mb-0">سایزها</h4>
 
         <a href="{{ route('admin.sizes.create') }}"
            class="btn btn-primary">
-            Add Size
+            افزودن سایز
         </a>
 
     </div>
@@ -29,9 +29,9 @@
                         <thead>
                         <tr>
                             <th>#</th>
-                            <th>Name</th>
-                            <th>Code</th>
-                            <th>Actions</th>
+                            <th>نام</th>
+                            <th>کد</th>
+                            <th>عملیات</th>
                         </tr>
                         </thead>
 
@@ -59,7 +59,7 @@
 
                                     <a href="{{ route('admin.sizes.edit', $size) }}"
                                        class="btn btn-sm btn-outline-primary">
-                                        Edit
+                                        ویرایش
                                     </a>
 
                                     <form action="{{ route('admin.sizes.destroy', $size) }}"
@@ -71,8 +71,8 @@
 
                                         <button type="submit"
                                                 class="btn btn-sm btn-outline-danger"
-                                                onclick="return confirm('Delete this size?')">
-                                            Delete
+                                                onclick="return confirm('این سایز حذف شود؟')">
+                                            حذف
                                         </button>
 
                                     </form>
@@ -94,7 +94,7 @@
             @else
 
                 <div class="alert alert-info mb-0">
-                    No sizes found.
+                    سایزی پیدا نشد.
                 </div>
 
             @endif
