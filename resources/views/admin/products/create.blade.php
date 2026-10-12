@@ -12,6 +12,13 @@
 
             <div class="card-body">
 
+                @if($categories->isEmpty())
+                    <div class="alert alert-warning" role="alert">
+                        هنوز دسته‌بندی فعالی ثبت نشده؛ برای انتخاب دسته‌بندی محصول، ابتدا
+                        <a href="{{ route('admin.categories.create') }}" class="alert-link">یک دسته‌بندی ایجاد کنید</a>.
+                    </div>
+                @endif
+
                 <form
                     action="{{ route('admin.products.store') }}"
                     method="POST"
@@ -88,10 +95,11 @@
                             <select
                                 name="category_id"
                                 class="form-select @error('category_id') is-invalid @enderror"
+                                required
                             >
 
                                 <option value="">
-                                    — انتخاب دسته‌بندی —
+                                    {{ $categories->isEmpty() ? 'ابتدا دسته‌بندی ایجاد کنید' : '— انتخاب دسته‌بندی —' }}
                                 </option>
 
                                 @foreach($categories as $category)

@@ -2,6 +2,7 @@
 
 return [
     'accepted' => 'پذیرفتن فیلد :attribute الزامی است.',
+    'after_or_equal' => 'تاریخ :attribute باید هم‌زمان یا پس از :date باشد.',
     'array' => 'فیلد :attribute باید آرایه باشد.',
     'boolean' => 'فیلد :attribute باید درست یا نادرست باشد.',
     'confirmed' => 'تأیید فیلد :attribute با مقدار آن مطابقت ندارد.',
@@ -65,6 +66,8 @@ return [
         'color_id' => 'رنگ',
         'sku' => 'شناسهٔ کالا',
         'code' => 'کد',
+        'starts_at' => 'شروع اعتبار',
+        'expires_at' => 'پایان اعتبار',
         'type' => 'نوع',
         'value' => 'مقدار',
         'status' => 'وضعیت',

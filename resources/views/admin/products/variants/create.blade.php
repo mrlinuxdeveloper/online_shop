@@ -69,34 +69,11 @@
                             رنگ
                         </label>
 
-                        <select
-                            name="color_id"
-                            class="form-select @error('color_id') is-invalid @enderror"
-                        >
-
-                            <option value="">
-                                انتخاب رنگ
-                            </option>
-
-                            @foreach($colors as $color)
-
-                                <option
-                                    value="{{ $color->id }}"
-                                    @selected(old('color_id') == $color->id)
-                                >
-                                    {{ $color->name }}
-                                    ({{ $color->code }})
-                                </option>
-
-                            @endforeach
-
-                        </select>
-
-                        @error('color_id')
-                        <div class="invalid-feedback">
-                            {{ $message }}
-                        </div>
-                        @enderror
+                        @include('admin.products.variants._color-select', [
+                            'colors' => $colors,
+                            'selectedColorId' => old('color_id'),
+                            'colorSelectId' => 'create-variant-color',
+                        ])
 
                     </div>
 

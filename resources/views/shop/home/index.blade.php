@@ -1,6 +1,21 @@
 @extends('layouts.app')
 
 @section('title', config('app.name', 'فروشگاه آنلاین'))
+@section('meta_description', 'خرید آنلاین پوشاک و استایل روز؛ جدیدترین محصولات، برندهای منتخب و پیشنهادهای ویژه را با ارسال به سراسر ایران در ' . config('app.name', 'فروشگاه آنلاین') . ' ببینید.')
+@section('canonical_url', route('home'))
+@push('seo')
+    <script type="application/ld+json">{!! json_encode([
+        '@context' => 'https://schema.org',
+        '@type' => 'WebSite',
+        'name' => config('app.name', 'فروشگاه آنلاین'),
+        'url' => route('home'),
+        'potentialAction' => [
+            '@type' => 'SearchAction',
+            'target' => route('shop.products.index') . '?search={search_term_string}',
+            'query-input' => 'required name=search_term_string',
+        ],
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
+@endpush
 
 @section('content')
     @php

@@ -25,9 +25,9 @@ class AppearanceController extends Controller
             'remove_logo_image' => ['sometimes', 'boolean'],
             'promo_text' => ['nullable', 'string', 'max:180'],
             'footer_tagline' => ['nullable', 'string', 'max:250'],
-            'instagram_url' => ['nullable', 'url', 'max:255'],
-            'telegram_url' => ['nullable', 'url', 'max:255'],
-            'youtube_url' => ['nullable', 'url', 'max:255'],
+            'social_links' => ['nullable', 'array', 'max:10'],
+            'social_links.*.name' => ['nullable', 'string', 'max:40'],
+            'social_links.*.url' => ['nullable', 'url', 'max:255'],
             'primary_color' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'accent_color' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'show_categories' => ['sometimes', 'boolean'],
@@ -53,6 +53,10 @@ class AppearanceController extends Controller
         ]);
 
         $oldAppearance = array_replace_recursive($this->defaults(), (array) SiteSetting::getValue('appearance', []));
+        $socialLinks = collect($validated['social_links'] ?? [])
+            ->map(fn ($link) => ['name' => trim($link['name'] ?? ''), 'url' => trim($link['url'] ?? '')])
+            ->filter(fn ($link) => $link['name'] !== '' && $link['url'] !== '')
+            ->values()->all();
         if (!collect($validated['slides'])->contains(fn ($slide) => (bool) ($slide['active'] ?? false))) {
             throw ValidationException::withMessages([
                 'slides' => 'حداقل یک اسلاید باید فعال باشد.',
@@ -111,9 +115,7 @@ class AppearanceController extends Controller
             'logo_image' => $logoImage,
             'promo_text' => $validated['promo_text'] ?? '',
             'footer_tagline' => $validated['footer_tagline'] ?? '',
-            'instagram_url' => $validated['instagram_url'] ?? '',
-            'telegram_url' => $validated['telegram_url'] ?? '',
-            'youtube_url' => $validated['youtube_url'] ?? '',
+            'social_links' => $socialLinks,
             'primary_color' => $validated['primary_color'],
             'accent_color' => $validated['accent_color'],
             'show_categories' => (bool) ($validated['show_categories'] ?? false),
@@ -148,6 +150,7 @@ class AppearanceController extends Controller
             'instagram_url' => '',
             'telegram_url' => '',
             'youtube_url' => '',
+            'social_links' => [],
             'primary_color' => '#75172c',
             'accent_color' => '#d7193f',
             'show_categories' => true,

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class CategoryController extends Controller
@@ -35,7 +36,8 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        try {
+            $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
 
             'slug' => [
@@ -66,7 +68,17 @@ class CategoryController extends Controller
                 'required',
                 'boolean',
             ],
-        ]);
+            ]);
+        } catch (ValidationException $exception) {
+            Log::warning('Category creation validation failed.', [
+                'errors' => $exception->errors(),
+            ]);
+
+            return back()
+                ->withInput()
+                ->withErrors($exception->errors())
+                ->with('error', 'دسته‌بندی ذخیره نشد: ' . collect($exception->errors())->flatten()->first());
+        }
 
         /*
         |--------------------------------------------------------------------------
@@ -84,10 +96,13 @@ class CategoryController extends Controller
         |--------------------------------------------------------------------------
         */
 
+        $imagePath = null;
         if ($request->hasFile('image')) {
-            $validated['image'] = $request
+            $imagePath = $request
                 ->file('image')
                 ->store('categories', 'public');
+
+            $validated['image'] = $imagePath;
         }
 
         /*
@@ -96,7 +111,22 @@ class CategoryController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        Category::create($validated);
+        try {
+            Category::create($validated);
+        } catch (Throwable $exception) {
+            if ($imagePath) {
+                Storage::disk('public')->delete($imagePath);
+            }
+
+            Log::error('Category creation failed.', [
+                'category_name' => $validated['name'] ?? null,
+                'exception' => $exception,
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', 'خطای ذخیره دسته‌بندی: ' . $exception::class . ' — ' . $exception->getMessage());
+        }
 
         return redirect()
             ->route('admin.categories.index')

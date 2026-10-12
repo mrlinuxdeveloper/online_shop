@@ -1,6 +1,32 @@
 @extends('layouts.app')
 
 @section('title', $product->name . ' | ' . config('app.name', 'فروشگاه آنلاین'))
+@section('meta_description', \Illuminate\Support\Str::limit(trim(preg_replace('/\\s+/', ' ', strip_tags($product->description ?: ($product->name . ' از ' . config('app.name', 'فروشگاه آنلاین') . '؛ خرید آنلاین با ارسال به سراسر ایران.')))), 155, '…'))
+@section('canonical_url', route('shop.products.show', $product))
+@section('og_type', 'product')
+@push('seo')
+    @php
+        $seoPrimaryImage = $product->images->firstWhere('is_primary', true) ?? $product->images->first();
+        $seoPrice = $product->salePrice();
+        $seoProduct = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Product',
+            'name' => $product->name,
+            'description' => trim(preg_replace('/\\s+/', ' ', strip_tags($product->description ?? ''))),
+            'sku' => $product->product_code,
+            'image' => $seoPrimaryImage ? [asset('storage/' . $seoPrimaryImage->image)] : [],
+            'brand' => $product->brand ? ['@type' => 'Brand', 'name' => $product->brand->name] : null,
+            'offers' => [
+                '@type' => 'Offer', 'url' => route('shop.products.show', $product),
+                'priceCurrency' => 'IRR', 'price' => number_format($seoPrice * 10, 0, '.', ''),
+                'availability' => $product->variants->where('status', true)->sum('stock') > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+                'itemCondition' => 'https://schema.org/NewCondition',
+            ],
+        ];
+    @endphp
+    @if($seoPrimaryImage)<meta property="og:image" content="{{ asset('storage/' . $seoPrimaryImage->image) }}"><meta name="twitter:image" content="{{ asset('storage/' . $seoPrimaryImage->image) }}">@endif
+    <script type="application/ld+json">{!! json_encode($seoProduct, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
+@endpush
 
 @section('content')
 

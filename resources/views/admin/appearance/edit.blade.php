@@ -28,10 +28,24 @@
                 <div class="col-md-6"><label for="primary_color" class="form-label">رنگ اصلی سایت</label><div class="d-flex gap-2"><input id="primary_color" name="primary_color" type="color" class="form-control form-control-color color-control" value="{{ old('primary_color', $appearance['primary_color']) }}" title="انتخاب رنگ اصلی"><input class="form-control" value="{{ old('primary_color', $appearance['primary_color']) }}" data-color-text="primary_color" aria-label="کد رنگ اصلی"></div></div>
                 <div class="col-md-6"><label for="accent_color" class="form-label">رنگ مکمل</label><div class="d-flex gap-2"><input id="accent_color" name="accent_color" type="color" class="form-control form-control-color color-control" value="{{ old('accent_color', $appearance['accent_color']) }}" title="انتخاب رنگ مکمل"><input class="form-control" value="{{ old('accent_color', $appearance['accent_color']) }}" data-color-text="accent_color" aria-label="کد رنگ مکمل"></div></div>
                 <div class="col-12"><label for="footer_tagline" class="form-label">توضیح کوتاه پایین سایت</label><textarea id="footer_tagline" name="footer_tagline" rows="2" class="form-control" maxlength="250">{{ old('footer_tagline', $appearance['footer_tagline']) }}</textarea></div>
-                <div class="col-12"><hr class="my-1"><h3 class="appearance-section-title mb-0">شبکه‌های اجتماعی</h3><div class="appearance-help">نشانی هر شبکه را وارد کنید تا پیوند آن در فوتر فروشگاه نمایش داده شود.</div></div>
-                <div class="col-md-4"><label for="instagram_url" class="form-label">Instagram</label><input id="instagram_url" name="instagram_url" type="url" dir="ltr" class="form-control" value="{{ old('instagram_url', $appearance['instagram_url'] ?? '') }}" placeholder="https://instagram.com/yourshop"></div>
-                <div class="col-md-4"><label for="telegram_url" class="form-label">Telegram</label><input id="telegram_url" name="telegram_url" type="url" dir="ltr" class="form-control" value="{{ old('telegram_url', $appearance['telegram_url'] ?? '') }}" placeholder="https://t.me/yourshop"></div>
-                <div class="col-md-4"><label for="youtube_url" class="form-label">YouTube</label><input id="youtube_url" name="youtube_url" type="url" dir="ltr" class="form-control" value="{{ old('youtube_url', $appearance['youtube_url'] ?? '') }}" placeholder="https://youtube.com/@yourshop"></div>
+                <div class="col-12"><hr class="my-1"><div class="d-flex align-items-center justify-content-between flex-wrap gap-2"><div><h3 class="appearance-section-title mb-0">شبکه‌های اجتماعی فوتر</h3><div class="appearance-help">نام شبکه و لینک آن را اضافه کنید؛ حداکثر ۱۰ مورد.</div></div><button type="button" id="add-social-link" class="btn btn-outline-primary btn-sm">＋ افزودن شبکه</button></div></div>
+                <div class="col-12"><div id="social-links-list" class="d-grid gap-2">
+                    @php
+                        $socialLinks = old('social_links', $appearance['social_links'] ?? []);
+                        if (empty($socialLinks)) {
+                            foreach (['Instagram' => 'instagram_url', 'Telegram' => 'telegram_url', 'YouTube' => 'youtube_url'] as $legacyName => $legacyKey) {
+                                if (!empty($appearance[$legacyKey])) $socialLinks[] = ['name' => $legacyName, 'url' => $appearance[$legacyKey]];
+                            }
+                        }
+                    @endphp
+                    @foreach($socialLinks as $index => $social)
+                        <div class="row g-2 align-items-end border rounded p-2 mx-0" data-social-row>
+                            <div class="col-md-4"><label class="form-label">نام شبکه</label><input name="social_links[{{ $index }}][name]" class="form-control" value="{{ $social['name'] ?? '' }}" maxlength="40" placeholder="مثلاً Instagram" required></div>
+                            <div class="col-md-7"><label class="form-label">لینک</label><input name="social_links[{{ $index }}][url]" type="url" dir="ltr" class="form-control" value="{{ $social['url'] ?? '' }}" maxlength="255" placeholder="https://..." required></div>
+                            <div class="col-md-1 d-grid"><button type="button" class="btn btn-outline-danger" data-remove-social aria-label="حذف لینک">×</button></div>
+                        </div>
+                    @endforeach
+                </div><div class="text-danger small mt-2">@error('social_links.*.url'){{ $message }}@enderror @error('social_links.*.name'){{ $message }}@enderror @error('social_links'){{ $message }}@enderror</div></div>
             </div>
         </div></div>
 
@@ -79,6 +93,26 @@
 <script>
 (() => {
     const list = document.getElementById('slides-list');
+    const socialList = document.getElementById('social-links-list');
+    const addSocialButton = document.getElementById('add-social-link');
+    let nextSocialIndex = Math.max(-1, ...[...socialList.querySelectorAll('[name^="social_links["]')].map((field) => Number(field.name.match(/^social_links\[(\d+)\]/)?.[1] ?? -1))) + 1;
+    addSocialButton.addEventListener('click', () => {
+        if (socialList.querySelectorAll('[data-social-row]').length >= 10) return;
+        const index = nextSocialIndex++;
+        const row = document.createElement('div');
+        row.className = 'row g-2 align-items-end border rounded p-2 mx-0';
+        row.dataset.socialRow = '';
+        row.innerHTML = `<div class="col-md-4"><label class="form-label">نام شبکه</label><input name="social_links[${index}][name]" class="form-control" maxlength="40" placeholder="مثلاً Instagram" required></div><div class="col-md-7"><label class="form-label">لینک</label><input name="social_links[${index}][url]" type="url" dir="ltr" class="form-control" maxlength="255" placeholder="https://..." required></div><div class="col-md-1 d-grid"><button type="button" class="btn btn-outline-danger" data-remove-social aria-label="حذف لینک">×</button></div>`;
+        socialList.append(row);
+        addSocialButton.disabled = socialList.querySelectorAll('[data-social-row]').length >= 10;
+    });
+    socialList.addEventListener('click', (event) => {
+        const button = event.target.closest('[data-remove-social]');
+        if (!button) return;
+        button.closest('[data-social-row]').remove();
+        addSocialButton.disabled = socialList.querySelectorAll('[data-social-row]').length >= 10;
+    });
+    addSocialButton.disabled = socialList.querySelectorAll('[data-social-row]').length >= 10;
     const addButton = document.getElementById('add-slide');
     let nextIndex = Math.max(-1, ...[...list.querySelectorAll('[name^="slides["]')].map((field) => Number(field.name.match(/^slides\[(\d+)\]/)?.[1] ?? -1))) + 1;
     const refreshNumbers = () => {

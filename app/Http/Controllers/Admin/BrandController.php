@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class BrandController extends Controller
 {
@@ -29,7 +32,8 @@ class BrandController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        try {
+            $validated = $request->validate([
 
             'name' => [
                 'required',
@@ -61,7 +65,17 @@ class BrandController extends Controller
                 'boolean',
             ],
 
-        ]);
+            ]);
+        } catch (ValidationException $exception) {
+            Log::warning('Brand creation validation failed.', [
+                'errors' => $exception->errors(),
+            ]);
+
+            return back()
+                ->withInput()
+                ->withErrors($exception->errors())
+                ->with('error', 'برند ذخیره نشد: ' . collect($exception->errors())->flatten()->first());
+        }
 
         /*
         |--------------------------------------------------------------------------
@@ -82,12 +96,15 @@ class BrandController extends Controller
         |--------------------------------------------------------------------------
         */
 
+        $logoPath = null;
         if ($request->hasFile('image')) {
-
-            $validated['image'] = $request
+            $logoPath = $request
                 ->file('image')
                 ->store('brands', 'public');
+
+            $validated['logo'] = $logoPath;
         }
+        unset($validated['image']);
 
         /*
         |--------------------------------------------------------------------------
@@ -95,7 +112,22 @@ class BrandController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        Brand::create($validated);
+        try {
+            Brand::create($validated);
+        } catch (Throwable $exception) {
+            if ($logoPath) {
+                Storage::disk('public')->delete($logoPath);
+            }
+
+            Log::error('Brand creation failed.', [
+                'brand_name' => $validated['name'] ?? null,
+                'exception' => $exception,
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', 'خطای ذخیره برند: ' . $exception::class . ' — ' . $exception->getMessage());
+        }
 
         return redirect()
             ->route('admin.brands.index')
@@ -179,18 +211,13 @@ class BrandController extends Controller
         |--------------------------------------------------------------------------
         */
 
+        $previousLogo = $brand->logo;
         if ($request->hasFile('image')) {
-
-            if ($brand->image) {
-
-                Storage::disk('public')
-                    ->delete($brand->image);
-            }
-
-            $validated['image'] = $request
+            $validated['logo'] = $request
                 ->file('image')
                 ->store('brands', 'public');
         }
+        unset($validated['image']);
 
         /*
         |--------------------------------------------------------------------------
@@ -199,6 +226,10 @@ class BrandController extends Controller
         */
 
         $brand->update($validated);
+
+        if ($request->hasFile('image') && $previousLogo) {
+            Storage::disk('public')->delete($previousLogo);
+        }
 
         return redirect()
             ->route('admin.brands.index')
@@ -216,10 +247,10 @@ class BrandController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        if ($brand->image) {
+        if ($brand->logo) {
 
             Storage::disk('public')
-                ->delete($brand->image);
+                ->delete($brand->logo);
         }
 
         /*

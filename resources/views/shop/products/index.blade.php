@@ -1,5 +1,10 @@
 @extends('layouts.app')
 
+@section('title', request('search') ? 'جستجوی «' . request('search') . '» | ' . config('app.name', 'فروشگاه آنلاین') : 'خرید آنلاین پوشاک و محصولات | ' . config('app.name', 'فروشگاه آنلاین'))
+@section('meta_description', request('search') ? 'نتایج جستجوی ' . request('search') . ' در فروشگاه ' . config('app.name', 'فروشگاه آنلاین') . '. محصولات را بررسی و آنلاین خرید کنید.' : 'مشاهده و خرید آنلاین جدیدترین محصولات و پوشاک با قیمت مناسب و ارسال به سراسر ایران از ' . config('app.name', 'فروشگاه آنلاین'))
+@section('canonical_url', route('shop.products.index'))
+@if(request()->hasAny(['search', 'category', 'brand', 'sort']))@section('robots', 'noindex, follow')@endif
+
 @section('content')
 
     <style>

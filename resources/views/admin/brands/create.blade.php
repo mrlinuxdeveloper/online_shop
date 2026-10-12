@@ -29,6 +29,9 @@
                             نام برند
                         </label>
 
+                        @error('name')
+                            <div class="text-danger small mb-1">{{ $message }}</div>
+                        @enderror
                         <input
                             type="text"
                             name="name"
@@ -37,44 +40,31 @@
                             placeholder="نام برند"
                         >
 
-                        @error('name')
-
-                        <div class="invalid-feedback">
-                            {{ $message }}
-                        </div>
-
-                        @enderror
-
                     </div>
 
 
-                    {{-- نامک --}}
+                    {{-- slug --}}
 
                     <div class="mb-3">
 
                         <label class="form-label">
-                            نامک
+                            slug
                         </label>
 
+                        @error('slug')
+                            <div class="text-danger small mb-1">{{ $message }}</div>
+                        @enderror
                         <input
                             type="text"
                             name="slug"
                             value="{{ old('slug') }}"
                             class="form-control @error('slug') is-invalid @enderror"
-                            placeholder="نامک-برند"
+                            placeholder="slug-برند"
                         >
 
                         <small class="text-muted">
                             برای ساخت خودکار، این بخش را خالی بگذارید.
                         </small>
-
-                        @error('slug')
-
-                        <div class="invalid-feedback">
-                            {{ $message }}
-                        </div>
-
-                        @enderror
 
                     </div>
 
@@ -87,20 +77,15 @@
                             تصویر برند
                         </label>
 
+                        @error('image')
+                            <div class="text-danger small mb-1">{{ $message }}</div>
+                        @enderror
                         <input
                             type="file"
                             name="image"
                             class="form-control @error('image') is-invalid @enderror"
                             accept="image/*"
                         >
-
-                        @error('image')
-
-                        <div class="invalid-feedback">
-                            {{ $message }}
-                        </div>
-
-                        @enderror
 
                     </div>
 
@@ -113,20 +98,15 @@
                             توضیحات
                         </label>
 
+                        @error('description')
+                            <div class="text-danger small mb-1">{{ $message }}</div>
+                        @enderror
                         <textarea
                             name="description"
                             rows="5"
                             class="form-control @error('description') is-invalid @enderror"
                             placeholder="توضیحات برند"
                         >{{ old('description') }}</textarea>
-
-                        @error('description')
-
-                        <div class="invalid-feedback">
-                            {{ $message }}
-                        </div>
-
-                        @enderror
 
                     </div>
 
@@ -139,9 +119,12 @@
                             وضعیت
                         </label>
 
+                        @error('status')
+                            <div class="text-danger small mb-1">{{ $message }}</div>
+                        @enderror
                         <select
                             name="status"
-                            class="form-select"
+                            class="form-select @error('status') is-invalid @enderror"
                         >
 
                             <option

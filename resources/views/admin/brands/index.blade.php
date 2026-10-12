@@ -76,10 +76,10 @@
 
                                 <td>
 
-                                    @if($brand->image)
+                                    @if($brand->logo)
 
                                         <img
-                                            src="{{ asset('storage/' . $brand->image) }}"
+                                            src="{{ asset('storage/' . $brand->logo) }}"
                                             alt="{{ $brand->name }}"
                                             width="60"
                                             height="60"

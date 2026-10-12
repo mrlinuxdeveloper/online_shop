@@ -29,6 +29,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\AppearanceController;
 use App\Http\Controllers\Shop\HomeController;
+use App\Http\Controllers\Shop\SitemapController;
 
 
 
@@ -48,6 +49,18 @@ Auth::routes();
 */
 
 Route::get('/', [HomeController::class,'index'])->name('home');
+Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
+Route::get('/robots.txt', function () {
+    $rules = [
+        'User-agent: *', 'Allow: /', 'Disallow: /admin/', 'Disallow: /cart',
+        'Disallow: /checkout', 'Disallow: /orders', 'Disallow: /addresses',
+        'Disallow: /wishlist', 'Disallow: /payment', 'Disallow: /dashboard',
+        'Disallow: /login', 'Disallow: /register', 'Disallow: /password/',
+        '', 'Sitemap: ' . route('sitemap'), '',
+    ];
+
+    return response(implode("\n", $rules), 200, ['Content-Type' => 'text/plain; charset=UTF-8']);
+})->name('robots');
 
 
 

@@ -31,20 +31,15 @@
                             نام برند
                         </label>
 
+                        @error('name')
+                            <div class="text-danger small mb-1">{{ $message }}</div>
+                        @enderror
                         <input
                             type="text"
                             name="name"
                             value="{{ old('name', $brand->name) }}"
                             class="form-control @error('name') is-invalid @enderror"
                         >
-
-                        @error('name')
-
-                        <div class="invalid-feedback">
-                            {{ $message }}
-                        </div>
-
-                        @enderror
 
                     </div>
 
@@ -57,6 +52,9 @@
                             نامک
                         </label>
 
+                        @error('slug')
+                            <div class="text-danger small mb-1">{{ $message }}</div>
+                        @enderror
                         <input
                             type="text"
                             name="slug"
@@ -64,20 +62,12 @@
                             class="form-control @error('slug') is-invalid @enderror"
                         >
 
-                        @error('slug')
-
-                        <div class="invalid-feedback">
-                            {{ $message }}
-                        </div>
-
-                        @enderror
-
                     </div>
 
 
                     {{-- تصویر فعلی --}}
 
-                    @if($brand->image)
+                    @if($brand->logo)
 
                         <div class="mb-3">
 
@@ -86,7 +76,7 @@
                             </label>
 
                             <img
-                                src="{{ asset('storage/' . $brand->image) }}"
+                                src="{{ asset('storage/' . $brand->logo) }}"
                                 alt="{{ $brand->name }}"
                                 width="120"
                                 height="120"
@@ -107,20 +97,15 @@
                             جایگزینی تصویر
                         </label>
 
+                        @error('image')
+                            <div class="text-danger small mb-1">{{ $message }}</div>
+                        @enderror
                         <input
                             type="file"
                             name="image"
                             class="form-control @error('image') is-invalid @enderror"
                             accept="image/*"
                         >
-
-                        @error('image')
-
-                        <div class="invalid-feedback">
-                            {{ $message }}
-                        </div>
-
-                        @enderror
 
                     </div>
 
@@ -133,19 +118,14 @@
                             توضیحات
                         </label>
 
+                        @error('description')
+                            <div class="text-danger small mb-1">{{ $message }}</div>
+                        @enderror
                         <textarea
                             name="description"
                             rows="5"
                             class="form-control @error('description') is-invalid @enderror"
                         >{{ old('description', $brand->description) }}</textarea>
-
-                        @error('description')
-
-                        <div class="invalid-feedback">
-                            {{ $message }}
-                        </div>
-
-                        @enderror
 
                     </div>
 
@@ -158,9 +138,12 @@
                             وضعیت
                         </label>
 
+                        @error('status')
+                            <div class="text-danger small mb-1">{{ $message }}</div>
+                        @enderror
                         <select
                             name="status"
-                            class="form-select"
+                            class="form-select @error('status') is-invalid @enderror"
                         >
 
                             <option
